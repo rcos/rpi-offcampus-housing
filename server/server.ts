@@ -16,7 +16,10 @@ mongoose.connect(MONGO_URI, {
   useUnifiedTopology: true,
   useFindAndModify: true,
   useCreateIndex: true
-}, (err: any) => {
+}, 
+
+// mongoose connection callback
+(err: any) => {
   if (err) {
     console.error(`❌ Error connecting to mongoose.`);
     process.exit(1);
