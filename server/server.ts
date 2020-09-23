@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 const app = express()
 
+
 // load environment variablesd
 dotenv.config({'path': `../.env`})
 dotenv.config({'path': `../.env.${process.env.NODE_ENV}`})
@@ -26,6 +27,11 @@ mongoose.connect(MONGO_URI, {
   }
   else console.log(`✔ Successfully connect to MongoDB instance.`);
 });
+
+
+// API routes
+import test from './API/test'
+app.use(test);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
