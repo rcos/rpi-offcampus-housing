@@ -28,6 +28,7 @@ mongoose.connect(MONGO_URI, {
   else console.log(`✔ Successfully connect to MongoDB instance.`);
 });
 
+// TODO, API CI -> https://www.freecodecamp.org/news/how-to-automate-rest-api-end-to-end-tests/
 
 // API routes
 import test from './API/test'
