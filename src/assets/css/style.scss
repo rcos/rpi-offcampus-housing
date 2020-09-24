@@ -1,0 +1,57 @@
+$pink: #E0777D;
+$black: #1E2019;
+$limewhite: #F0F7F4;
+$purple: #8F3985;
+$cyan: #99E1D9;
+
+.form.toggle-container {
+  display: inline-block;
+  font-family: khumbh-sans;
+  color: $black;
+
+  .toggle {
+    display: inline-block;
+
+    width: 40px;
+    height: 20px;
+    border: 2px solid $black;
+    border-radius: 30px;
+    cursor: pointer;
+    padding-left: 1px;
+    padding-right: 1px;
+    position: relative;
+  
+    &:active {
+      .toggle-slider {
+        transform: scale(0.8);
+      }
+    }
+  
+    .toggle-slider {
+      width: 18px;
+      height: 18px;
+      background-color: $black;
+      border-radius: 30px;
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      transition: transform 0.25s;
+    }
+  }
+
+  .label {
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: top;
+    height: 20px;
+    position: relative;
+    line-height: 30px;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.8rem;
+
+    span {
+      position: absolute;
+    }
+  }
+}
