@@ -1,6 +1,6 @@
 documentation → [toolbox](../toolbox.md) → form → Toggle
 
-## toggle
+## Toggle
 
 `@desc` A form component that is a boolean toggle. It's either on or off
 
