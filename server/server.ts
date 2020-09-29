@@ -6,7 +6,11 @@ const app = express()
 
 // load environment variablesd
 dotenv.config({'path': `../.env`})
-dotenv.config({'path': `../.env.${process.env.NODE_ENV}`})
+if (!process.env.NODE_ENV) {
+  console.error(`NODE_ENV is not set.\n`);
+  process.exit();
+}
+dotenv.config({'path': `../.env.${process.env.NODE_ENV!.replace(' ', '')}`})
 
 const PORT = process.env.SERVER_PORT
 const MONGO_URI = `mongodb+srv://rpioffcampusprojectteam:${process.env.MONGO_DB_PASSWORD}@cluster0.vsneo.mongodb.net/housing-database?retryWrites=true&w=majority`
