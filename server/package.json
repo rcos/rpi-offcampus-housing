@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-server": "set NODE_ENV=development&& nodemon server.ts",
+    "dev-server": "NODE_ENV=development npx nodemon server.ts",
     "newman": "node_modules/.bin/newman run"
   },
   "keywords": [],
