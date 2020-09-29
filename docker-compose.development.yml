@@ -1,0 +1,29 @@
+version: "3.4"
+
+volumes:
+  roh_server_node_modules:
+  roh_web_node_modules:
+
+services:
+  server:
+    command: npx nodemon server.ts
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+      - .env.development
+    volumes:
+      - roh_server_node_modules:/app/node_modules
+      - ./server:/app
+
+  web:
+    command: npm run start
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+      - .env.development
+    stdin_open: true
+    volumes:
+      - roh_web_node_modules:/app/node_modules
+      - ./web:/app

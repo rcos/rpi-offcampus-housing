@@ -1,0 +1,8 @@
+#!/bin/bash
+cd $(cd -P -- "$(dirname -- "$0")" && pwd -P)/../
+
+docker-compose \
+  -f docker-compose.yml \
+  -f docker-compose.development.yml \
+  --env-file .env.development \
+  -- $@

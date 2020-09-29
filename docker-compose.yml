@@ -1,0 +1,22 @@
+version: "3.4"
+
+services:
+  server:
+    build:
+      context: server
+    container_name: roh_server
+    env_file:
+      - .env
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+
+  web:
+    build:
+      context: web
+    container_name: roh_web
+    depends_on:
+      - server
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
