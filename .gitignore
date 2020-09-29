@@ -1,8 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
 /server/node_modules
+/web/node_modules
 /.pnp
 .pnp.js
 
@@ -21,6 +21,7 @@
 .env.development*
 .env.production*
 .env
+docker.bat
 
 npm-debug.log*
 yarn-debug.log*
