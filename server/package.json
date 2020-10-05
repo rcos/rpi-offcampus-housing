@@ -21,8 +21,10 @@
     "mongoose": "^5.10.6"
   },
   "devDependencies": {
+    "@types/faker": "^5.1.2",
     "@types/node": "^14.11.2",
     "cross-env": "^7.0.2",
+    "faker": "^5.1.0",
     "newman": "^5.2.0",
     "nodemon": "^2.0.4",
     "npx": "^10.2.2",
