@@ -1,13 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App.tsx';
 import * as serviceWorker from './serviceWorker';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom"
 
 // stylesheets
 import './assets/css/style.scss'
 import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
+
+// router paths
+import App from './App.tsx';
+import Test from './views/Test.tsx'
+
+// setup routes
+const Routes = () => {
+  return (<Router>
+    <Switch>
+      <Route path="/test">
+        <Test />
+      </Route>
+      <Route path="/">
+        <App />
+      </Route>
+    </Switch>
+  </Router>)
+}
 
 ReactDOM.render(
   <React.StrictMode>
