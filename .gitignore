@@ -23,6 +23,7 @@ build
 .env.development*
 .env.production*
 .env
+docker.bat
 
 npm-debug.log*
 yarn-debug.log*
