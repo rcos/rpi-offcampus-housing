@@ -7,13 +7,18 @@ var Schema = mongoose.Schema;
 //This needs to be very fine tuned to match what we want.
 // I'll be going back over this again when we get a chance to meet.
 var PropertySchema = new Schema({
-    landlord: Landlord.schema,
+    landlord: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Landlord'
+    },
     location: String,
-    property_id: String,
-    description: String,
-    reviews: [Review.schema],
+    description: Object,
+    reviews: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review'
+    }],
     date_update: Date,
-    period_available: Date,
+    period_available: Object,
     lease_duration: String,
     price: Number,
     amenities: [String],
