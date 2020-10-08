@@ -6,7 +6,11 @@ const studentRouter = express.Router();
 
 studentRouter.get('/:id', (req, res) => {
 
-  console.log(chalk.bgBlue(`👉 GET student/:id`))
+  /*
+  GET /students/:id -> Retrieve the student that has the specified id, otherwise prompt error.
+  */
+
+  console.log(chalk.bgBlue(`👉 GET /students/:id`))
   let student_id = req.params.id;
 
   validId(student_id)

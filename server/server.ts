@@ -34,11 +34,17 @@ mongoose.connect(MONGO_URI, {
 
 // TODO, API CI -> https://www.freecodecamp.org/news/how-to-automate-rest-api-end-to-end-tests/
 
+// setup middleware
+import bodyParser from 'body-parser'
+app.use(express.json())
+
 // API routes
 import test from './API/test'
 import StudentGET from './API/Student/student.get'
+import StudentPUT from './API/Student/student.put'
 app.use(test);
 app.use('/students', StudentGET)
+app.use('/students', StudentPUT)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
