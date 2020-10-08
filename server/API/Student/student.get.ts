@@ -1,6 +1,7 @@
 import express from 'express'
 import chalk from 'chalk'
 import Student, {IStudentDoc} from '../../schemas/student.schema'
+import {validId} from '../../helpers'
 
 const studentRouter = express.Router();
 
@@ -53,15 +54,5 @@ studentRouter.get('/:id', (req, res) => {
   
 
 })
-
-import mongoose from 'mongoose'
-const validId = (id: string): Promise<null> => {
-
-  return new Promise<null>((resolve, reject) => {
-    if (mongoose.Types.ObjectId.isValid(id)) resolve()
-    else reject()
-  });
-
-}
 
 export default studentRouter

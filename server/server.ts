@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { application } from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 const app = express()
@@ -42,9 +42,12 @@ app.use(express.json())
 import test from './API/test'
 import StudentGET from './API/Student/student.get'
 import StudentPUT from './API/Student/student.put'
+import LandlordGET from './API/Landlord/landlord.get'
 app.use(test);
+
 app.use('/students', StudentGET)
 app.use('/students', StudentPUT)
+app.use('/landlord', LandlordGET)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
