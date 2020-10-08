@@ -2,9 +2,79 @@ import express from 'express'
 import chalk from 'chalk'
 import Property, {IPropertyDoc} from '../../schemas/property.schema'
 import Landlord, {ILandlordDoc} from '../../schemas/landlord.schema'
+import Review, {IReviewDoc} from '../../schemas/review.schema'
 import { validId } from '../../helpers';
 
 const propertyRouter = express.Router();
+
+propertyRouter.get('/:id/reviews', (req, res) => {
+  console.log(chalk.bgBlue(`👉 GET /api/properties/:id/reviews`))
+  let property_id = req.params.id;
+
+  validId(property_id)
+  .then(() => {
+
+    Property.findById(property_id, (err: any, property_doc: IPropertyDoc) => {
+
+      if (err || !property_doc) {
+        console.log(chalk.bgRed(`❌ Error: Could not find property with id: ${property_id}`))
+        res.json({
+          success: false,
+          error: err ? err : `No property found.`
+        })
+      }
+      else {
+
+        console.log(chalk.green(`✔ (1/2) Successfully found property with id ${property_id}`))
+        
+        let reviews = property_doc.reviews
+        
+        let reviews_promises = reviews.map(review_id => {
+          return new Promise((resolve, reject) => {
+            // look for the review document that matches the id review_id
+            Review.findById(review_id, (err: any, review_doc: IReviewDoc) => {
+              if (err || !review_doc) {
+                resolve(null)
+              }
+              else {
+                resolve(review_doc)
+              }
+            })
+          })
+        })
+
+        // wait for all the reviews to finish
+        Promise.all(reviews_promises)
+        .then(fulfilled_reviews => {
+          console.log(chalk.bgGreen(`✔ (2/2) Successfully retrieved all reviews for the property with id ${property_id}`))
+          res.json({
+            success: true,
+            reviews: fulfilled_reviews
+          })
+        })
+        .catch(() => {
+          console.log(chalk.bgRed(`❌ (2/2) An error occurred retrieving all the reviews for the property with id ${property_id}`))
+          res.json({
+            success: false,
+            error: "Internal server error"
+          })
+          return;
+        })
+
+      }
+
+    })
+    
+
+  })
+  .catch(() => {
+    console.log(chalk.bgRed(`❌ Error: ${property_id} is not a valid ObjectId.`))
+    res.json({
+      success: false,
+      error: "Invalid id."
+    })
+  })
+})
 
 propertyRouter.get('/:id/landlord', (req, res) => {
   console.log(chalk.bgBlue(`👉 GET /api/properties/:id/landlord`))
