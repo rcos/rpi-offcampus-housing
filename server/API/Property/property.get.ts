@@ -1,9 +1,71 @@
 import express from 'express'
 import chalk from 'chalk'
 import Property, {IPropertyDoc} from '../../schemas/property.schema'
+import Landlord, {ILandlordDoc} from '../../schemas/landlord.schema'
 import { validId } from '../../helpers';
 
 const propertyRouter = express.Router();
+
+propertyRouter.get('/:id/landlord', (req, res) => {
+  console.log(chalk.bgBlue(`👉 GET /api/properties/:id/landlord`))
+  let property_id = req.params.id;
+
+  validId(property_id)
+  .then(() => {
+
+    Property.findById(property_id, (err: any, property_doc: IPropertyDoc) => {
+
+      if (err || !property_doc) {
+        console.log(chalk.bgRed(`❌ Error: Could not find property with id: ${property_id}`))
+        res.json({
+          success: false,
+          error: err ? err : `No property found.`
+        })
+      }
+      else {
+
+        console.log(chalk.green(`✔ (1/2) Successfully found property with id ${property_id}`))
+        
+        let landlord_id = property_doc.landlord
+        Landlord.findById(landlord_id, (err: any, landlord_doc: ILandlordDoc) => {
+
+          // if we can't find the landlord, or if there is an error
+          if (err || !landlord_doc) {
+            console.log(chalk.bgRed(`❌ Error: No landlord with id ${landlord_id} found `))
+            res.json({
+              success: false,
+              error: err ? err : `No landlord found`
+            })
+          }
+
+          // if the landlord is found with no error
+          else {
+            console.log(chalk.bgGreen(`✔ (2/2) Successfully found the landlord that owns property with id ${property_id}`))
+            res.json({
+              success: true,
+              first_name: landlord_doc.first_name,
+              last_name: landlord_doc.last_name,
+              _id: landlord_doc._id,
+              email: landlord_doc.email,
+              rating: landlord_doc.rating
+            })
+          }
+        })
+
+      }
+
+    })
+    
+
+  })
+  .catch(() => {
+    console.log(chalk.bgRed(`❌ Error: ${property_id} is not a valid ObjectId.`))
+    res.json({
+      success: false,
+      error: "Invalid id."
+    })
+  })
+})
 
 propertyRouter.get('/:id', (req, res) => {
 
