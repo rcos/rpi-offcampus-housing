@@ -11,7 +11,7 @@ studentRouter.put('/', (req, res) => {
   PUT /students -> Create a new student with data from req.body
   */
 
-  console.log(chalk.bgBlue(`👉 PUT /students`))
+  console.log(chalk.bgBlue(`👉 PUT /students/`))
   let student_ = req.body
 
   if (student_ == undefined) {
@@ -85,7 +85,7 @@ studentRouter.put('/', (req, res) => {
 
     // if the student already exists, return error
     else {
-      console.log(chalk.bgRed(`❌ Error: user with email ${student_.email} already exists`))
+      console.log(chalk.bgRed(`❌ Error: student with email ${student_.email} already exists`))
       res.json({
         success: false,
         error: "Student already exists"

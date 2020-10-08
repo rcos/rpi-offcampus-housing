@@ -43,11 +43,13 @@ import test from './API/test'
 import StudentGET from './API/Student/student.get'
 import StudentPUT from './API/Student/student.put'
 import LandlordGET from './API/Landlord/landlord.get'
+import LandlordPUT from './API/Landlord/landlord.put'
 app.use(test);
 
-app.use('/students', StudentGET)
-app.use('/students', StudentPUT)
-app.use('/landlord', LandlordGET)
+app.use('/api/students', StudentGET)
+app.use('/api/students', StudentPUT)
+app.use('/api/landlords', LandlordGET)
+app.use('/api/landlords', LandlordPUT)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

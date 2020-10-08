@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 var Schema = mongoose.Schema;
 
-interface ILandlordDoc {
+interface ILandlordDoc extends mongoose.Document {
     _id: string
     first_name: string
     last_name: string
@@ -19,6 +19,6 @@ var LandlordSchema = new Schema({
     rating: Number //included to be able to access landlord rating quickly
 });
 
-const Landlord = mongoose.model("Landlord", LandlordSchema);
+const Landlord = mongoose.model<ILandlordDoc>("Landlord", LandlordSchema);
 export default Landlord;
 export { ILandlordDoc }
