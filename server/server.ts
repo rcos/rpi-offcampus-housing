@@ -36,7 +36,9 @@ mongoose.connect(MONGO_URI, {
 
 // API routes
 import test from './API/test'
+import StudentGET from './API/Student/student.get'
 app.use(test);
+app.use('/students', StudentGET)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
