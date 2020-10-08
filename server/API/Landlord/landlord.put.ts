@@ -11,7 +11,7 @@ landlordRouter.put('/', (req, res) => {
   PUT /landlords/ -> Create a new landlord with data from req.body
   */
 
-  console.log(chalk.bgBlue(`👉 PUT /landlords/`))
+  console.log(chalk.bgBlue(`👉 PUT /api/landlords/`))
   let landlord_ = req.body
 
   if (landlord_ == undefined) {

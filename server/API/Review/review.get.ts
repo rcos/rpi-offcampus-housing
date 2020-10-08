@@ -12,7 +12,7 @@ reviewRouter.get('/:id', (req, res) => {
     Otherwise, prompt an error.
   */
 
-  console.log(chalk.bgBlue(`👉 GET /reviews/:id`))
+  console.log(chalk.bgBlue(`👉 GET /api/reviews/:id`))
   let review_id = req.params.id;
 
   validId(review_id)

@@ -11,7 +11,7 @@ studentRouter.put('/', (req, res) => {
   PUT /students -> Create a new student with data from req.body
   */
 
-  console.log(chalk.bgBlue(`👉 PUT /students/`))
+  console.log(chalk.bgBlue(`👉 PUT /api/students/`))
   let student_ = req.body
 
   if (student_ == undefined) {

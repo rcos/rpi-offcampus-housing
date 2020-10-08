@@ -11,7 +11,7 @@ studentRouter.get('/:id', (req, res) => {
   GET /students/:id -> Retrieve the student that has the specified id, otherwise prompt error.
   */
 
-  console.log(chalk.bgBlue(`👉 GET /students/:id`))
+  console.log(chalk.bgBlue(`👉 GET /api/students/:id`))
   let student_id = req.params.id;
 
   validId(student_id)

@@ -13,7 +13,7 @@ reviewRouter.put('/', async (req, res) => {
   PUT /reviews/ -> Create a new review with data from req.body
   */
 
-  console.log(chalk.bgBlue(`👉 PUT /reviews/`))
+  console.log(chalk.bgBlue(`👉 PUT /api/reviews/`))
   let review_ = req.body
 
   if (review_ == undefined) {

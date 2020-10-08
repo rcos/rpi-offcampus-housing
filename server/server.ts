@@ -46,6 +46,7 @@ import LandlordGET from './API/Landlord/landlord.get'
 import LandlordPUT from './API/Landlord/landlord.put'
 import ReviewGET from './API/Review/review.get'
 import ReviewPUT from './API/Review/review.put'
+import PropertyGET from './API/Property/property.get'
 app.use(test);
 
 app.use('/api/students', StudentGET)
@@ -54,6 +55,7 @@ app.use('/api/landlords', LandlordGET)
 app.use('/api/landlords', LandlordPUT)
 app.use('/api/reviews', ReviewGET)
 app.use('/api/reviews', ReviewPUT)
+app.use('/api/properties', PropertyGET)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

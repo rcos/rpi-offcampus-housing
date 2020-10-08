@@ -11,7 +11,7 @@ landlordRouter.get ('/:id', (req, res) => {
   GET /landlord/:id -> Retrieve the landlord that has the specified id, otherwise prompt error.
   */
 
- console.log(chalk.bgBlue(`👉 GET /landlord/:id`))
+ console.log(chalk.bgBlue(`👉 GET /api/landlord/:id`))
  let landlord_id = req.params.id;
 
  validId(landlord_id)
