@@ -8,7 +8,7 @@ const landlordRouter = express.Router();
 landlordRouter.put('/', (req, res) => {
   
   /*
-  PUT /landlord/ -> Create a new landlord with data from req.body
+  PUT /landlords/ -> Create a new landlord with data from req.body
   */
 
   console.log(chalk.bgBlue(`👉 PUT /landlords/`))
