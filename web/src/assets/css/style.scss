@@ -3,6 +3,11 @@ $black: #1E2019;
 $limewhite: #F0F7F4;
 $purple: #8F3985;
 $cyan: #99E1D9;
+$cyanDark: #79b5ae;
+
+body {
+  font-family:  khumbh-sans;
+}
 
 // Scrollbar style
 *::-webkit-scrollbar {
@@ -19,7 +24,21 @@ $cyan: #99E1D9;
 }
 
 .padded {
-  margin-bottom: 20px;
+  &.upper {
+    margin-top: 20px;
+  }
+  &.lower {
+    margin-bottom: 20px;
+  }
+}
+
+.padded-2 {
+  &.upper {
+    margin-top: 10px;
+  }
+  &.lower {
+    margin-bottom: 10px;
+  }
 }
 
 // Form components style
@@ -65,8 +84,7 @@ $cyan: #99E1D9;
     height: 20px;
     position: relative;
     line-height: 30px;
-    text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 100;
     font-size: 0.8rem;
 
     span {
@@ -111,6 +129,7 @@ $cyan: #99E1D9;
     z-index: 3;
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
     overflow-y: scroll;
+    background-color: white;
 
     .option {
       background-color: white;
@@ -124,47 +143,277 @@ $cyan: #99E1D9;
 }
 
 .form.range-selector {
-
-  height: 15px;
-  box-sizing: border-box;
-  position: relative;
-
-  .anchor {
-    width: 15px;
-    height: 15px;
-    background-color: $black;
-    border-radius: 30px;
-    position: absolute;
-
-    &.left {
-      left: 0;
-    }
-    &.right {
-      right: 0;
-    }
-  }
-
-  .slider-base {
-    height: 3px;
-    background: $black;
-    position: relative;
-    transform: translateY(6px);
-  }
+  font-weight: 100;
+  font-size: 0.7rem;
+  display: flex;
 
   .slider {
-    position: absolute;
-    width: 17px;
-    height: 17px;
-    border-radius: 30px;
-    background-color: $cyan;
-    top: -1px;
-    left: -1px;
-    cursor: pointer;
-    transform: scale(1);
-    transition: transform 0.25s;
+    flex-grow: 1;
+    margin-left: 5px;
+    margin-right: 5px;
+    position: relative;
 
-    &:active {
-      transform: scale(1.1);
+    &::before {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: $black;
+      border-radius: 10px;
+      left: -3px;
+      top: 0;
+      z-index: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: $black;
+      border-radius: 10px;
+      right: -3px;
+      top: 0;
+      z-index: 1;
+    }
+
+    .slider-bar {
+      height: 2px;
+      background-color: $black;
+      transform: translateY(4px);
+    }
+
+    .range-region {
+      height: 10px;
+      position: absolute;
+      left: 0px;
+      z-index: 2;
+      top: 0;
+
+      .range-slider-bar {
+        height: 3px;
+        background-color: $cyan;
+        transform: translateY(3.5px);
+      }
+
+      .left-pin, .right-pin {
+        transition: transform 0.25s, box-shadow 0.25s;
+        transform: scale(1);
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        cursor: pointer;
+        background-color: $cyan;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.0);
+
+        &:active {
+          transform: scale(1.2);
+          box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4);
+
+          .value-label {
+            transform: scale(0.8);
+          }
+        }
+
+        .value-label {
+          position: absolute;
+          transition: transform 0.25s;
+          left: 0;
+          top: 0;
+          color: white;
+          background-color: $black;
+          top: 15px;
+          font-size: 0.65rem;
+          padding: 2px 5px;
+          border-radius: 3px;
+          transform: scale(1);
+        }
+      }
+
+      .left-pin {
+        left: -4px;
+        border-radius: 10px;
+        top: -1px;
+      }
+
+      .right-pin {
+        right: -4px;
+        border-radius: 10px;
+        top: -1px;
+      }
     }
   }
 }
+
+.left-and-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .spacer {
+    flex-grow: 1;
+  }
+}
+
+.app-logo {
+  background: url('../svg/logo.svg');
+  background-size: 100%;
+  cursor: pointer;
+}
+
+.app-button {
+  box-sizing: border-box;
+  height: 30px;
+  line-height: 26px;
+  color: white;
+  padding: 0 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.25s;
+  position: relative;
+  transform: scale(1);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .text-area {
+
+    &.left {
+      margin-left: 25px;
+    }
+
+    &.right {
+      margin-right: 25px;
+    }
+  }
+
+  .icon-area {
+    width: 25px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+
+    &.right {
+      right: 0;
+    }
+    
+    &.left {
+      left: 0;
+    }
+  }
+}
+
+.input-field {
+  border: 2px solid $black;
+  height: 40px;
+  border-radius: 3px;
+  position: relative;
+
+  .label-area {
+    position: absolute;
+    height: 40px;
+    line-height: 40px;
+    background-color: white;
+    color: $black;
+    top: 0;
+    left: 0;
+    padding: 0 10px;
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: height 0.25s, 
+      line-height 0.25s, 
+      font-size 0.25s, 
+      border 0.25s,
+      background 0.25s,
+      color 0.25s;
+
+    transition-timing-function: ease-out;
+
+    &.focused {
+      height: 15px;
+      line-height: 15px;
+      font-size: 11px;
+      border-bottom-right-radius: 3px;
+      background-color: white;
+      color: $black;
+    }
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    transform: translateY(12px);
+    height: 23px;
+    border: none;
+    background: none;
+    outline: none;
+  }
+}
+
+.dashed-underline {
+  border-bottom: 1px dashed $cyanDark;
+  cursor: pointer;
+}
+
+.nav-right-holder {
+  div {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .school-logo-area {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid $black;
+    margin-left: 10px;
+    border-radius: 3px;
+  }
+}
+
+.left-search-area {
+
+  .filter-area {
+    border: 1px solid $black;
+    border-radius: 3px;
+    padding: 12px 10px;
+  }
+}
+
+.search-page-contents {
+  display: flex;
+  
+  .left-area {
+    width: 40%;
+    min-width: 40%;
+  }
+
+  .right-area {
+    flex-grow: 1;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.activable {
+  opacity: 0.65;
+  &.active {
+    opacity: 1;
+  }
+}
+
+.input-label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+

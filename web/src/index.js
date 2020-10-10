@@ -5,8 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom"
 
 // stylesheets
@@ -15,18 +14,22 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
-import App from './App.tsx';
-import Test from './views/Test.tsx'
+import App from './App';
+import LandingView from './views/Landing'
+import SearchView from './views/Search'
 
 // setup routes
 const Routes = () => {
   return (<Router>
     <Switch>
+      <Route path="/search">
+        <SearchView />
+      </Route>
       <Route path="/test">
-        <Test />
+        <App />
       </Route>
       <Route path="/">
-        <App />
+        <LandingView />
       </Route>
     </Switch>
   </Router>)
@@ -34,7 +37,7 @@ const Routes = () => {
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Routes />
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -55,7 +55,7 @@ const Dropdown = ({ options, onSelect }: DropdownInterface) => {
     <div className="label" onClick={toggleDropdown}>{getOption()}</div>
     <motion.div className="dropdown-list" style={{
       opacity: dropdownSpring,
-      scale: scaleTransform
+      scaleY: scaleTransform
     }}>
       {
         options.map((option_: string, i: number) => (<div 
