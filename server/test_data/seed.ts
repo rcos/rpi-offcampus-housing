@@ -204,7 +204,7 @@ const generateProperty = (values?: Partial<Property>): Property => {
     },
     lease_duration: `${lease_duration} months`,
     price: faker.random.number({ min: 300, max: 2000 }),
-    amenities: faker.random.arrayElements(faker.random.number(5)),
+    amenities: faker.random.words(faker.random.number(5)).split(" "),
     // utility_included: faker.random.boolean(),
     sq_ft: faker.random.number({ min: 500, max: 2000 }),
     ...values,
