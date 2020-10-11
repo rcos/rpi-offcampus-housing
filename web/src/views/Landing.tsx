@@ -1,4 +1,5 @@
 import React from 'react'
+import {useHistory} from 'react-router-dom'
 
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import Centered from '../components/toolbox/layout/Centered'
@@ -7,9 +8,9 @@ import Button from '../components/toolbox/form/Button'
 import {BiLogIn} from 'react-icons/bi'
 
 const SearchView = () => {
+  const history = useHistory()
 
   return (<div>
-
     <Centered width={1200} height="100%">
 
     <div>
@@ -22,6 +23,7 @@ const SearchView = () => {
           background="#1E2019"
           textColor="white"
           iconLocation="right"
+          onClick={() => history.push('/landlord/login')}
         />}
       />
     </div>

@@ -5,6 +5,24 @@ $purple: #8F3985;
 $cyan: #99E1D9;
 $cyanDark: #79b5ae;
 
+// transition animation
+.page-enter {
+  opacity: 0;
+}
+.page-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.page-exit {
+  opacity: 1;
+}
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+
+
+// general style
 body {
   font-family:  khumbh-sans;
 }
@@ -309,7 +327,7 @@ body {
 }
 
 .input-field {
-  border: 2px solid $black;
+  border: 1px solid $black;
   height: 40px;
   border-radius: 3px;
   position: relative;
@@ -598,5 +616,22 @@ body {
   &.error {
     background-color: #e65c5c;
     box-shadow: 0px 0px 5px rgba(201, 71, 71, 0.3);
+  }
+}
+
+.horizontal-line {
+  background-color: $black;
+  height: 1px;
+  position: relative;
+  transform: translateY(5px);
+
+  .label {
+    position: absolute;
+    top: -5px;
+    font-size: 0.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 0 10px;
   }
 }

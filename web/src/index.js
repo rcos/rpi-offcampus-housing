@@ -7,6 +7,7 @@ import {
   Switch,
   Route
 } from "react-router-dom"
+import ReactCSSTransitionGroup from 'react-transition-group';
 
 // stylesheets
 import './assets/css/style.scss'
@@ -47,20 +48,20 @@ const Routes = () => {
       errorAlert: errorAlert
     }}>
       <AlertController alertInfo={alertCtxValue} />
-      <Switch>
-        <Route exact path="/landlord/login">
-          <LandlordLoginView />
-        </Route>
-        <Route exact path="/search">
-          <SearchView />
-        </Route>
-        <Route exact path="/">
-          <LandingView />
-        </Route>
-        <Route>
-          <NotFound />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route exact path="/landlord/login">
+            <LandlordLoginView />
+          </Route>
+          <Route exact path="/search">
+            <SearchView />
+          </Route>
+          <Route exact path="/">
+            <LandingView />
+          </Route>
+          <Route>
+            <NotFound />
+          </Route>
+        </Switch>
     </AlertContext.Provider>
   </Router>)
 }
