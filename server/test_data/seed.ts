@@ -4,12 +4,14 @@ import { promisify } from "util";
 
 import * as faker from "faker";
 
+import { ObjectID } from "mongodb";
+
 // defaults
 const DEFAULT_OUT_DIRECTORY = ".";
 const DEFAULT_OUT_STUDENTS_FILE = "students.json";
 const DEFAULT_OUT_LANDLORDS_FILE = "landlords.json";
 const DEFAULT_OUT_PROPERTIES_FILE = "properties.json";
-const DEFAULT_OUT_STUDENT_REVIEWS = "student_reviews.json";
+const DEFAULT_OUT_STUDENT_REVIEWS = "reviews.json";
 const DEFAULT_NUM_STUDENTS = 200;
 const DEFAULT_NUM_LANDLORDS = 15;
 const DEFAULT_NUM_PROPERTIES = 40;
@@ -18,6 +20,15 @@ const DEFAULT_SEED = 1;
 
 // helper models
 type Counter = number;
+
+// need to do this way so stringify is valid
+type MongoObjectID = {
+  $oid: ObjectID;
+};
+
+interface MongoObject {
+  _id: MongoObjectID;
+}
 
 interface Content {
   text: string;
@@ -110,17 +121,18 @@ const getRcsId = (first_name: string, last_name: string) => {
 };
 
 // students
-type Student = {
-  id: string;
-} & Profile;
+type Student = MongoObject & Profile;
 
-let globalStudentCounter: Counter = 0;
-const getStudentId = (index?: number) =>
-  `test_student_id_${index ?? globalStudentCounter++}`;
+const studentIds: MongoObjectID[] = [];
+const getStudentId = () => {
+  const id = { $oid: new ObjectID() };
+  studentIds.push(id);
+  return id;
+};
 const getRandomStudentId = () =>
-  getStudentId(getRandomIdIndex(globalStudentCounter));
+  studentIds[faker.random.number(studentIds.length - 1)];
 const generateStudent = (values?: Partial<Student>): Student => ({
-  id: getStudentId(),
+  _id: getStudentId(),
   ...getRandomProfile(true),
   ...values,
 });
@@ -128,17 +140,20 @@ const generateStudents = (n: number) => objectFactory(n, generateStudent);
 
 // landlord
 type Landlord = {
-  id: string;
   rating: number;
-} & Profile;
+} & MongoObject &
+  Profile;
 
-let globalLandlordCounter: Counter = 0;
-const getLandlordId = (index?: number) =>
-  `test_landlord_id_${index ?? globalLandlordCounter++}`;
+const landlordIds: MongoObjectID[] = [];
+const getLandlordId = () => {
+  const id = { $oid: new ObjectID() };
+  landlordIds.push(id);
+  return id;
+};
 const getRandomLandlordId = () =>
-  getLandlordId(getRandomIdIndex(globalLandlordCounter));
+  landlordIds[faker.random.number(landlordIds.length - 1)];
 const generateLandlord = (values?: Partial<Landlord>): Landlord => ({
-  id: getLandlordId(),
+  _id: getLandlordId(),
   rating: getRandomRating(),
   ...getRandomProfile(),
   ...values,
@@ -146,18 +161,16 @@ const generateLandlord = (values?: Partial<Landlord>): Landlord => ({
 const generateLandlords = (n: number) => objectFactory(n, generateLandlord);
 
 // property
-interface Property {
-  id: string;
-  landlord_id: string;
+type Property = {
+  landlord_id: MongoObjectID;
   location: {
     address: string;
     city: string;
     state: string;
     zip: string;
   };
-  property_id: string;
+  property_id: MongoObjectID;
   description: Content;
-  reviews: string[];
   date_update: Date;
   period_available: {
     start: Date;
@@ -168,13 +181,16 @@ interface Property {
   amenities: string[];
   // utility_included: boolean;
   sq_ft: number;
-}
+} & MongoObject;
 
-let globalPropertyCounter: Counter = 0;
-const getPropertyId = (index?: number) =>
-  `test_property_id_${index ?? globalPropertyCounter++}`;
+const propertyIds: MongoObjectID[] = [];
+const generatePropertyId = () => {
+  const id = { $oid: new ObjectID() };
+  propertyIds.push(id);
+  return id;
+};
 const getRandomPropertyId = () =>
-  getPropertyId(getRandomIdIndex(globalPropertyCounter));
+  propertyIds[faker.random.number(propertyIds.length - 1)];
 const generateProperty = (values?: Partial<Property>): Property => {
   const lease_start = faker.date.soon(
     faker.random.number({ min: 10, max: 200 })
@@ -182,7 +198,7 @@ const generateProperty = (values?: Partial<Property>): Property => {
   const lease_duration = faker.random.boolean() ? 6 : 12;
 
   return {
-    id: getPropertyId(),
+    _id: generatePropertyId(),
     landlord_id: getRandomLandlordId(),
     location: {
       address: faker.address.streetAddress(),
@@ -192,9 +208,6 @@ const generateProperty = (values?: Partial<Property>): Property => {
     },
     property_id: getRandomPropertyId(),
     description: getRandomContent(),
-    reviews: Array.from({ length: faker.random.number(10) }).map(() =>
-      getRandomStudentReviewId()
-    ),
     date_update: faker.date.recent(faker.random.number(100)),
     period_available: {
       start: lease_start,
@@ -213,9 +226,9 @@ const generateProperty = (values?: Partial<Property>): Property => {
 const generateProperties = (n: number) => objectFactory(n, generateProperty);
 
 // student reviews
-interface StudentReview {
-  property_id: string;
-  student_id: string;
+type StudentReview = {
+  property_id: MongoObjectID;
+  student_id: MongoObjectID;
   content: Content;
   rating: {
     property: number;
@@ -225,19 +238,24 @@ interface StudentReview {
     start_date: string;
     end_date: string;
   };
-}
+} & MongoObject;
 
-let globalStudentReviewCounter: Counter = 0;
-const getStudentReviewId = (index?: number) =>
-  `test_student_review_id_${index ?? globalStudentReviewCounter}`;
+const studentReviewIds: MongoObjectID[] = [];
+const generateStudentReviewId = () => {
+  const id = { $oid: new ObjectID() };
+  studentReviewIds.push(id);
+  return id;
+};
 const getRandomStudentReviewId = () =>
-  getStudentReviewId(getRandomIdIndex(globalStudentReviewCounter));
+  studentReviewIds[faker.random.number(studentReviewIds.length - 1)];
 const generateStudentReview = (
   studentReviewValues?: Partial<StudentReview>
 ): StudentReview => {
   const { rating: ratingValues, ...values } = studentReviewValues ?? {};
+  const property_id = getRandomPropertyId();
   return {
-    property_id: getRandomPropertyId(),
+    _id: generateStudentReviewId(),
+    property_id,
     student_id: getRandomStudentId(),
     content: getRandomContent(),
     rating: {
