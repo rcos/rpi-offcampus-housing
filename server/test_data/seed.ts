@@ -152,17 +152,16 @@ interface Property {
   };
   property_id: string;
   description: Content;
-  // reviews
+  reviews: string[];
   date_updated: Date;
   period_available: {
     start: Date;
     end: Date;
   };
   lease_duration: number;
-  price: {
-    // amenity;
-    utility_included: boolean;
-  };
+  price: number;
+  amenities: string[];
+  // utility_included: boolean;
   sq_ft: number;
 }
 
@@ -188,6 +187,9 @@ const generateProperty = (values?: Partial<Property>): Property => {
     },
     property_id: getRandomPropertyId(),
     description: getRandomContent(),
+    reviews: Array.from({ length: faker.random.number(10) }).map(() =>
+      getRandomStudentReviewId()
+    ),
     date_updated: faker.date.recent(faker.random.number(100)),
     period_available: {
       start: lease_start,
@@ -196,9 +198,9 @@ const generateProperty = (values?: Partial<Property>): Property => {
       ),
     },
     lease_duration,
-    price: {
-      utility_included: faker.random.boolean(),
-    },
+    price: faker.random.number({ min: 300, max: 2000 }),
+    amenities: faker.random.arrayElements(faker.random.number(5)),
+    // utility_included: faker.random.boolean(),
     sq_ft: faker.random.number({ min: 500, max: 2000 }),
     ...values,
   };
@@ -220,9 +222,8 @@ interface StudentReview {
 let globalStudentReviewCounter: Counter = 0;
 const getStudentReviewId = (index?: number) =>
   `test_student_review_id_${index ?? globalStudentReviewCounter}`;
-const getRandomStudentReviewId = getStudentReviewId(
-  getRandomIdIndex(globalStudentReviewCounter)
-);
+const getRandomStudentReviewId = () =>
+  getStudentReviewId(getRandomIdIndex(globalStudentReviewCounter));
 const generateStudentReview = (
   studentReviewValues?: Partial<StudentReview>
 ): StudentReview => {
