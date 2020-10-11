@@ -14,9 +14,10 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
-import App from './App';
-import LandingView from './views/Landing'
 import SearchView from './views/Search'
+import LandlordLoginView from './views/LandlordLogin'
+import NotFound from './views/NotFound'
+import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext';
 import AlertController from './components/AlertController'
 
@@ -47,14 +48,17 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
       <Switch>
-        <Route path="/search">
+        <Route exact path="/landlord/login">
+          <LandlordLoginView />
+        </Route>
+        <Route exact path="/search">
           <SearchView />
         </Route>
-        <Route path="/test">
-          <App />
-        </Route>
-        <Route path="/">
+        <Route exact path="/">
           <LandingView />
+        </Route>
+        <Route>
+          <NotFound />
         </Route>
       </Switch>
     </AlertContext.Provider>

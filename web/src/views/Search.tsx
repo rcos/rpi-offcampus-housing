@@ -16,7 +16,6 @@ const SearchView = () => {
     <Centerd height="100%" width={1200}>
       <div>
 
-        <div style={{marginTop: '20px'}}></div>
         <Navbar />
         <div style={{marginTop: '20px'}}></div>
 

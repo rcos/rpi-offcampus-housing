@@ -5,14 +5,17 @@ import Logo from './Logo'
 
 const Navbar = () => {
 
-  return (<LeftAndRight 
-    left={<div><Logo /></div>}
-    right={<div className="nav-right-holder">
-      <div><span style={{fontWeight: 'bold'}}>James Bond</span> @ 
-      <span className="dashed-underline">Rensselaer Polytechnic Institute</span></div>
-      <div className="school-logo-area"></div>
-    </div>}
-  />)
+  return (<React.Fragment>
+    <div style={{marginTop: '20px'}}></div>
+    <LeftAndRight 
+      left={<div><Logo /></div>}
+      right={<div className="nav-right-holder">
+        <div><span style={{fontWeight: 'bold'}}>James Bond</span> @ 
+        <span className="dashed-underline">Rensselaer Polytechnic Institute</span></div>
+        <div className="school-logo-area"></div>
+      </div>}
+    />
+  </React.Fragment>)
 }
 
 export default Navbar
