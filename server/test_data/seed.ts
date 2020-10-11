@@ -79,13 +79,29 @@ const getRandomProfile = (isStudent?: boolean): Profile => {
   return {
     first_name,
     last_name,
-    email: faker.internet.email(
-      first_name,
-      last_name,
-      isStudent ? "rpi.edu" : undefined
-    ),
+    email: isStudent
+      ? `${getRcsId(first_name, last_name)}@rpi.edu`
+      : faker.internet.email(first_name, last_name),
     phone_number: faker.phone.phoneNumber("(###) ### - ####"),
   };
+};
+
+const rcsIdCounter: { [rcsIdName: string]: number } = {};
+const getRcsIdName = (first_name: string, last_name: string) =>
+  `${last_name.toLowerCase().slice(0, 5)}${first_name[0].toLowerCase()}`;
+const getRcsId = (first_name: string, last_name: string) => {
+  const rcsIdName = getRcsIdName(first_name, last_name);
+
+  if (rcsIdCounter[rcsIdName] === undefined) {
+    rcsIdCounter[rcsIdName] = 0;
+  }
+
+  if (rcsIdCounter[rcsIdName] === 0) {
+    rcsIdCounter[rcsIdName]++;
+    return rcsIdName;
+  } else {
+    return rcsIdName + rcsIdCounter[rcsIdName]++;
+  }
 };
 
 // students
