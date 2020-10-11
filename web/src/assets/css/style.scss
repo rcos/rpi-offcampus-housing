@@ -341,8 +341,10 @@ body {
     top: 0;
     left: 0;
     padding: 0 10px;
-    font-size: 15px;
+    font-size: 0.7rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 
     transition: height 0.25s, 
       line-height 0.25s, 
@@ -356,9 +358,7 @@ body {
     &.focused {
       height: 15px;
       line-height: 15px;
-      font-size: 11px;
-      border-bottom-right-radius: 3px;
-      background-color: white;
+      font-size: 0.5rem;
       color: $black;
     }
   }

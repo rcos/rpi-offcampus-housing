@@ -17,6 +17,7 @@ import './assets/css/fonts.scss'
 // router paths
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
+import LandlordRegisterView from './views/LandlordRegister'
 import NotFound from './views/NotFound'
 import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext';
@@ -51,6 +52,9 @@ const Routes = () => {
         <Switch>
           <Route exact path="/landlord/login">
             <LandlordLoginView />
+          </Route>
+          <Route exact path="/landlord/register">
+            <LandlordRegisterView />
           </Route>
           <Route exact path="/search">
             <SearchView />

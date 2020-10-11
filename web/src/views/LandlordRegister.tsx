@@ -8,11 +8,11 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 
-const LandlordLogin = () => {
+const LandlordRegister = () => {
 
   const history = useHistory()
 
-  return (<Centered width={400} height={500}>
+  return (<Centered width={400} height={600}>
     <div>
 
       {/* Header */}
@@ -26,15 +26,35 @@ const LandlordLogin = () => {
           lineHeight: '45px',
           marginLeft: '10px'
         }}>
-          Landlord Login
+          Landlord Register
         </div>
       </div>
 
       <div className="padded upper">
         <Input 
+          label="First Name"
+        />
+      </div>
+      <div className="padded upper">
+        <Input 
+          label="Last Name"
+        />
+      </div>
+
+      <div style={{marginTop: '40px'}} />
+      <div className="padded upper">
+        <Input 
           label="email"
         />
       </div>
+
+      <div className="padded upper">
+        <Input 
+          label="confirm email"
+        />
+      </div>
+
+      <div style={{marginTop: '40px'}} />
       <div className="padded upper">
         <Input 
           label="password"
@@ -43,35 +63,42 @@ const LandlordLogin = () => {
       </div>
 
       <div className="padded upper">
+        <Input 
+          label="confirm password"
+          type="password"
+        />
+      </div>
+
+      <div className="padded upper">
         <LeftAndRight
           left={<div style={{fontSize: '0.8rem'}}>Forgot password?</div>}
           right={<Button 
-            text="Login"
+            text="Continue"
             textColor="white"
             background="#E0777D"
-            icon={<FiLogIn />}
-            iconLocation="right"
           />}
         />
-      </div>
+      </div>      
 
       {/* Horizontal Line */}
       <div className="padded upper">
         <div className="horizontal-line">
-          <div className="label">or</div>
+          <div className="label"></div>
         </div>
       </div>
 
       <div className="padded upper">
         <LeftAndRight 
           left={<div style={{fontSize: '0.8rem'}}>
-            Don't have an account?
+            Already have an account?
           </div>}
           right={<Button 
-            text="Sign Up"
+            text="Login"
             textColor="white"
             background="#1E2019"
-            onClick={() => history.push('/landlord/register')}
+            icon={<FiLogIn />}
+            iconLocation="right"
+            onClick={() => history.push('/landlord/login')}
           />}
         />
       </div>
@@ -80,4 +107,4 @@ const LandlordLogin = () => {
   </Centered>)
 }
 
-export default LandlordLogin
+export default LandlordRegister
