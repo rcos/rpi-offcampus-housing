@@ -98,6 +98,10 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
       console.log(`Range ref is no longer null`)
       let rect = sliderBoundRef.current.getBoundingClientRect()
       setSliderWidth(rect.width)
+      setTimeout(() => {setSliderWidth(rect.width)}, 10)
+      setTimeout(() => {setSliderWidth(rect.width)}, 100)
+      setTimeout(() => {setSliderWidth(rect.width)}, 500)
+      setTimeout(() => {setSliderWidth(rect.width)}, 1000)
       console.log(`Width: ${rect.width}`)
     }
   }, []);

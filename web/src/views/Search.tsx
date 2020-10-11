@@ -1,14 +1,13 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 
 import Centerd from '../components/toolbox/layout/Centered'
 import Navbar from '../components/Navbar'
 
 import Dropdown from '../components/toolbox/form/Dropdown'
-import Toggle from '../components/toolbox/form/Toggle'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
-import {BiFilterAlt, BiSort} from 'react-icons/bi'
-import src from '*.bmp'
+import SearchResult from '../components/SearchResult'
+import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
 
 
 const SearchFilterArea = () => {
@@ -16,17 +15,10 @@ const SearchFilterArea = () => {
   // State
   const [startDate, setStartDate] = useState<Date>(new Date())
   const [endtDate, setEndDate] = useState<Date>(new Date())
+  const [mapHeight, setMapHeight] = useState<number>(0)
 
   // Refs
   const filterAreaRef = useRef<HTMLDivElement>(null)
-
-  const sliderChanged = (min: number, max: number): void => {
-    console.log(`Slider changed from ${min} to ${max}`)
-  }
-
-  const sliderSlid = (min: number, max: number): void => {
-    console.log(`Slider slid from ${min} to ${max}`)
-  }
 
   const dateStr = (date_: Date): string => {
     let month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
@@ -34,13 +26,12 @@ const SearchFilterArea = () => {
     return `${month[date_.getMonth()]} ${date_.getFullYear()}`
   }
 
-
   /**
    * @desc Given the `filter-area` div, determine the size of the area
    * starting from below this area to the bottom of the page. This will
    * be the height of the map box.
    */
-  const getMapHeight = (): number => {
+  const calculateMapHeight = (): number => {
     if (filterAreaRef.current == null) return 0;
 
     let filterDiv: HTMLDivElement = filterAreaRef.current!;
@@ -51,6 +42,37 @@ const SearchFilterArea = () => {
     let height_ = Math.max(viewportHeight - bottomOfFilter, 0)
     console.log(`Map Height: ${height_}`)
     return height_
+  }
+
+  useEffect(() => {
+    setMapHeight(calculateMapHeight())
+    window.addEventListener('resize', recalculateMapHeight)
+
+    /*
+    The first calculation of the map height is usually incorrect.
+    Once all the components mount successfully, the height becomes
+    accurate. So I will calculate the height 5 times at the start
+    after some time has passed to get the accurate height.
+    */
+    setTimeout(() => {
+      setMapHeight(calculateMapHeight())
+    }, 10)
+    setTimeout(() => {
+      setMapHeight(calculateMapHeight())
+    }, 100)
+    setTimeout(() => {
+      setMapHeight(calculateMapHeight())
+    }, 500)
+    setTimeout(() => {
+      setMapHeight(calculateMapHeight())
+    }, 1000)
+    setTimeout(() => {
+      setMapHeight(calculateMapHeight())
+    }, 3000)
+  }, [])
+
+  const recalculateMapHeight = () => {
+    setMapHeight(calculateMapHeight())
   }
 
   return (<div className="left-search-area">
@@ -154,8 +176,8 @@ const SearchFilterArea = () => {
 
     {/* Map Placeholder */}
     <div className="map-area" style={{
-      height: `${getMapHeight()}px`,
-      bottom: `-${getMapHeight() + 10}px`,
+      height: `${mapHeight}px`,
+      bottom: `-${mapHeight + 10}px`,
       backgroundImage: `url('https://i.imgur.com/DxbLDs2.png')`,
       backgroundSize: '120%'
     }}>
@@ -166,15 +188,76 @@ const SearchFilterArea = () => {
 
 const SearchResultsArea = () => {
 
-  return (<div>
-    RESULTS
+  // refs
+  const resultViewportRef = useRef<HTMLDivElement>(null)
+
+  // state
+  const [resultsViewportHeight, setViewportHeight] = useState(0)
+
+  // effects
+  useEffect(() => {
+    setViewportHeight(calculateResultsViewportHeight())
+    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
+    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
+    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 500)
+    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 1000)
+    window.addEventListener('resize', updateResultsViewportHeight)
+  }, []);
+
+  const updateResultsViewportHeight = (): void => {
+    setViewportHeight(calculateResultsViewportHeight())
+  }
+
+  const calculateResultsViewportHeight = (): number => {
+    if (resultViewportRef.current == null) return 0;
+
+    let viewportDiv: HTMLDivElement = resultViewportRef.current!
+    let rect_ = viewportDiv.getBoundingClientRect()
+
+    let clientHeight = document.documentElement.clientHeight
+    return clientHeight - (rect_.top + 10)
+  }
+
+  return (<div className="search-results-area" 
+    style={{
+      height: `${resultsViewportHeight}px`
+    }}
+    ref={resultViewportRef}>
+
+    {/* Results Count */}
+    <div className="results-count-row">
+      <div className="left-and-right pointer activable active"
+        style={{
+          height: '35px',
+          lineHeight: '35px',
+          fontWeight: 600
+        }}
+      >
+        <div style={{width: '20px',
+        height: '35px',
+        marginRight: '5px',
+        transform: `translateY(2px)`,
+        minWidth: '20px'}}><BiHomeAlt /></div>
+        <div style={{
+          fontSize: '0.85rem'
+        }}>
+          20 Results
+        </div>
+      </div>
+    </div>
+
+    {/* Search Results Container */}
+    <div className="search-results-container">
+
+      {Array.from(new Array(15), (x) => (<SearchResult />))}
+    </div>
   </div>)
 }
 
 const SearchView = () => {
 
   return (<div>
-    <Centerd height="100%" width={1000}>
+    <Centerd height="100%" width={1200}>
       <div>
 
         <div style={{marginTop: '20px'}}></div>
