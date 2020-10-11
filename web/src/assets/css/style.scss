@@ -438,11 +438,77 @@ body {
 .search-results-area {
   position: relative;
 
+  .search-pagination {
+    position: absolute;
+    bottom: 0;
+    height: 30px;
+    width: 100%;
+
+    display: flex;
+    .left-arrow-area, .right-arrow-area {
+      width: 30px;
+      height: 30px;
+      font-size: 1.2rem;
+      min-width: 30px;
+      box-sizing: border-box;
+      line-height: 40px;
+      text-align: center;
+      cursor: pointer;
+      transform: scale(1);
+      transition: transform 0.25s;
+      opacity: 0.5;
+      color: $black;
+
+      &:active {
+        transform: scale(1);
+      }
+
+      &.active {
+        opacity: 1;
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+    }
+
+    .page-indexes {
+      flex-grow: 1;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+
+      .page-index {
+        transform: scale(1);
+        transform-origin: bottom;
+        height: 20px;
+        line-height: 24px;
+        padding: 0 8px;
+        margin: 0 5px;
+        margin-top: 5px;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-size: 0.8rem;
+        border-radius: 3px;
+        font-weight: 600;
+        transition: transform 0.25s;
+
+        &.active {
+          background-color: $purple;
+          color: white;
+        }
+
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+    }
+  }
+
   .search-results-container {
     overflow-y: scroll;
     position: absolute;
     width: 100%;
-    bottom: 0;
+    bottom: 30px;
     top: 35px;
     box-sizing: border-box;
   }

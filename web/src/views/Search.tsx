@@ -8,6 +8,28 @@ import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
+import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
+
+const SearchView = () => {
+
+  return (<div>
+    <Centerd height="100%" width={1200}>
+      <div>
+
+        <div style={{marginTop: '20px'}}></div>
+        <Navbar />
+        <div style={{marginTop: '20px'}}></div>
+
+        <div className="search-page-contents">
+          <div className="left-area"><SearchFilterArea /></div>
+          <div className="right-area"><SearchResultsArea /></div>
+        </div>
+
+      </div>
+
+    </Centerd>
+  </div>)
+}
 
 const SearchFilterArea = () => {
 
@@ -166,7 +188,9 @@ const SearchFilterArea = () => {
           />
         </div>
         <div className="subtext" style={{marginTop: '30px'}}>
-          You are looking to lease from the beginning of {dateStr(startDate)} to the 
+          You are looking to lease X bedrooms between the
+          prices of $Y and $Z from the beginning of 
+          {dateStr(startDate)} to the 
           end of the {dateStr(endtDate)}.
         </div>
       </div>
@@ -249,27 +273,23 @@ const SearchResultsArea = () => {
 
       {Array.from(new Array(15), (x, i) => (<SearchResult key={i} />))}
     </div>
-  </div>)
-}
 
-const SearchView = () => {
-
-  return (<div>
-    <Centerd height="100%" width={1200}>
-      <div>
-
-        <div style={{marginTop: '20px'}}></div>
-        <Navbar />
-        <div style={{marginTop: '20px'}}></div>
-
-        <div className="search-page-contents">
-          <div className="left-area"><SearchFilterArea /></div>
-          <div className="right-area"><SearchResultsArea /></div>
-        </div>
-
+    {/* Pagination */}
+    <div className="search-pagination">
+      <div className="left-arrow-area">
+        <FiArrowLeft />
       </div>
-
-    </Centerd>
+      <div className="page-indexes">
+        <div className="page-index active">1</div>
+        <div className="page-index">2</div>
+        <div className="page-index">3</div>
+        <div className="page-index">4</div>
+        <div className="page-index">5</div>
+      </div>
+      <div className="right-arrow-area active">
+        <FiArrowRight />
+      </div>
+    </div>
   </div>)
 }
 
