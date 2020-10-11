@@ -70,7 +70,12 @@ const getRandomTerm = () => {
     "Winter",
   ]);
   const year = new Date().getFullYear() - faker.random.number(5);
-  return `${season} ${year}`;
+
+  return {
+    start_date: "",
+    end_date: "",
+    name: `${season} ${year}`,
+  };
 };
 
 const getRandomProfile = (isStudent?: boolean): Profile => {
@@ -153,12 +158,12 @@ interface Property {
   property_id: string;
   description: Content;
   reviews: string[];
-  date_updated: Date;
+  date_update: Date;
   period_available: {
     start: Date;
     end: Date;
   };
-  lease_duration: number;
+  lease_duration: string;
   price: number;
   amenities: string[];
   // utility_included: boolean;
@@ -190,14 +195,14 @@ const generateProperty = (values?: Partial<Property>): Property => {
     reviews: Array.from({ length: faker.random.number(10) }).map(() =>
       getRandomStudentReviewId()
     ),
-    date_updated: faker.date.recent(faker.random.number(100)),
+    date_update: faker.date.recent(faker.random.number(100)),
     period_available: {
       start: lease_start,
       end: new Date(
         lease_start.setMonth(lease_start.getMonth() + lease_duration)
       ),
     },
-    lease_duration,
+    lease_duration: `${lease_duration} months`,
     price: faker.random.number({ min: 300, max: 2000 }),
     amenities: faker.random.arrayElements(faker.random.number(5)),
     // utility_included: faker.random.boolean(),
@@ -216,7 +221,10 @@ interface StudentReview {
     property: number;
     landlord: number;
   };
-  term: string;
+  term: {
+    start_date: string;
+    end_date: string;
+  };
 }
 
 let globalStudentReviewCounter: Counter = 0;
