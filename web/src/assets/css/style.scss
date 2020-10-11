@@ -96,10 +96,10 @@ body {
 .form.dropdown {
   border: 1px solid $black;
   height: 32px;
-  line-height: 32px;
+  line-height: 35px;
   text-align: center;
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 100;
+  font-size: 0.7rem;
   border-radius: 3px;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.05);
   cursor: pointer;
@@ -379,11 +379,15 @@ body {
 }
 
 .left-search-area {
+  position: relative;
 
   .filter-area {
     border: 1px solid $black;
     border-radius: 3px;
     padding: 12px 10px;
+    background-color: white;
+    position: relative;
+    z-index: 2;
   }
 }
 
@@ -417,3 +421,15 @@ body {
   font-weight: 600;
 }
 
+.subtext {
+  font-weight: 100;
+  font-size: 0.8rem;
+}
+
+.map-area {
+  border: 1px solid black;
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}

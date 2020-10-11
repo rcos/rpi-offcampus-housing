@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useRef} from 'react'
 
 import Centerd from '../components/toolbox/layout/Centered'
 import Navbar from '../components/Navbar'
@@ -8,9 +8,17 @@ import Toggle from '../components/toolbox/form/Toggle'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {BiFilterAlt, BiSort} from 'react-icons/bi'
+import src from '*.bmp'
 
 
 const SearchFilterArea = () => {
+
+  // State
+  const [startDate, setStartDate] = useState<Date>(new Date())
+  const [endtDate, setEndDate] = useState<Date>(new Date())
+
+  // Refs
+  const filterAreaRef = useRef<HTMLDivElement>(null)
 
   const sliderChanged = (min: number, max: number): void => {
     console.log(`Slider changed from ${min} to ${max}`)
@@ -20,9 +28,34 @@ const SearchFilterArea = () => {
     console.log(`Slider slid from ${min} to ${max}`)
   }
 
+  const dateStr = (date_: Date): string => {
+    let month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December']
+    return `${month[date_.getMonth()]} ${date_.getFullYear()}`
+  }
+
+
+  /**
+   * @desc Given the `filter-area` div, determine the size of the area
+   * starting from below this area to the bottom of the page. This will
+   * be the height of the map box.
+   */
+  const getMapHeight = (): number => {
+    if (filterAreaRef.current == null) return 0;
+
+    let filterDiv: HTMLDivElement = filterAreaRef.current!;
+
+    let bottomOfFilter = filterDiv.getBoundingClientRect().bottom + 20
+    let viewportHeight = document.documentElement.clientHeight
+
+    let height_ = Math.max(viewportHeight - bottomOfFilter, 0)
+    console.log(`Map Height: ${height_}`)
+    return height_
+  }
+
   return (<div className="left-search-area">
 
-    <div className="filter-area" style={{fontWeight: 600}}>
+    <div className="filter-area" style={{fontWeight: 600}} ref={filterAreaRef}>
 
       {/* Filter and Sort Buttons */}
       <LeftAndRight
@@ -97,9 +130,9 @@ const SearchFilterArea = () => {
             min={300}
             max={1000}
             labelPrefix="$"
-            onChange={(old_date: Date, new_date: Date) => {
-              console.log(`old: ${old_date.toISOString()}`)
-              console.log(`new: ${new_date.toISOString()}`)
+            onSlide={(new_start_date: Date, new_end_date: Date) => {
+              setStartDate(new_start_date)
+              setEndDate(new_end_date)
             }}
             rangeArray={Array.from(new Array(5), (x, i) => {
               let date_ = new Date()
@@ -112,7 +145,21 @@ const SearchFilterArea = () => {
             }}
           />
         </div>
+        <div className="subtext" style={{marginTop: '30px'}}>
+          You are looking to lease from the beginning of {dateStr(startDate)} to the 
+          end of the {dateStr(endtDate)}.
+        </div>
       </div>
+    </div>
+
+    {/* Map Placeholder */}
+    <div className="map-area" style={{
+      height: `${getMapHeight()}px`,
+      bottom: `-${getMapHeight() + 10}px`,
+      backgroundImage: `url('https://i.imgur.com/DxbLDs2.png')`,
+      backgroundSize: '120%'
+    }}>
+
     </div>
   </div>)
 }
