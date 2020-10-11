@@ -124,6 +124,7 @@ const generateStudents = (n: number) => objectFactory(n, generateStudent);
 // landlord
 type Landlord = {
   id: string;
+  rating: number;
 } & Profile;
 
 let globalLandlordCounter: Counter = 0;
@@ -133,6 +134,7 @@ const getRandomLandlordId = () =>
   getLandlordId(getRandomIdIndex(globalLandlordCounter));
 const generateLandlord = (values?: Partial<Landlord>): Landlord => ({
   id: getLandlordId(),
+  rating: getRandomRating(),
   ...getRandomProfile(),
   ...values,
 });
