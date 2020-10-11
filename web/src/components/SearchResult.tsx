@@ -1,4 +1,5 @@
 import React from 'react'
+import AlertContext from './context/AlertContext'
 
 import {BiAddToQueue, BiRightArrowAlt} from 'react-icons/bi'
 import Button from './toolbox/form/Button'
@@ -6,11 +7,21 @@ import Button from './toolbox/form/Button'
 const SearchResult = () => {
   
   return (<div className="search-result">
-    
+
     {/* Add to Collection Button */}
-    <div className="add-to-collection">
-      <BiAddToQueue />
-    </div>
+    <AlertContext.Consumer>
+      {(locale) => {
+        return (
+          <div 
+          onClick={() => {
+            (locale as any).successAlert("Successfully added {Property Name} to your collection.")
+          }}
+          className="add-to-collection">
+            <BiAddToQueue />
+          </div>
+        )
+      }}
+    </AlertContext.Consumer>
 
     {/* View Property Button */}
     <div className="view-property-button">
@@ -62,8 +73,8 @@ const SearchResult = () => {
 
           <div style={{marginBottom: `10px`, display: 'flex'}}>
             
-            {Array.from(new Array(3), (x) => (
-            <div className="secondary-image-area">
+            {Array.from(new Array(3), (x, i) => (
+            <div className="secondary-image-area" key={i}>
               <div className="image-container"></div>
             </div>))}
             <div className="image-count-area">

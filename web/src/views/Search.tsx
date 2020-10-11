@@ -9,7 +9,6 @@ import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
 
-
 const SearchFilterArea = () => {
 
   // State
@@ -40,7 +39,6 @@ const SearchFilterArea = () => {
     let viewportHeight = document.documentElement.clientHeight
 
     let height_ = Math.max(viewportHeight - bottomOfFilter, 0)
-    console.log(`Map Height: ${height_}`)
     return height_
   }
 
@@ -249,7 +247,7 @@ const SearchResultsArea = () => {
     {/* Search Results Container */}
     <div className="search-results-container">
 
-      {Array.from(new Array(15), (x) => (<SearchResult />))}
+      {Array.from(new Array(15), (x, i) => (<SearchResult key={i} />))}
     </div>
   </div>)
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -17,21 +17,47 @@ import './assets/css/fonts.scss'
 import App from './App';
 import LandingView from './views/Landing'
 import SearchView from './views/Search'
+import AlertContext from './components/context/AlertContext';
+import AlertController from './components/AlertController'
 
 // setup routes
 const Routes = () => {
+
+  const [alertCtxValue, setAlertCtxValue] = useState({id: 0, value: ""})
+  const successAlert = (msg) => {
+    setAlertCtxValue({
+      id: alertCtxValue.id + 1,
+      value: msg,
+      type: 'success'
+    })
+  }
+
+  const errorAlert = (msg) => {
+    setAlertCtxValue({
+      id: alertCtxValue.id + 1,
+      value: msg,
+      type: 'error'
+    })
+  }
+
   return (<Router>
-    <Switch>
-      <Route path="/search">
-        <SearchView />
-      </Route>
-      <Route path="/test">
-        <App />
-      </Route>
-      <Route path="/">
-        <LandingView />
-      </Route>
-    </Switch>
+    <AlertContext.Provider value={{
+      successAlert: successAlert,
+      errorAlert: errorAlert
+    }}>
+      <AlertController alertInfo={alertCtxValue} />
+      <Switch>
+        <Route path="/search">
+          <SearchView />
+        </Route>
+        <Route path="/test">
+          <App />
+        </Route>
+        <Route path="/">
+          <LandingView />
+        </Route>
+      </Switch>
+    </AlertContext.Provider>
   </Router>)
 }
 
