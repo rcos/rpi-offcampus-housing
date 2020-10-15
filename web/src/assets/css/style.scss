@@ -535,6 +535,10 @@ body {
 .search-result {
   position: relative;
 
+  &.featured {
+    background-color: #ffeebd;
+  }
+
   .view-property-button {
     position: absolute;
     right: 10px;
@@ -593,6 +597,16 @@ body {
 
     .right-info-area {
       flex-grow: 1;
+
+      .featured-button {
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        margin-left: 10px;
+        padding: 5px 10px 3px 10px;
+        transform: translateY(-3px);
+        border-radius: 3px;
+      }
     }
   }
 }

@@ -269,7 +269,8 @@ const SearchResultsArea = () => {
     {/* Search Results Container */}
     <div className="search-results-container">
 
-      {Array.from(new Array(15), (x, i) => (<SearchResult key={i} />))}
+      <SearchResult featured={true} />
+      {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))}
     </div>
 
     {/* Pagination */}

@@ -5,11 +5,15 @@ import {useHistory} from 'react-router'
 import {BiAddToQueue, BiRightArrowAlt} from 'react-icons/bi'
 import Button from './toolbox/form/Button'
 
-const SearchResult = () => {
+interface ISearchResult {
+  featured?:boolean
+}
+
+const SearchResult = ({ featured }: ISearchResult) => {
 
   const history = useHistory()
   
-  return (<div className="search-result">
+  return (<div className={`search-result ${featured ? 'featured' : ''}`}>
 
     {/* Add to Collection Button */}
     <AlertContext.Consumer>
@@ -32,7 +36,7 @@ const SearchResult = () => {
         text="View"
         icon={<BiRightArrowAlt />}
         iconLocation="right"
-        background="white"
+        background={featured ? '#ffeebd' : 'white'}
         border="black"
         onClick={() => { history.push('/property') }}
       />
@@ -65,6 +69,7 @@ const SearchResult = () => {
                 }}
               >212 15th St, Troy NY 12180</div>
               <div>4 miles Away</div>
+              {featured && <div className="featured-button">featured</div>}
             </div>
 
             {/* Landlord Information */}
