@@ -117,6 +117,32 @@ const PropertyPageLeftSide = () => {
 
 const PropertyPageRightSide = () => {
 
+  const detailsRef = useRef<HTMLDivElement>(null)
+  const [detailViewHeight, setDetailViewHeight] = useState<number>(0)
+
+  useEffect(() => {
+    calculateDetailViewHeight ()
+    setTimeout(() => {calculateDetailViewHeight ()}, 10)
+    setTimeout(() => {calculateDetailViewHeight ()}, 100)
+    setTimeout(() => {calculateDetailViewHeight ()}, 500)
+    setTimeout(() => {calculateDetailViewHeight ()}, 1000)
+
+    window.addEventListener('resize', onResizeFunction)
+  }, [])
+
+  const onResizeFunction = () => {
+    calculateDetailViewHeight() 
+  }
+
+  const calculateDetailViewHeight = () => {
+    if (detailsRef.current != null) {
+      let bounds_ = detailsRef.current.getBoundingClientRect()
+      let window_height = window.innerHeight
+
+      setDetailViewHeight(window_height - bounds_.top - 20)
+    }
+  }
+
   return (<div>
     
     {/* Property Address Line */}
@@ -127,7 +153,11 @@ const PropertyPageRightSide = () => {
     }}>
       212 15th St, Troy NY 12180
     </div>
-    <div style={{border: '1px solid black'}}>
+    <div
+      ref={detailsRef}
+      style={{
+        overflowY: 'scroll',
+        height: `${detailViewHeight}px`}}>
       <div>
         <CommentBubble 
           header="Notice"
