@@ -663,3 +663,29 @@ body {
     border: 2px solid $purple;
   }
 }
+
+.comment-bubble {
+  background-color: #82AEF9;
+  padding: 15px 15px;
+  border-radius: 5px;
+  position: relative;
+
+  .action-button {
+    position: absolute;
+    background-color: $black;
+    color: white;
+    padding: 10px 10px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 0.25s;
+    right: 15px;
+    bottom: 15px;
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}

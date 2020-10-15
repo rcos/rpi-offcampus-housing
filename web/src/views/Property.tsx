@@ -4,6 +4,7 @@ import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
 import Button from '../components/toolbox/form/Button'
 import {BsArrowLeft} from 'react-icons/bs'
+import CommentBubble from '../components/toolbox/misc/CommentBubble'
 
 const Property = () => {
 
@@ -17,7 +18,7 @@ const Property = () => {
         style={{width: "40%", minWidth: "40%"}}
       ><PropertyPageLeftSide /></div>
       <div
-        style={{flexGrow: 1, border: "1px solid black"}}
+        style={{flexGrow: 1, marginLeft: '20px'}}
       ><PropertyPageRightSide /></div>
 
     </div>
@@ -65,7 +66,7 @@ const PropertyPageLeftSide = () => {
   }
 
   return (<div>
-    <div style={{width: "170px"}}>
+    <div style={{width: "170px", marginBottom: '20px'}}>
       <Button 
         text="Back to Search"
         icon={<BsArrowLeft />}
@@ -98,13 +99,39 @@ const PropertyPageLeftSide = () => {
           className={`image-preview-thumbnail ${index == propertyImageIndex ? 'active' : ''}`} />)
       })}
     </div>
+
+    {/* Owned By Area */}
+    <div style={{ display: 'flex' }} className="padded upper">
+      <div style={{
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        fontSize: '0.8rem', 
+        marginRight: '8px'
+      }}>Owned By</div>
+      <div style={{fontSize: '0.9rem'}}>John Meyer</div>
+    </div>
   </div>)
 }
 
 const PropertyPageRightSide = () => {
 
   return (<div>
-    Property Right Side
+    
+    {/* Property Address Line */}
+    <div style={{
+      fontWeight: 600,
+      fontSize: '1.2rem'
+    }}>
+      212 15th St, Troy NY 12180
+    </div>
+    <div className="padded upper">
+      <CommentBubble 
+        header="Notice"
+        message="1 Room available for sublet starting November 2020"
+        action="Mode Info"
+        onActionClick={() => {console.log(`Show more info!`)}}
+      />
+    </div>
   </div>)
 }
 

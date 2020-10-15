@@ -13,7 +13,7 @@ const ViewWrapper = ({children}: {children: any}) => {
     let new_width = e.target.innerWidth
     if (new_width >= 1400) setViewWidth(1400)
     else if (new_width > 1200 && new_width < 1400) setViewWidth(1200)
-    else if (new_width < 1200) setViewWidth(new_width)
+    else if (new_width < 1200) setViewWidth(new_width - 100)
   }
 
   return (<Centered height="100%" width={viewWidth}>{children}</Centered>)
