@@ -20,8 +20,9 @@ import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
 import NotFound from './views/NotFound'
 import LandingView from './views/Landing'
-import AlertContext from './components/context/AlertContext';
+import AlertContext from './components/context/AlertContext'
 import AlertController from './components/AlertController'
+import PropertyView from './views/Property'
 
 // setup routes
 const Routes = () => {
@@ -50,21 +51,12 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
-          <Route exact path="/landlord/login">
-            <LandlordLoginView />
-          </Route>
-          <Route exact path="/landlord/register">
-            <LandlordRegisterView />
-          </Route>
-          <Route exact path="/search">
-            <SearchView />
-          </Route>
-          <Route exact path="/">
-            <LandingView />
-          </Route>
-          <Route>
-            <NotFound />
-          </Route>
+          <Route exact path="/property" component={PropertyView} />
+          <Route exact path="/landlord/login" component={LandlordLoginView} />
+          <Route exact path="/landlord/register" component={LandlordRegisterView} />
+          <Route exact path="/search" component={SearchView} />
+          <Route exact path="/" component={LandingView} />
+          <Route component={NotFound} />
         </Switch>
     </AlertContext.Provider>
   </Router>)

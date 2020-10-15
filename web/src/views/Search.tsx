@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 
-import Centerd from '../components/toolbox/layout/Centered'
+import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
 
 import Dropdown from '../components/toolbox/form/Dropdown'
@@ -13,11 +13,10 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 const SearchView = () => {
 
   return (<div>
-    <Centerd height="100%" width={1200}>
+    <ViewWrapper>
       <div>
 
         <Navbar />
-        <div style={{marginTop: '20px'}}></div>
 
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>
@@ -26,7 +25,7 @@ const SearchView = () => {
 
       </div>
 
-    </Centerd>
+    </ViewWrapper>
   </div>)
 }
 
@@ -270,7 +269,8 @@ const SearchResultsArea = () => {
     {/* Search Results Container */}
     <div className="search-results-container">
 
-      {Array.from(new Array(15), (x, i) => (<SearchResult key={i} />))}
+      <SearchResult featured={true} />
+      {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))}
     </div>
 
     {/* Pagination */}
