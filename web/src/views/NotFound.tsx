@@ -2,7 +2,7 @@ import React from 'react'
 import {useHistory} from 'react-router-dom'
 
 import Navbar from '../components/Navbar'
-import Centered from '../components/toolbox/layout/Centered'
+import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
 
 import { FiHome } from "react-icons/fi"
@@ -12,7 +12,7 @@ const NotFound = () => {
   
   const goHome = () => history.push('/')
 
-  return (<Centered width={1200} height="100%">
+  return (<ViewWrapper>
     <div>
       <Navbar />
       <div
@@ -47,7 +47,7 @@ const NotFound = () => {
         </div>
       </div>
     </div>
-  </Centered>)
+  </ViewWrapper>)
 }
 
 export default NotFound

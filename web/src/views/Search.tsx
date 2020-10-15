@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 
-import Centerd from '../components/toolbox/layout/Centered'
+import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
 
 import Dropdown from '../components/toolbox/form/Dropdown'
@@ -13,7 +13,7 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 const SearchView = () => {
 
   return (<div>
-    <Centerd height="100%" width={1200}>
+    <ViewWrapper>
       <div>
 
         <Navbar />
@@ -26,7 +26,7 @@ const SearchView = () => {
 
       </div>
 
-    </Centerd>
+    </ViewWrapper>
   </div>)
 }
 
