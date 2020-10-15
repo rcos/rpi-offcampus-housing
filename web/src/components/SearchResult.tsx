@@ -1,10 +1,13 @@
 import React from 'react'
 import AlertContext from './context/AlertContext'
+import {useHistory} from 'react-router'
 
 import {BiAddToQueue, BiRightArrowAlt} from 'react-icons/bi'
 import Button from './toolbox/form/Button'
 
 const SearchResult = () => {
+
+  const history = useHistory()
   
   return (<div className="search-result">
 
@@ -31,6 +34,7 @@ const SearchResult = () => {
         iconLocation="right"
         background="white"
         border="black"
+        onClick={() => { history.push('/property') }}
       />
     </div>
 
