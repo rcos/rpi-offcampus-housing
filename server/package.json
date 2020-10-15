@@ -6,7 +6,8 @@
   "scripts": {
     "server": "nodemon server.ts",
     "dev-server": "cross-env NODE_ENV=development npm run server",
-    "newman": "node_modules/.bin/newman run"
+    "newman": "node_modules/.bin/newman run",
+    "gen-test-data": "cd test_data && npx tsc seed.ts && node -e \"require('./seed.js').writeData();\""
   },
   "keywords": [],
   "author": "",
@@ -23,8 +24,10 @@
     "mongoose": "^5.10.6"
   },
   "devDependencies": {
+    "@types/faker": "^5.1.2",
     "@types/node": "^14.11.2",
     "cross-env": "^7.0.2",
+    "faker": "^5.1.0",
     "newman": "^5.2.0",
     "nodemon": "^2.0.4",
     "npx": "^10.2.2",
