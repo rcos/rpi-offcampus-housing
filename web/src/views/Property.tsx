@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar'
 import Button from '../components/toolbox/form/Button'
 import {BsArrowLeft} from 'react-icons/bs'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
+import Minimizable from '../components/toolbox/misc/Minimizable'
+import Progress from '../components/toolbox/misc/Progress'
 
 const Property = () => {
 
@@ -120,17 +122,131 @@ const PropertyPageRightSide = () => {
     {/* Property Address Line */}
     <div style={{
       fontWeight: 600,
-      fontSize: '1.2rem'
+      fontSize: '1.2rem',
+      marginBottom: '30px'
     }}>
       212 15th St, Troy NY 12180
     </div>
-    <div className="padded upper">
-      <CommentBubble 
-        header="Notice"
-        message="1 Room available for sublet starting November 2020"
-        action="Mode Info"
-        onActionClick={() => {console.log(`Show more info!`)}}
-      />
+    <div style={{border: '1px solid black'}}>
+      <div>
+        <CommentBubble 
+          header="Notice"
+          message="1 Room available for sublet starting November 2020"
+          action="More Info"
+          onActionClick={() => {console.log(`Show more info!`)}}
+        />
+      </div>
+      <div className="padded upper">
+        
+        <Minimizable title="Property Description">
+          <div>
+            <div className="property-desc-entry">
+              <div className="label">Rooms</div>
+              <div className="desc">3 Bedrooms / 2 Bath</div>
+            </div>
+            
+            <div className="property-desc-entry">
+              <div className="label">Size</div>
+              <div className="desc">2000 Sq. ft.</div>
+            </div>
+            
+            <div className="property-desc-entry">
+              <div className="label">Distance</div>
+              <div className="desc">10 miles from campus</div>
+            </div>
+            
+            <div className="property-desc-entry">
+              <div className="label">Price</div>
+              <div className="desc">$1029/room/mo</div>
+            </div>
+
+            <div className="property-desc-entry">
+              <div className="label">Min. Lease Period</div>
+              <div className="desc">6 mo.</div>
+            </div>
+          </div>
+        </Minimizable>
+        <Minimizable title="Property Ratings By Students">
+          <div style={{display: 'flex'}}>
+            <div style={{width: '36%', minWidth: '36%'}}>
+
+              {/* Total Percentage */}
+              <div style={{display: 'flex', marginBottom: '14px'}}>
+                <div style={{
+                  color: '#4AF271',
+                  fontSize: '2rem',
+                  fontWeight: 100,
+                  marginRight: '7px',
+                }}>76%</div>
+                <div>from 36 students</div>
+              </div>
+
+              {/* Category Ratings */}
+              <Rating />
+              <Rating />
+              <Rating />
+              <Rating />
+              <Rating />
+            </div>
+            <div style={{flexGrow: 1, marginLeft: '20px'}}>
+              <div className='graph-holder'>
+                INTERACTABLE GRAPH GOES HERE
+              </div>
+            </div>
+          </div>
+        </Minimizable>
+        <Minimizable title="Landlord Ratings By Students">
+          <div style={{display: 'flex'}}>
+            <div style={{width: '36%', minWidth: '36%'}}>
+
+              {/* Total Percentage */}
+              <div style={{display: 'flex', marginBottom: '14px'}}>
+                <div style={{
+                  color: '#4AF271',
+                  fontSize: '2rem',
+                  fontWeight: 100,
+                  marginRight: '7px'
+                }}>76%</div>
+                <div>from 36 students</div>
+              </div>
+
+              {/* Category Ratings */}
+              <Rating />
+              <Rating />
+              <Rating />
+              <Rating />
+              <Rating />
+            </div>
+            <div style={{flexGrow: 1, marginLeft: '20px'}}>
+              <div className='graph-holder'>
+                INTERACTABLE GRAPH GOES HERE
+              </div>
+            </div>
+          </div>
+        </Minimizable>
+      </div>
+    </div>
+  </div>)
+}
+
+const Rating = () => {
+
+  return (<div style={{marginBottom: '10px'}}>
+    <div style={{
+      fontSize: '0.8rem',
+      marginBottom: '5px'
+    }}>Category Name</div>
+    <div style={{display: 'flex'}}>
+      <div
+        style={{flexGrow: 1}}
+      ><Progress value={0.8} /></div>
+      <div style={{
+        width: '25px',
+        minWidth: '25px',
+        fontSize: '0.7rem',
+        transform: `translateY(-2px)`,
+        marginLeft: '10px'
+      }}>80%</div>
     </div>
   </div>)
 }
