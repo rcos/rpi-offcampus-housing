@@ -15,6 +15,7 @@ const Navbar = () => {
         <div className="school-logo-area"></div>
       </div>}
     />
+    <div style={{marginTop: '20px'}}></div>
   </React.Fragment>)
 }
 

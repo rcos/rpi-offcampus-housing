@@ -17,7 +17,6 @@ const SearchView = () => {
       <div>
 
         <Navbar />
-        <div style={{marginTop: '20px'}}></div>
 
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>

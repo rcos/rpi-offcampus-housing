@@ -635,3 +635,31 @@ body {
     padding: 0 10px;
   }
 }
+
+.image-preview-holder {
+  border: 1px solid black;
+  border-radius: 3px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.image-preview-thumbnail {
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  margin-right: 10px;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: border 0.25s;
+  border: 2px solid rgba(0, 0, 0, 0);
+
+  &:hover {
+    border: 2px solid rgba(0, 0, 0, 0.8);
+  }
+
+  &.active {
+    border: 2px solid $purple;
+  }
+}
