@@ -2,6 +2,17 @@ import mongoose from "mongoose";
 
 var Schema = mongoose.Schema;
 
+interface IReviewDoc extends mongoose.Document {
+    property_id: string
+    student_id: string
+    content: string
+    rating: number
+    term: {
+        start_date: Date
+        end_date: Date
+    }
+}
+
 //This needs to be fine tuned to match our schema specs.
 var ReviewSchema = new Schema({
     property_id: {
@@ -17,5 +28,6 @@ var ReviewSchema = new Schema({
     term: Object
 });
 
-const Review = mongoose.model("Review", ReviewSchema);
-module.exports = Review;
+const Review = mongoose.model<IReviewDoc>("Review", ReviewSchema);
+export default Review;
+export { IReviewDoc }
