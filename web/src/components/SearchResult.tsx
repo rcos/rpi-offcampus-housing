@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AlertContext from './context/AlertContext'
 import {useHistory} from 'react-router'
 
@@ -7,11 +7,17 @@ import Button from './toolbox/form/Button'
 
 interface ISearchResult {
   featured?:boolean
+  result: Object | null
 }
 
-const SearchResult = ({ featured }: ISearchResult) => {
+const SearchResult = ({ featured, result }: ISearchResult) => {
 
   const history = useHistory()
+
+  useEffect(() => {
+    console.log(`Search Result !`)
+    console.log(result)
+  }, [result])
   
   return (<div className={`search-result ${featured ? 'featured' : ''}`}>
 
@@ -38,7 +44,7 @@ const SearchResult = ({ featured }: ISearchResult) => {
         iconLocation="right"
         background={featured ? '#ffeebd' : 'white'}
         border="black"
-        onClick={() => { history.push('/property') }}
+        onClick={() => { history.push( result ? `/property/${(result as any)._id}` : `/search` ) }}
       />
     </div>
 
