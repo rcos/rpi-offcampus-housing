@@ -15,10 +15,12 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 // API
 import SearchAPI from '../API/SearchAPI'
 import Loading from '../components/toolbox/misc/Loading'
+import { useHistory } from 'react-router-dom'
 
 
 const SearchView = () => {
 
+  const history = useHistory()
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
   const [loading, setLoading] = useState<boolean>(true)
@@ -44,11 +46,15 @@ const SearchView = () => {
         console.error(result.data.error)
         setSearchResults([])
         setLoading(false)
+        // update the url
+
       }
 
       else {
         setSearchResults(result.data.properties)
         setLoading(false)
+        // window.location.href = `${window.location.host}/search?p=${searchPage}`
+        window.history.replaceState(null, document.title, `/search?p=${searchPage}`)
       }
     })
     .catch(err => {
