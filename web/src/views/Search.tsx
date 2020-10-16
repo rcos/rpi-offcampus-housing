@@ -1,4 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
+import queryString from 'query-string'
+import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
@@ -10,7 +12,24 @@ import SearchResult from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
+
 const SearchView = () => {
+
+  const [searchPage, setSearchPage] = useState<number>(0)
+
+  useEffect(() => {
+
+    // on load, check which search page we are on
+    const searchParams = queryString.parse(window.location.search)
+    if (_.has(searchParams, 'p')) {
+      setSearchPage( parseInt( searchParams["p"] as string ))
+    }
+
+  }, [])
+
+  useEffect(() => {
+    console.log(`Search Page: ${searchPage}`)
+  }, [searchPage])
 
   return (<div>
     <ViewWrapper>
