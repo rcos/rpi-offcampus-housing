@@ -44,7 +44,14 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
         iconLocation="right"
         background={featured ? '#ffeebd' : 'white'}
         border="black"
-        onClick={() => { history.push( result ? `/property/${(result as any)._id}` : `/search` ) }}
+        onClick={() => { history.push( result ? {
+
+          // go to the property page, if this result has an id
+          pathname: `/property/${(result as any)._id}`,
+          state: { fromSearchPage: window.location.href }
+
+          // ... otherwise, just return back to the same page
+        } : `/search${window.location.search}` ) }}
       />
     </div>
 

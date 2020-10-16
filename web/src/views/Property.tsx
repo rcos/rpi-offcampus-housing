@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
@@ -7,12 +8,31 @@ import {BsArrowLeft} from 'react-icons/bs'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import Minimizable from '../components/toolbox/misc/Minimizable'
 import Progress from '../components/toolbox/misc/Progress'
+import { useHistory, useLocation } from 'react-router-dom'
 
 interface IProperty {
   property_id: string
 }
 
 const Property = ({ property_id }: IProperty) => {
+  
+  const location = useLocation()
+  const history = useHistory()
+  const [showBackButton, setShowBackButton] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (_.has(location.state, 'fromSearchPage')) {
+      setShowBackButton(true)
+    }
+  }, [location])
+
+  const navigateBack = () => {
+    
+    // only navigate back if we came from the search page
+    if (_.has(location.state, 'fromSearchPage')) {
+      history.goBack()
+    }
+  }
 
   useEffect(() => {
     console.log(`Prop ID: ${property_id}`)
@@ -26,7 +46,10 @@ const Property = ({ property_id }: IProperty) => {
 
       <div
         style={{width: "40%", minWidth: "40%"}}
-      ><PropertyPageLeftSide /></div>
+      ><PropertyPageLeftSide
+        showBackButton={showBackButton}
+        navBack={navigateBack}
+      /></div>
       <div
         style={{flexGrow: 1, marginLeft: '20px'}}
       ><PropertyPageRightSide /></div>
@@ -36,7 +59,14 @@ const Property = ({ property_id }: IProperty) => {
   </ViewWrapper>)
 }
 
-const PropertyPageLeftSide = () => {
+interface IPropertyPageLeftSide {
+  navBack: Function
+  showBackButton: boolean
+}
+const PropertyPageLeftSide = ({
+  navBack,
+  showBackButton
+}: IPropertyPageLeftSide) => {
 
   const [propertyImages, setPropertyImages] = useState<string[]>([""])
   const [propertyImageIndex, setPropertyImageIndex] = useState<number>(-1)
@@ -76,15 +106,16 @@ const PropertyPageLeftSide = () => {
   }
 
   return (<div>
-    <div style={{width: "170px", marginBottom: '20px'}}>
-      <Button 
+    {showBackButton && <div style={{width: "170px", marginBottom: '20px'}}>
+       <Button 
         text="Back to Search"
         icon={<BsArrowLeft />}
         background="white"
         border="black"
         iconLocation="left"
+        onClick={() => navBack()}
       />
-    </div>
+    </div>}
     
     {/* Active Image View */}
     <div 

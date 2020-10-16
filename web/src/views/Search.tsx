@@ -36,7 +36,7 @@ const SearchView = () => {
   useEffect(() => {
     console.log(`Search Page: ${searchPage}`)
 
-    SearchAPI.properties(10, searchPage * 10)
+    SearchAPI.properties(8, searchPage * 8)
     .then(result => {
       if (!result.data.success) {
         console.error(`Failed to search for peoperties on page ${searchPage}`)
