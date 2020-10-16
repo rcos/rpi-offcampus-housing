@@ -51,7 +51,7 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
-          <Route exact path="/property" component={PropertyView} />
+          <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />
           <Route exact path="/landlord/register" component={LandlordRegisterView} />
           <Route exact path="/search" component={SearchView} />

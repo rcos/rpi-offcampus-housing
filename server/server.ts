@@ -1,6 +1,7 @@
 import express, { application } from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
+import cors from 'cors'
 const app = express()
 
 
@@ -20,6 +21,9 @@ const MONGO_URI = `mongodb+srv://rpioffcampusprojectteam:${process.env.MONGO_DB_
 // setup middleware
 import bodyParser from 'body-parser'
 app.use(express.json())
+app.use(cors({
+  origin: 'http://localhost:3000'
+}))
 
 // API routes
 import test from './API/test'
@@ -31,7 +35,7 @@ import ReviewGET from './API/Review/review.get'
 import ReviewPUT from './API/Review/review.put'
 import PropertyGET from './API/Property/property.get'
 import PropertyPUT from './API/Property/property.put'
-import SearchGET from './API/Search/search .get'
+import SearchGET from './API/Search/search.get'
 app.use(test);
 
 app.use('/api/students', StudentGET)

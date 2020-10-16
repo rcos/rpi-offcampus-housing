@@ -1,4 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
+import queryString from 'query-string'
+import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
@@ -6,11 +8,71 @@ import Navbar from '../components/Navbar'
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
-import SearchResult from '../components/SearchResult'
+import SearchResult, {SearchResultLoading} from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
+// API
+import SearchAPI from '../API/SearchAPI'
+import Loading from '../components/toolbox/misc/Loading'
+
+
 const SearchView = () => {
+
+  const [searchPage, setSearchPage] = useState<number>(0)
+  const [searchResults, setSearchResults] = useState<Object []>()
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+
+    // on load, check which search page we are on
+    const searchParams = queryString.parse(window.location.search)
+    if (_.has(searchParams, 'p')) {
+      setSearchPage( parseInt( searchParams["p"] as string ))
+    }
+
+  }, [])
+
+  useEffect(() => {
+    console.log(`Search Page: ${searchPage}`)
+
+    // get the results for the next page
+    SearchAPI.properties(8, searchPage * 8)
+    .then(result => {
+      if (!result.data.success) {
+        console.error(`Failed to search for peoperties on page ${searchPage}`)
+        console.error(result.data.error)
+        setSearchResults([])
+        setLoading(false)
+        // update the url
+
+      }
+
+      else {
+        setSearchResults(result.data.properties)
+        setLoading(false)
+        // window.location.href = `${window.location.host}/search?p=${searchPage}`
+        window.history.replaceState(null, document.title, `/search?p=${searchPage}`)
+      }
+    })
+    .catch(err => {
+      console.log(`Error searching for properties...`)
+      console.log(err)
+    })
+
+  }, [searchPage])
+
+  const handlePageChange = (page_direction: number): void => {
+    // load the next/previous page based on what page_direction is set to
+    let next_page = searchPage
+    if (page_direction == 0) next_page = Math.max(0, next_page - 1)
+    if (page_direction == 1) next_page += 1 // todo clamp to max
+    setSearchPage(next_page)
+  }
+
+  const goToPage = (page_index: number): void => {
+    setSearchPage(Math.max(0, page_index))
+  }
 
   return (<div>
     <ViewWrapper>
@@ -20,7 +82,13 @@ const SearchView = () => {
 
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>
-          <div className="right-area"><SearchResultsArea /></div>
+          <div className="right-area"><SearchResultsArea 
+            loading={loading} 
+            results={searchResults ? searchResults : []}
+            handlePageChange={handlePageChange}
+            goToPage={goToPage}
+            page={searchPage}
+          /></div>
         </div>
 
       </div>
@@ -206,7 +274,14 @@ const SearchFilterArea = () => {
   </div>)
 }
 
-const SearchResultsArea = () => {
+interface ISearchResultsArea {
+  results: Object[]
+  loading: boolean
+  handlePageChange: Function
+  goToPage: Function
+  page: number
+}
+const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}: ISearchResultsArea) => {
 
   // refs
   const resultViewportRef = useRef<HTMLDivElement>(null)
@@ -269,23 +344,35 @@ const SearchResultsArea = () => {
     {/* Search Results Container */}
     <div className="search-results-container">
 
-      <SearchResult featured={true} />
-      {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))}
+
+      {loading && <div>
+        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading />))}  
+      </div>}
+      {/* <SearchResult featured={true} /> */}
+      {/* {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))} */}
+      {!loading && results.map((result_: any, i: number) => <SearchResult key={i} result={result_} />
+      )}
     </div>
 
     {/* Pagination */}
     <div className="search-pagination">
-      <div className="left-arrow-area">
+      <div className="left-arrow-area" onClick={() => handlePageChange(0)}>
         <FiArrowLeft />
       </div>
       <div className="page-indexes">
-        <div className="page-index active">1</div>
+        {Array.from(new Array(5), (_, i: number) => {
+          return (<div 
+            key={i}
+            onClick={() => {goToPage(i)}}
+            className={`page-index ${i == page ? 'active' : ''}`}>{i + 1}</div>);
+        })}
+        {/* <div className="page-index active">1</div>
         <div className="page-index">2</div>
         <div className="page-index">3</div>
         <div className="page-index">4</div>
-        <div className="page-index">5</div>
+        <div className="page-index">5</div> */}
       </div>
-      <div className="right-arrow-area active">
+      <div className="right-arrow-area active" onClick={() => handlePageChange(1)}>
         <FiArrowRight />
       </div>
     </div>

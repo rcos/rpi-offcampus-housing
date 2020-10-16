@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AlertContext from './context/AlertContext'
 import {useHistory} from 'react-router'
 
@@ -7,9 +7,10 @@ import Button from './toolbox/form/Button'
 
 interface ISearchResult {
   featured?:boolean
+  result: Object | null
 }
 
-const SearchResult = ({ featured }: ISearchResult) => {
+const SearchResult = ({ featured, result }: ISearchResult) => {
 
   const history = useHistory()
   
@@ -38,7 +39,14 @@ const SearchResult = ({ featured }: ISearchResult) => {
         iconLocation="right"
         background={featured ? '#ffeebd' : 'white'}
         border="black"
-        onClick={() => { history.push('/property') }}
+        onClick={() => { history.push( result ? {
+
+          // go to the property page, if this result has an id
+          pathname: `/property/${(result as any)._id}`,
+          state: { fromSearchPage: window.location.href }
+
+          // ... otherwise, just return back to the same page
+        } : `/search${window.location.search}` ) }}
       />
     </div>
 
@@ -99,4 +107,60 @@ const SearchResult = ({ featured }: ISearchResult) => {
   </div>)
 }
 
+const SearchResultLoading = () => {
+  
+  return (<div className={`search-result loading`}>
+
+    {/* Add to Collection Button */}
+
+
+    <div className="result-grid">
+      <div className="primary-image-area">
+        <div className="image-container">
+          <div className="image-loading" />
+        </div>
+      </div>
+      <div className="right-info-area">
+        
+        {/* Vertical Flex */}
+        <div style={{display: 'flex', 
+        height: `100%`,
+        flexDirection: 'column',
+        justifyContent: 'space-between'}}>
+          <div>
+
+            {/* Property Location Information */}
+            <div style={{
+              display: 'flex',
+              fontSize: `0.9rem`  
+            }} className="padded-2 upper">
+              <div className="block-loading" style={{width: `200px`}}></div>
+              <div className="block-loading" style={{width: `100px`}}></div>
+            </div>
+
+            {/* Landlord Information */}
+            <div className="padded-2 upper" style={{fontSize: `0.8rem`, display: `flex`, alignItems: `center`}}>
+              
+              <div className="block-loading" style={{width: `100px`}}></div>
+              <div className="block-loading" style={{width: `100px`}}></div>
+            </div>
+          </div>
+
+          <div style={{marginBottom: `10px`, display: 'flex'}}>
+            
+            {Array.from(new Array(3), (x, i) => (
+            <div className="secondary-image-area" key={i}>
+              <div className="image-container"><div className="image-loading" /></div>
+            </div>))}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>)
+}
+
 export default SearchResult
+export { SearchResultLoading }

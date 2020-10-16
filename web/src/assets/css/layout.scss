@@ -1,3 +1,5 @@
+@import './style.scss';
+
 .layout-centered {
   position: fixed;
   left: 0;
@@ -23,5 +25,104 @@
         height: 100%;
       }
     }
+  }
+}
+
+// Loading Animation
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid $cyan;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
+}
+
+.block-loading {
+  height: 16px;
+  background-color: #c9c9c9;
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
+  overflow: hidden;
+  // animation: block-pulse 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+
+  &::before {
+    content: '';
+    width: 40px;
+    height: 16px;
+    background: rgb(201,201,201);
+    background: linear-gradient(90deg, 
+    rgba(201,201,201,1) 0%, 
+    rgba(209, 209, 209,1) 50%, 
+    rgba(201,201,201,1) 100%);
+    position: absolute;
+    animation: block-pulse 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+}
+
+@keyframes block-pulse {
+  0% {
+    left: -10%;
+  }
+  100% {
+    left: 110%;
+  }
+}
+
+.image-loading {
+  width: 100%;
+  height: 100%;
+  background-color: #c9c9c9;
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
+  overflow: hidden;
+  // animation: block-pulse 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+
+  &::before {
+    content: '';
+    width: 40px;
+    height: 110px;
+    background: rgb(201,201,201);
+    background: linear-gradient(90deg, 
+    rgba(201,201,201,1) 0%, 
+    rgba(209, 209, 209, 1) 50%, 
+    rgba(201,201,201,1) 100%);
+    position: absolute;
+    animation: block-pulse-2 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+}
+
+@keyframes block-pulse-2 {
+  0% {
+    left: -10%;
+  }
+  100% {
+    left: 110%;
   }
 }

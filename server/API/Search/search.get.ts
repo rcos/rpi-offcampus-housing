@@ -33,10 +33,24 @@ searchRouter.get('/properties/:offset/:limit', (req, res) => {
     }
     else {
 
-      console.log(chalk.bgGreen(`✔ Successfully found ${properties_docs ? properties_docs.length : 0} property documents!`))
-      res.json({
-        success: true,
-        properties: properties_docs ? properties_docs.map(prop_ => prop_.toObject()) : []
+      // Must run second query to find the count of possible results
+      Property.find({}).count().exec((err, doc_count) => {
+
+        if (err) {
+          console.log(chalk.bgRed(`❌ Error trying to get count of search results.`))
+          res.json({
+            success: false,
+            error: `Internal server error`
+          })
+        }
+        else {
+          console.log(chalk.bgGreen(`✔ Successfully found ${properties_docs ? properties_docs.length : 0} property documents!`))
+          res.json({
+            success: true,
+            count: doc_count,
+            properties: properties_docs ? properties_docs.map(prop_ => prop_.toObject()) : []
+          })
+        }
       })
     }
   })
