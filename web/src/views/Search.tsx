@@ -36,6 +36,7 @@ const SearchView = () => {
   useEffect(() => {
     console.log(`Search Page: ${searchPage}`)
 
+    // get the results for the next page
     SearchAPI.properties(8, searchPage * 8)
     .then(result => {
       if (!result.data.success) {
@@ -57,6 +58,18 @@ const SearchView = () => {
 
   }, [searchPage])
 
+  const handlePageChange = (page_direction: number): void => {
+    // load the next/previous page based on what page_direction is set to
+    let next_page = searchPage
+    if (page_direction == 0) next_page = Math.max(0, next_page - 1)
+    if (page_direction == 1) next_page += 1 // todo clamp to max
+    setSearchPage(next_page)
+  }
+
+  const goToPage = (page_index: number): void => {
+    setSearchPage(Math.max(0, page_index))
+  }
+
   return (<div>
     <ViewWrapper>
       <div>
@@ -65,7 +78,13 @@ const SearchView = () => {
 
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>
-          <div className="right-area"><SearchResultsArea loading={loading} results={searchResults ? searchResults : []} /></div>
+          <div className="right-area"><SearchResultsArea 
+            loading={loading} 
+            results={searchResults ? searchResults : []}
+            handlePageChange={handlePageChange}
+            goToPage={goToPage}
+            page={searchPage}
+          /></div>
         </div>
 
       </div>
@@ -251,7 +270,14 @@ const SearchFilterArea = () => {
   </div>)
 }
 
-const SearchResultsArea = ({results, loading}: {results: Object[], loading: boolean}) => {
+interface ISearchResultsArea {
+  results: Object[]
+  loading: boolean
+  handlePageChange: Function
+  goToPage: Function
+  page: number
+}
+const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}: ISearchResultsArea) => {
 
   // refs
   const resultViewportRef = useRef<HTMLDivElement>(null)
@@ -324,17 +350,23 @@ const SearchResultsArea = ({results, loading}: {results: Object[], loading: bool
 
     {/* Pagination */}
     <div className="search-pagination">
-      <div className="left-arrow-area">
+      <div className="left-arrow-area" onClick={() => handlePageChange(0)}>
         <FiArrowLeft />
       </div>
       <div className="page-indexes">
-        <div className="page-index active">1</div>
+        {Array.from(new Array(5), (_, i: number) => {
+          return (<div 
+            key={i}
+            onClick={() => {goToPage(i)}}
+            className={`page-index ${i == page ? 'active' : ''}`}>{i + 1}</div>);
+        })}
+        {/* <div className="page-index active">1</div>
         <div className="page-index">2</div>
         <div className="page-index">3</div>
         <div className="page-index">4</div>
-        <div className="page-index">5</div>
+        <div className="page-index">5</div> */}
       </div>
-      <div className="right-arrow-area active">
+      <div className="right-arrow-area active" onClick={() => handlePageChange(1)}>
         <FiArrowRight />
       </div>
     </div>

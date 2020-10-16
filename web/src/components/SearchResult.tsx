@@ -13,11 +13,6 @@ interface ISearchResult {
 const SearchResult = ({ featured, result }: ISearchResult) => {
 
   const history = useHistory()
-
-  useEffect(() => {
-    console.log(`Search Result !`)
-    console.log(result)
-  }, [result])
   
   return (<div className={`search-result ${featured ? 'featured' : ''}`}>
 
