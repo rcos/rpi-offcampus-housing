@@ -8,19 +8,17 @@ import Navbar from '../components/Navbar'
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
-import SearchResult from '../components/SearchResult'
+import SearchResult, {SearchResultLoading} from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
 // API
 import SearchAPI from '../API/SearchAPI'
 import Loading from '../components/toolbox/misc/Loading'
-import { useHistory } from 'react-router-dom'
 
 
 const SearchView = () => {
 
-  const history = useHistory()
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
   const [loading, setLoading] = useState<boolean>(true)
@@ -347,7 +345,9 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     <div className="search-results-container">
 
 
-      {loading && <div><Loading /></div>}
+      {loading && <div>
+        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading />))}  
+      </div>}
       {/* <SearchResult featured={true} /> */}
       {/* {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))} */}
       {!loading && results.map((result_: any, i: number) => <SearchResult key={i} result={result_} />

@@ -107,4 +107,60 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
   </div>)
 }
 
+const SearchResultLoading = () => {
+  
+  return (<div className={`search-result loading`}>
+
+    {/* Add to Collection Button */}
+
+
+    <div className="result-grid">
+      <div className="primary-image-area">
+        <div className="image-container">
+          <div className="image-loading" />
+        </div>
+      </div>
+      <div className="right-info-area">
+        
+        {/* Vertical Flex */}
+        <div style={{display: 'flex', 
+        height: `100%`,
+        flexDirection: 'column',
+        justifyContent: 'space-between'}}>
+          <div>
+
+            {/* Property Location Information */}
+            <div style={{
+              display: 'flex',
+              fontSize: `0.9rem`  
+            }} className="padded-2 upper">
+              <div className="block-loading" style={{width: `200px`}}></div>
+              <div className="block-loading" style={{width: `100px`}}></div>
+            </div>
+
+            {/* Landlord Information */}
+            <div className="padded-2 upper" style={{fontSize: `0.8rem`, display: `flex`, alignItems: `center`}}>
+              
+              <div className="block-loading" style={{width: `100px`}}></div>
+              <div className="block-loading" style={{width: `100px`}}></div>
+            </div>
+          </div>
+
+          <div style={{marginBottom: `10px`, display: 'flex'}}>
+            
+            {Array.from(new Array(3), (x, i) => (
+            <div className="secondary-image-area" key={i}>
+              <div className="image-container"><div className="image-loading" /></div>
+            </div>))}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>)
+}
+
 export default SearchResult
+export { SearchResultLoading }
