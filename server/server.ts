@@ -35,7 +35,7 @@ import ReviewGET from './API/Review/review.get'
 import ReviewPUT from './API/Review/review.put'
 import PropertyGET from './API/Property/property.get'
 import PropertyPUT from './API/Property/property.put'
-import SearchGET from './API/Search/search .get'
+import SearchGET from './API/Search/search.get'
 app.use(test);
 
 app.use('/api/students', StudentGET)
