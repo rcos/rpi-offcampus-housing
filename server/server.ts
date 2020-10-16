@@ -15,23 +15,6 @@ dotenv.config({'path': `../.env.${process.env.NODE_ENV!.replace(' ', '')}`})
 const PORT = process.env.SERVER_PORT
 const MONGO_URI = `mongodb+srv://rpioffcampusprojectteam:${process.env.MONGO_DB_PASSWORD}@cluster0.vsneo.mongodb.net/housing-database?retryWrites=true&w=majority`
 
-// connect to MongoDB via mongoose
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true, 
-  useUnifiedTopology: true,
-  useFindAndModify: true,
-  useCreateIndex: true
-}, 
-
-// mongoose connection callback
-(err: any) => {
-  if (err) {
-    console.error(`❌ Error connecting to mongoose.`);
-    process.exit(1);
-  }
-  else console.log(`✔ Successfully connect to MongoDB instance.`);
-});
-
 // TODO, API CI -> https://www.freecodecamp.org/news/how-to-automate-rest-api-end-to-end-tests/
 
 // setup middleware
@@ -48,6 +31,7 @@ import ReviewGET from './API/Review/review.get'
 import ReviewPUT from './API/Review/review.put'
 import PropertyGET from './API/Property/property.get'
 import PropertyPUT from './API/Property/property.put'
+import SearchGET from './API/Search/search .get'
 app.use(test);
 
 app.use('/api/students', StudentGET)
@@ -58,7 +42,25 @@ app.use('/api/reviews', ReviewGET)
 app.use('/api/reviews', ReviewPUT)
 app.use('/api/properties', PropertyGET)
 app.use('/api/properties', PropertyPUT)
+app.use('/api/search', SearchGET)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+
+  // connect to MongoDB via mongoose
+  mongoose.connect(MONGO_URI, {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    useFindAndModify: true
+  }, 
+
+  // mongoose connection callback
+  (err: any) => {
+    if (err) {
+      console.error(`❌ Error connecting to mongoose.`);
+      console.error(err)
+      process.exit(1);
+    }
+    else console.log(`✔ Successfully connect to MongoDB instance.`);
+  });
 });
