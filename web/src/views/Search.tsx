@@ -14,12 +14,14 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
 // API
 import SearchAPI from '../API/SearchAPI'
+import Loading from '../components/toolbox/misc/Loading'
 
 
 const SearchView = () => {
 
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
 
@@ -39,10 +41,13 @@ const SearchView = () => {
       if (!result.data.success) {
         console.error(`Failed to search for peoperties on page ${searchPage}`)
         console.error(result.data.error)
+        setSearchResults([])
+        setLoading(false)
       }
 
       else {
         setSearchResults(result.data.properties)
+        setLoading(false)
       }
     })
     .catch(err => {
@@ -60,7 +65,7 @@ const SearchView = () => {
 
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>
-          <div className="right-area"><SearchResultsArea results={searchResults ? searchResults : []} /></div>
+          <div className="right-area"><SearchResultsArea loading={loading} results={searchResults ? searchResults : []} /></div>
         </div>
 
       </div>
@@ -246,7 +251,7 @@ const SearchFilterArea = () => {
   </div>)
 }
 
-const SearchResultsArea = ({results}: {results: Object[]}) => {
+const SearchResultsArea = ({results, loading}: {results: Object[], loading: boolean}) => {
 
   // refs
   const resultViewportRef = useRef<HTMLDivElement>(null)
@@ -309,9 +314,11 @@ const SearchResultsArea = ({results}: {results: Object[]}) => {
     {/* Search Results Container */}
     <div className="search-results-container">
 
+
+      {loading && <div><Loading /></div>}
       {/* <SearchResult featured={true} /> */}
       {/* {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))} */}
-      {results.map((result_: any, i: number) => <SearchResult key={i} result={result_} />
+      {!loading && results.map((result_: any, i: number) => <SearchResult key={i} result={result_} />
       )}
     </div>
 

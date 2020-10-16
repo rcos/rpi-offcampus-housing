@@ -8,7 +8,15 @@ import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import Minimizable from '../components/toolbox/misc/Minimizable'
 import Progress from '../components/toolbox/misc/Progress'
 
-const Property = () => {
+interface IProperty {
+  property_id: string
+}
+
+const Property = ({ property_id }: IProperty) => {
+
+  useEffect(() => {
+    console.log(`Prop ID: ${property_id}`)
+  }, [property_id])
 
   return (<ViewWrapper>
     <Navbar />
