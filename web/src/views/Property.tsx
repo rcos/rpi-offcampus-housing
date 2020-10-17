@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
+import {Line} from 'react-chartjs-2'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
@@ -259,7 +260,44 @@ const PropertyPageRightSide = () => {
             </div>
             <div style={{flexGrow: 1, marginLeft: '20px'}}>
               <div className='graph-holder'>
-                INTERACTABLE GRAPH GOES HERE
+                
+                {/* ChartJS Chart */}
+                <Line 
+                    data={{
+                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                      datasets: [
+                        {
+                        label: 'Property Ratings Over Time',
+                        backgroundColor: 'rgba(224, 119, 125, 0.3)',
+                        borderColor: 'rgba(224, 119, 125,1)',
+                        borderWidth: 1,
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                        }
+                      ]
+                    }}
+                    options={{ 
+                      maintainAspectRatio: true,
+                      title: {
+                        text: "Property Ratings Over Time",
+                        display: true,
+                        position: 'top'
+                      },
+                      legend: {
+                        display: false
+                      },
+                      scales: {
+                        yAxes: [{
+                          ticks: {
+                            suggestedMax: 100,
+                            suggestedMin: 0
+                          }
+                        }]
+                      }
+                    }}
+                  />
+
               </div>
             </div>
           </div>
@@ -288,7 +326,44 @@ const PropertyPageRightSide = () => {
             </div>
             <div style={{flexGrow: 1, marginLeft: '20px'}}>
               <div className='graph-holder'>
-                INTERACTABLE GRAPH GOES HERE
+                
+                {/* ChartJS Line */}
+                <Line 
+                    data={{
+                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                      datasets: [
+                        {
+                        label: 'Landlord Ratings Over Time',
+                        backgroundColor: 'rgba(224, 119, 125, 0.3)',
+                        borderColor: 'rgba(224, 119, 125,1)',
+                        borderWidth: 1,
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                        }
+                      ]
+                    }}
+                    options={{ 
+                      maintainAspectRatio: true,
+                      title: {
+                        text: "Landlord Ratings Over Time",
+                        display: true,
+                        position: 'top'
+                      },
+                      legend: {
+                        display: false
+                      },
+                      scales: {
+                        yAxes: [{
+                          ticks: {
+                            suggestedMax: 100,
+                            suggestedMin: 0
+                          }
+                        }]
+                      }
+                    }}
+                  />
+
               </div>
             </div>
           </div>
