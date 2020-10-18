@@ -37,7 +37,7 @@ propertyRouter.get('/:id/reviews', (req, res) => {
                 resolve(null)
               }
               else {
-                resolve(review_doc)
+                resolve(review_doc.toObject())
               }
             })
           })
