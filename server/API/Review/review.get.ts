@@ -35,12 +35,7 @@ reviewRouter.get('/:id', (req, res) => {
         console.log(chalk.bgGreen(`✔ Successfully found review with id ${review_id}`))
         res.json({
           success: true,
-          _id: review_doc._id,
-          property_id: review_doc.property_id,
-          student_id: review_doc.student_id,
-          content: review_doc.content,
-          rating: review_doc.rating,
-          term: review_doc.term
+          review_data: review_doc.toObject()
         })
 
       }
