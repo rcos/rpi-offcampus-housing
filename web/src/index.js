@@ -18,6 +18,7 @@ import './assets/css/fonts.scss'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
+import CollectionView from './views/Collection'
 import NotFound from './views/NotFound'
 import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext'
@@ -51,6 +52,7 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
+          <Route exact path="/collection" component={CollectionView} /> 
           <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />
           <Route exact path="/landlord/register" component={LandlordRegisterView} />

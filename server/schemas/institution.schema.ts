@@ -5,7 +5,7 @@ var Schema = mongoose.Schema
 interface IInstitutionDoc extends mongoose.Document {
   name: String
   location: {
-    address: String
+    address: string
     city: string
     state: string
     zip: string
