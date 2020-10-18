@@ -55,10 +55,12 @@ const Property = ({ property_id }: IProperty) => {
         console.error(`Property API returned success = false`)
         console.error(res.data.error)
         setLoading(false)
+        history.push('/search')
       }
     })
     .catch(err => {
       console.error(`Error fetching property data for id ${property_id}`)
+      history.push('/search')
     })
 
   }, [property_id])

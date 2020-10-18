@@ -15,6 +15,7 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
+import HomeView from './views/HomeView'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
@@ -52,6 +53,7 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
+          <Route exact path="/home" component={HomeView} />
           <Route exact path="/collection" component={CollectionView} /> 
           <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />

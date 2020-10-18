@@ -10,8 +10,7 @@ const Navbar = () => {
     <LeftAndRight 
       left={<div><Logo /></div>}
       right={<div className="nav-right-holder">
-        <div><span style={{fontWeight: 'bold'}}>James Bond</span> @ 
-        <span className="dashed-underline">Rensselaer Polytechnic Institute</span></div>
+        <div><span style={{fontWeight: 'bold'}}>James Bond</span> @ <span className="dashed-underline">Rensselaer Polytechnic Institute</span></div>
         <div className="school-logo-area"></div>
       </div>}
     />

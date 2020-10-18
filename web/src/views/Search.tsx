@@ -9,7 +9,7 @@ import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult, {SearchResultLoading} from '../components/SearchResult'
-import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
+import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
 // API
@@ -330,7 +330,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
         height: '35px',
         marginRight: '5px',
         transform: `translateY(2px)`,
-        minWidth: '20px'}}><BiHomeAlt /></div>
+        minWidth: '20px'}}><BiSearch /></div>
         <div style={{
           fontSize: '0.85rem'
         }}>

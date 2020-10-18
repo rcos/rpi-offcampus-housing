@@ -4,7 +4,7 @@ import Centered from './toolbox/layout/Centered'
 import Navbar from './Navbar'
 import PopupBubble from './toolbox/misc/PopupBubble'
 
-import { BiSearch, BiCollection } from "react-icons/bi";
+import { BiSearch, BiCollection, BiHomeAlt } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 
 const ViewWrapper = ({children}: {children: any}) => {
@@ -37,6 +37,11 @@ const ViewWrapper = ({children}: {children: any}) => {
   }
 
   const pageLinks = {
+    home: {
+      target: '/home',
+      icon: <BiHomeAlt />,
+      name: "Home"
+    },
     search: {
       target: '/search',
       icon: <BiSearch />,
