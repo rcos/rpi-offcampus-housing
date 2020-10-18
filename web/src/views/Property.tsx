@@ -5,6 +5,8 @@ import {Line} from 'react-chartjs-2'
 import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
 import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 
+import PropertyAPI from '../API/PropertyAPI'
+
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
 import Button from '../components/toolbox/form/Button'
@@ -23,12 +25,15 @@ const Property = ({ property_id }: IProperty) => {
   const location = useLocation()
   const history = useHistory()
   const [showBackButton, setShowBackButton] = useState<boolean>(false)
+  const [propertyData, setPropertyData] = useState<{} | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     if (_.has(location.state, 'fromSearchPage')) {
       setShowBackButton(true)
     }
   }, [location])
+
 
   const navigateBack = () => {
     
@@ -39,7 +44,24 @@ const Property = ({ property_id }: IProperty) => {
   }
 
   useEffect(() => {
-    console.log(`Prop ID: ${property_id}`)
+    
+    // get the property data
+    PropertyAPI.property(property_id)
+    .then(res => {
+      if (res.data.success) {
+        setPropertyData(res.data.property_data)
+        setLoading(false)
+      }
+      else {
+        console.error(`Property API returned success = false`)
+        console.error(res.data.error)
+        setLoading(false)
+      }
+    })
+    .catch(err => {
+      console.error(`Error fetching property data for id ${property_id}`)
+    })
+
   }, [property_id])
 
   return (<ViewWrapper>
@@ -56,7 +78,10 @@ const Property = ({ property_id }: IProperty) => {
       /></div>
       <div
         style={{flexGrow: 1, marginLeft: '20px'}}
-      ><PropertyPageRightSide /></div>
+      ><PropertyPageRightSide 
+        propertyData={propertyData}
+        loading={loading}
+      /></div>
 
     </div>
 
@@ -158,7 +183,11 @@ const PropertyPageLeftSide = ({
   </div>)
 }
 
-const PropertyPageRightSide = () => {
+interface IPropertyPageRightSide {
+  propertyData: {} | null
+  loading: boolean
+}
+const PropertyPageRightSide = ({propertyData, loading}: IPropertyPageRightSide) => {
 
   const detailsRef = useRef<HTMLDivElement>(null)
   const [detailViewHeight, setDetailViewHeight] = useState<number>(0)
@@ -186,6 +215,12 @@ const PropertyPageRightSide = () => {
     }
   }
 
+  const getAddress = (): string => {
+    if (!propertyData) return "<placeholder>"
+    let location = (propertyData as any).location
+    return `${location.address}, ${location.city} ${location.state} ${location.zip}`
+  }
+
   return (<div>
     
     {/* Property Address Line */}
@@ -194,7 +229,8 @@ const PropertyPageRightSide = () => {
       fontSize: '1.2rem',
       marginBottom: '30px'
     }}>
-      212 15th St, Troy NY 12180
+      {loading && <div style={{width: `70%`}}><div className="block-loading" /></div>}
+      {!loading && getAddress()}
     </div>
     <div
       ref={detailsRef}
