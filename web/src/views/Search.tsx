@@ -78,8 +78,6 @@ const SearchView = () => {
     <ViewWrapper>
       <div>
 
-        <Navbar />
-
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea /></div>
           <div className="right-area"><SearchResultsArea 

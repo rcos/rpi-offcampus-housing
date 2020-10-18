@@ -8,7 +8,6 @@ import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 import PropertyAPI from '../API/PropertyAPI'
 
 import ViewWrapper from '../components/ViewWrapper'
-import Navbar from '../components/Navbar'
 import Button from '../components/toolbox/form/Button'
 import {BsArrowLeft} from 'react-icons/bs'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -65,7 +64,6 @@ const Property = ({ property_id }: IProperty) => {
   }, [property_id])
 
   return (<ViewWrapper>
-    <Navbar />
     
     
     <div style={{display: 'flex'}}>
@@ -218,7 +216,7 @@ const PropertyPageRightSide = ({propertyData, loading}: IPropertyPageRightSide) 
   const getAddress = (): string => {
     if (!propertyData) return "<placeholder>"
     let location = (propertyData as any).location
-    return `${location.address}, ${location.city} ${location.state} ${location.zip}`
+    return `${location.address}, ${location.city} ${location.state}, ${location.zip}`
   }
 
   return (<div>
