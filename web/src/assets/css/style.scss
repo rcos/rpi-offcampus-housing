@@ -792,6 +792,17 @@ body {
       transition: background 0.25s, transform 0.25s;
       border-radius: 3px;
       transform: scale(1);
+      position: relative;
+
+      .link-desc {
+        position: absolute;
+        top: 50%;
+        color: $black;
+        font-size: 0.8rem;
+        transform: translateY(-50%);
+        right: calc(100% + 10px);
+        font-weight: 600;
+      }
 
       &.active {
         background-color: $pink;

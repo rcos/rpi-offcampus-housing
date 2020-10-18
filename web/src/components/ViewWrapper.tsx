@@ -59,22 +59,28 @@ const ViewWrapper = ({children}: {children: any}) => {
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
 
-            return (<div key={index} 
-            onClick={() => {
-              history.push((pageLinks as any)[page_].target)
-            }}
-            style={{marginBottom: '15px'}}>
-            <PopupBubble
-              message={(pageLinks as any)[page_].name}
-              direction="left"
-              width={60}
-            >
-              <div 
-              className={`icon-link ${window.location.pathname.toLowerCase() == (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-                {(pageLinks as any)[page_].icon}
-              </div>
-            </PopupBubble>
-          </div>)
+            if (navbarMinMode)
+              return (<div key={index} style={{marginBottom: '15px'}} onClick={() => history.push((pageLinks as any)[page_].target)}>
+                <div className={`icon-link ${window.location.pathname.toLowerCase() == (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                  {(pageLinks as any)[page_].icon}
+                  <div className="link-desc">{(pageLinks as any)[page_].name}</div>
+                </div>
+              </div>)
+            
+            else return (<div key={index}
+                onClick={() => history.push((pageLinks as any)[page_].target)}
+                style={{marginBottom: '15px'}}>
+                <PopupBubble
+                  message={(pageLinks as any)[page_].name}
+                  direction="right"
+                  width={60}
+                >
+                  <div 
+                  className={`icon-link ${window.location.pathname.toLowerCase() == (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                    {(pageLinks as any)[page_].icon}
+                  </div>
+                </PopupBubble>
+              </div>)
 
           })}
 
