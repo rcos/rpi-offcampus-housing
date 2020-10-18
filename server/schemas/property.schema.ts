@@ -5,7 +5,12 @@ const Review = require("./review.schema");
 var Schema = mongoose.Schema;
 
 interface IPropertyDoc extends mongoose.Document {
-    landlord: string
+    landlord: {
+        address: String,
+        city: String,
+        state: String,
+        zip: String
+    }
     location: string
     description: string
     reviews: [string]
@@ -24,7 +29,12 @@ var PropertySchema = new Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Landlord'
     },
-    location: String,
+    location: {
+        address: String,
+        city: String,
+        state: String,
+        zip: String
+    },
     description: String,
     reviews: [{
         type: mongoose.Types.ObjectId,

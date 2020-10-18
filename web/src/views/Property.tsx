@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
 import {Line} from 'react-chartjs-2'
+// @ts-ignore
+import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
+import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Navbar from '../components/Navbar'
@@ -277,23 +280,70 @@ const PropertyPageRightSide = () => {
                         }
                       ]
                     }}
-                    options={{ 
+                    options={{
                       maintainAspectRatio: true,
                       title: {
                         text: "Property Ratings Over Time",
                         display: true,
                         position: 'top'
                       },
-                      legend: {
+                      legend: { // ChartJSDraggablePlugin
                         display: false
                       },
                       scales: {
                         yAxes: [{
                           ticks: {
                             suggestedMax: 100,
-                            suggestedMin: 0
+                            suggestedMin: 0,
+                            stepSize: 20
+                          }
+                        }],
+                        xAxes: [{
+                          gridLines: {
+                            color: `white`
                           }
                         }]
+                      },
+
+                      annotation: {
+                        annotations: [{
+                          type: 'line',
+                          mode: 'horizontal',
+                          scaleID: 'y-axis-0',
+                          value: 25,
+
+                          // @ts-ignore
+                          draggable: true,
+                          // @ts-ignore
+                          onDragStart: (e) => {
+                            console.log(`Drag started`)
+                          },
+                          // @ts-ignore
+                          onDrag: (e) => {
+                            console.log(`Dragged`)
+                          },
+                        }]
+                      },
+
+                      plugins: {
+                        annotation: { // ChartJSAnnotationPlugin
+                          drawTime: 'afterDatasetsDraw',
+                          events: ['click'],
+                          dblClickSpeed: 350,
+                          annotations: [{
+                            drawTime: 'afterDraw',
+                            id: 'a-line-1',
+                            type: 'line',
+                            mode: 'horizontal',
+                            scaleID: 'y-axis-0',
+                            value: '25',
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            onClick: function(e: any) {
+                              console.log(`Annotation Plugin: onClick callback`)
+                            }
+                          }]
+                        }
                       }
                     }}
                   />
