@@ -14,7 +14,8 @@ var StudentSchema = new Schema({
     first_name: String,
     last_name: String,
     email: String,
-    phone_number: String
+    phone_number: String,
+    saved_properties: [{ type: mongoose.Types.ObjectId, ref: 'Property' }] 
 });
 
 const Student = mongoose.model<IStudentDoc>("Student", StudentSchema);
