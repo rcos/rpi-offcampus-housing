@@ -13,11 +13,14 @@ interface ISearchResult {
 const SearchResult = ({ featured, result }: ISearchResult) => {
 
   const history = useHistory()
-
-  useEffect(() => {
-    console.log(result)
-  }, [result])
   
+  const getAddress = (): string => {
+    if (!result) return "<undefined>"
+    // 212 15th St, Troy NY 12180
+    let location = (result as any).location
+    return `${location.address}, ${location.city} ${location.state} ${location.zip}`
+  }
+
   return (<div className={`search-result ${featured ? 'featured' : ''}`}>
 
     {/* Add to Collection Button */}
@@ -79,7 +82,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
                   fontWeight: 600,
                   marginRight: '10px'
                 }}
-              >212 15th St, Troy NY 12180</div>
+              >{getAddress()}</div>
               <div>4 miles Away</div>
               {featured && <div className="featured-button">featured</div>}
             </div>

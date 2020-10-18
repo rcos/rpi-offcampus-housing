@@ -346,7 +346,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
 
       {loading && <div>
-        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading />))}  
+        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading key={i} />))}  
       </div>}
       {/* <SearchResult featured={true} /> */}
       {/* {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))} */}
