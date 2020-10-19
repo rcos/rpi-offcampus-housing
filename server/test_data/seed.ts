@@ -233,8 +233,8 @@ const generateData = ({
   }
 
   const students = generateStudents(numStudents);
-  const properties = generateProperties(numProperties);
   const landlords = generateLandlords(numLandlords);
+  const properties = generateProperties(numProperties);
   const studentReviews = generateStudentReviews(numStudentReviews);
 
   // Hack for populating properties -> review shortcut
@@ -306,6 +306,11 @@ const writeData = async (props?: WriteDataProps & Partial<SeedProps>) => {
 };
 
 export {
+  MongoObjectID,
+  Student,
+  Landlord,
+  Property,
+  StudentReview,
   seedGenerator,
   generateStudent,
   generateStudents,
