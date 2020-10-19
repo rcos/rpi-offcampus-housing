@@ -2,8 +2,6 @@ import chai from "chai";
 import chaiHttp = require("chai-http");
 import "mocha";
 
-// import mongoose from "mongoose";
-
 import { app } from "../../server";
 import * as TestData from "../../test_data/data";
 
