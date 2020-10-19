@@ -63,8 +63,7 @@ jobs:
         env:
           MONGO_DB_CLUSTER_USERNAME: test
           MONGO_DB_PASSWORD: test
-          MONGO_DB_HOST: localhost
-          MONGO_DB_PORT: ${{ job.services.mongo.ports[27017] }}
+          MONGO_DB_HOST: localhost:${{ job.services.mongo.ports[27017] }}
           MONGO_DB_PREFIX: mongodb
           MONGO_DB_AUTH_SOURCE: admin
           SERVER_PORT: 3000
