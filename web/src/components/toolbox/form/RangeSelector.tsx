@@ -3,6 +3,8 @@ import { range } from 'lodash';
 import React, {useState, useEffect, useRef} from 'react'
 
 interface RangeSelectorInterface {
+  initialLeft?: number
+  initialRight?: number
   min: number
   max: number
   labelPrefix?: string
@@ -25,7 +27,8 @@ const clamp = (a: number, b: number, c: number) => {
 
 const RangeSelector = ({min, max, labelPrefix, 
   labelPostfix, onSlide, onChange,
-rangeArray, valueTransform}: RangeSelectorInterface) => {
+rangeArray, valueTransform,
+initialLeft, initialRight}: RangeSelectorInterface) => {
 
   const [minVal, setMinVal] = useState<number>(0)
   const [maxVal, setMaxVal] = useState<number>(0)
@@ -87,8 +90,18 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
   useEffect(() => {
 
     // initialize the min and max of the range slider
-    setMinVal(min ? min : 0)
-    setMaxVal(max ? max : 1)
+    let actual_min = min ? min : 0
+    let actual_max = max ? max : 1
+    setMinVal(actual_min)
+    setMaxVal(actual_max)
+
+    if (initialLeft) {
+      setLeftVal( clamp((initialLeft - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
+
+    if (initialRight) {
+      setRightVal( clamp((initialRight - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
 
     // set the slider width
     if (sliderBoundRef.current == null) {
@@ -105,6 +118,10 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
       console.log(`Width: ${rect.width}`)
     }
   }, []);
+
+  useEffect(() => {
+
+  }, [minVal, maxVal])
 
   useEffect(() => {
     setMinVal(min)

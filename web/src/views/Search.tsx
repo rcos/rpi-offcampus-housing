@@ -14,14 +14,16 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
 // API
 import SearchAPI from '../API/SearchAPI'
-import Loading from '../components/toolbox/misc/Loading'
 
 
 const SearchView = () => {
 
+  // State Variables
+  const [loading, setLoading] = useState<boolean>(true)
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
-  const [loading, setLoading] = useState<boolean>(true)
+  const [priceBound, setPriceBound] = useState<number[]>([700, 800])
+  const [priceRange, setPriceRange] = useState<number[]>([400, 1400])
 
   useEffect(() => {
 
@@ -52,7 +54,7 @@ const SearchView = () => {
         setSearchResults(result.data.properties)
         setLoading(false)
         // window.location.href = `${window.location.host}/search?p=${searchPage}`
-        window.history.replaceState(null, document.title, `/search?p=${searchPage}`)
+        updatePageUrl()
       }
     })
     .catch(err => {
@@ -61,6 +63,14 @@ const SearchView = () => {
     })
 
   }, [searchPage])
+
+  useEffect(() => {
+    updatePageUrl()
+  }, [priceBound])
+
+  const updatePageUrl = () => {
+    window.history.replaceState(null, document.title, `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}`)
+  }
 
   const handlePageChange = (page_direction: number): void => {
     // load the next/previous page based on what page_direction is set to
@@ -79,7 +89,11 @@ const SearchView = () => {
       <div>
 
         <div className="search-page-contents">
-          <div className="left-area"><SearchFilterArea /></div>
+          <div className="left-area"><SearchFilterArea 
+            priceBound={priceBound}
+            setPriceBound={setPriceBound}
+            priceRange={priceRange}
+          /></div>
           <div className="right-area"><SearchResultsArea 
             loading={loading} 
             results={searchResults ? searchResults : []}
@@ -95,7 +109,13 @@ const SearchView = () => {
   </div>)
 }
 
-const SearchFilterArea = () => {
+interface ISearchFilterArea {
+  // the possible min/max values
+  priceRange: number[]
+  priceBound: number[]
+  setPriceBound: Function
+}
+const SearchFilterArea = ({priceBound, setPriceBound, priceRange}: ISearchFilterArea) => {
 
   // State
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -159,6 +179,11 @@ const SearchFilterArea = () => {
     setMapHeight(calculateMapHeight())
   }
 
+  const handlePriceSlide = (a: number, b:number): void => {
+    // update the price range
+    setPriceBound([a.toFixed(2), b.toFixed(2)])
+  }
+
   return (<div className="left-search-area">
 
     <div className="filter-area" style={{fontWeight: 600}} ref={filterAreaRef}>
@@ -192,9 +217,12 @@ const SearchFilterArea = () => {
         <div className="input-label">Price Per Room Range</div>
         <div className="padded-2 upper">
           <RangeSelector 
-            min={300}
-            max={10000}
+            min={priceRange[0]}
+            max={priceRange[1]}
             labelPrefix="$"
+            initialLeft={priceBound[0]}
+            initialRight={priceBound[1]}
+            onChange={handlePriceSlide}
           />
         </div>
       </div>
