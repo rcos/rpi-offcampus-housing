@@ -33,14 +33,14 @@ jobs:
         run: npm ci
         working-directory: server
       - name: Seed housing-database
-        run: bash reload_db.sh mongodb://test:test@mongo:${{ job.services.mongo.ports[27017] }}/housing-database
+        run: bash reload_db.sh mongodb://test:test@localhost:${{ job.services.mongo.ports[27017] }}/housing-database
         working-directory: server/test_data
       - name: Run tests
         run: npm test
         env:
           MONGO_DB_CLUSTER_USERNAME: test
           MONGO_DB_PASSWORD: test
-          MONGO_DB_HOST: mongo
+          MONGO_DB_HOST: localhost
           MONGO_DB_PORT: ${{ job.services.mongo.ports[27017] }}
           MONGO_DB_PREFIX: mongodb
           SERVER_PORT: 3000
