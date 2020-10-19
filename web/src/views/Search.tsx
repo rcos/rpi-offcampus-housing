@@ -15,6 +15,8 @@ import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 // API
 import SearchAPI from '../API/SearchAPI'
 
+const clamp = (a: number, b: number, c: number) => Math.min(Math.max(a, b), c);
+
 
 const SearchView = () => {
 
@@ -22,7 +24,9 @@ const SearchView = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
-  const [priceBound, setPriceBound] = useState<number[]>([700, 800])
+
+  const [initialPriceBoundSet, setInitialPriceBoundSet] = useState<boolean>(false)
+  const [priceBound, setPriceBound] = useState<number[]>([700, 750])
   const [priceRange, setPriceRange] = useState<number[]>([400, 1400])
 
   useEffect(() => {
@@ -32,6 +36,13 @@ const SearchView = () => {
     if (_.has(searchParams, 'p')) {
       setSearchPage( parseInt( searchParams["p"] as string ))
     }
+
+    // set the price bounds from the params
+    let bounds = [priceRange[0], priceRange[1]]
+    if (_.has(searchParams, 'min_price')) bounds[0] = parseInt( searchParams["min_price"] as string )
+    if (_.has(searchParams, 'max_price')) bounds[1] = parseInt( searchParams["max_price"] as string )
+    setPriceBound(bounds)
+    setInitialPriceBoundSet(true)
 
   }, [])
 
@@ -54,7 +65,6 @@ const SearchView = () => {
         setSearchResults(result.data.properties)
         setLoading(false)
         // window.location.href = `${window.location.host}/search?p=${searchPage}`
-        updatePageUrl()
       }
     })
     .catch(err => {
@@ -65,10 +75,12 @@ const SearchView = () => {
   }, [searchPage])
 
   useEffect(() => {
+    console.log(`PRICE BOUNDS CHANGED: ${priceBound} (${initialPriceBoundSet})`)
     updatePageUrl()
-  }, [priceBound])
+  }, [searchPage, priceBound])
 
   const updatePageUrl = () => {
+    console.log(`Page url updating to: ${`/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}`}`)
     window.history.replaceState(null, document.title, `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}`)
   }
 
@@ -84,6 +96,11 @@ const SearchView = () => {
     setSearchPage(Math.max(0, page_index))
   }
 
+  const handlePriceBoundSet = (new_bounds: number[]) => {
+    let clamped_bounds = [clamp(new_bounds[0], priceRange[0], priceRange[1]), clamp(new_bounds[1], priceRange[0], priceRange[1])]
+    setPriceBound(clamped_bounds)
+  }
+
   return (<div>
     <ViewWrapper>
       <div>
@@ -91,7 +108,7 @@ const SearchView = () => {
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea 
             priceBound={priceBound}
-            setPriceBound={setPriceBound}
+            setPriceBound={handlePriceBoundSet}
             priceRange={priceRange}
           /></div>
           <div className="right-area"><SearchResultsArea 

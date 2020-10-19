@@ -21,7 +21,6 @@ interface RangeSelectorInterface {
 }
 
 const clamp = (a: number, b: number, c: number) => {
-
   return Math.min(Math.max(a, b), c);
 }
 
@@ -95,14 +94,6 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
     setMinVal(actual_min)
     setMaxVal(actual_max)
 
-    if (initialLeft) {
-      setLeftVal( clamp((initialLeft - actual_min)/(actual_max - actual_min), 0, 1) )
-    }
-
-    if (initialRight) {
-      setRightVal( clamp((initialRight - actual_min)/(actual_max - actual_min), 0, 1) )
-    }
-
     // set the slider width
     if (sliderBoundRef.current == null) {
       console.error(`Range bound ref is null`)
@@ -118,6 +109,18 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
       console.log(`Width: ${rect.width}`)
     }
   }, []);
+
+  useEffect(() => {
+    let actual_min = minVal
+    let actual_max = maxVal
+    if (initialLeft) {
+      setLeftVal( clamp((initialLeft - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
+
+    if (initialRight) {
+      setRightVal( clamp((initialRight - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
+  }, [initialLeft, initialRight])
 
   useEffect(() => {
 
