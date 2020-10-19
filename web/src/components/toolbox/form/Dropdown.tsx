@@ -17,6 +17,7 @@ interface DropdownInterface {
 const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
 
   const handleOutsideDropdownClick = (e: MouseEvent, showDropdown: boolean) => {
+    console.log(`handle outside click (${showDropdown})`)
     if (showDropdown) setShowDropdown(false)
   }
 
@@ -57,6 +58,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
   }, [selectedOption])
 
   const selecteOption = (index: number): void => {
+    console.log(`Option Selected: ${index}`)
     setSelectedOption(index)
     setShowDropdown(false)
   }
@@ -67,7 +69,10 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
   }
   
   const toggleDropdown = (): void => {
-    setShowDropdown(!showDropdown)
+    console.log(`toggle triggered`)
+    
+    let v_ = dropdownSpring.get()
+    if (v_ == 0 || v_ == 1) setShowDropdown(!showDropdown)
   }
 
   return (<div className="form dropdown">
@@ -82,7 +87,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
         options.map((option_: any, i: number) => (<div 
           key={i} 
           onClick={() => {selecteOption(i)}}
-          className="option">{option_}</div>))
+          className={`option ${i == selectedIndex? 'selected' : ''}`}>{option_}</div>))
       }
     </motion.div>
   </div>)

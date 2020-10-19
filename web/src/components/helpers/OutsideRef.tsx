@@ -6,7 +6,9 @@ const useOutsideAlerter = (ref: React.RefObject<any>, onClick: (e: MouseEvent, d
        * Alert if clicked on outside of element
        */
       const handleOutsideClcik = (e: MouseEvent) => {
-        onClick (e, dependency)
+        if (ref.current && !ref.current.contains(e.target)) {
+          onClick (e, dependency)
+      }
       }
 
       // Bind the event listener

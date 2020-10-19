@@ -161,6 +161,7 @@ const SearchView = () => {
             setPriceBound={handlePriceBoundSet}
             priceRange={priceRange}
             roomCounts={roomCounts}
+            roomIndex={roomCountIndex}
             selectedRoomCountIndex={roomCountIndex}
             handleRoomCountSelect={handleRoomCountSelect}
           /></div>
@@ -185,10 +186,11 @@ interface ISearchFilterArea {
   priceBound: number[]
   setPriceBound: Function
   roomCounts: number[]
+  roomIndex: number
   selectedRoomCountIndex: number
   handleRoomCountSelect: (arg0: number) => void
 }
-const SearchFilterArea = ({priceBound, setPriceBound, priceRange, roomCounts, selectedRoomCountIndex, handleRoomCountSelect}: ISearchFilterArea) => {
+const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roomCounts, selectedRoomCountIndex, handleRoomCountSelect}: ISearchFilterArea) => {
 
   // State
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -350,9 +352,8 @@ const SearchFilterArea = ({priceBound, setPriceBound, priceRange, roomCounts, se
           />
         </div>
         <div className="subtext" style={{marginTop: '30px'}}>
-          You are looking to lease X bedrooms between the
-          prices of $Y and $Z from the beginning of 
-          {dateStr(startDate)} to the 
+          You are looking to lease {roomCounts[roomIndex]} {roomCounts[roomIndex] == 1 ? 'bedroom' : 'bedrooms'} between the
+          prices of ${priceBound[0]} and ${priceBound[1]} from the beginning of {dateStr(startDate)} to the 
           end of the {dateStr(endtDate)}.
         </div>
       </div>

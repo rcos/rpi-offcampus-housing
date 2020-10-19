@@ -144,7 +144,7 @@ body {
     top: 42px;
     max-height: 120px;
     border-radius: 3px;
-    z-index: 3;
+    z-index: 4;
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
     overflow-y: scroll;
     background-color: white;
@@ -152,6 +152,15 @@ body {
     .option {
       background-color: white;
       transition: background-color 0.25s;
+
+      &.selected {
+        background-color: $cyanDark;
+        color: white;
+
+        &:hover {
+          background-color: $cyanDark;
+        }
+      }
 
       &:hover {
         background-color: $limewhite;
