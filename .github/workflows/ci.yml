@@ -23,9 +23,8 @@ jobs:
         run: npm ci
         working-directory: server
       - name: Check tsc
-        uses: icrawl/action-tsc@v1
-        with:
-          project: server
+        run: npx tsc
+        working-directory: server
 
   api_tests:
     name: API tests
