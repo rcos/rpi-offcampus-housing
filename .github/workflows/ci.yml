@@ -5,8 +5,31 @@ on:
   - workflow_dispatch
 
 jobs:
+  server_ts_build:
+    name: Check server ts build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - uses: actions/cache@v2
+        with:
+          path: server/node_modules
+          key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server
+      - name: Check tsc
+        uses: icrawl/action-tsc@v1
+        with:
+          project: server
+
   api_tests:
     name: API tests
+    needs: server_ts_build
 
     runs-on: ubuntu-latest
 
@@ -28,7 +51,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: server/node_modules
-          key: ci-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
+          key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
         working-directory: server
