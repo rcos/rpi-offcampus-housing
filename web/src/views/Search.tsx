@@ -26,8 +26,8 @@ const SearchView = () => {
   const [searchResults, setSearchResults] = useState<Object []>()
 
   const [initialPriceBoundSet, setInitialPriceBoundSet] = useState<boolean>(false)
-  const [priceBound, setPriceBound] = useState<number[]>([700, 750])
-  const [priceRange, setPriceRange] = useState<number[]>([400, 1400])
+  const [priceBound, setPriceBound] = useState<number[]>([400, 600])
+  const [priceRange, setPriceRange] = useState<number[]>([300, 1400])
 
   useEffect(() => {
 

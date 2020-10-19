@@ -82,7 +82,9 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
   }
 
   const getRangeWidth = ():number => {
-    let width_: number = sliderWidth;
+    // let width_ = updateSlider();
+    // let width_: number = sliderWidth;
+    let width_ = getSliderWidth();
     return (rightVal * width_) - (leftVal * width_);
   }
 
@@ -138,6 +140,8 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
       }
       else onSlide (getLeftBound(), getRightBound())
     }
+
+    updateSlider ()
   }, [leftVal, rightVal])
 
   useEffect(() => {
@@ -148,6 +152,18 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
       else onChange (getLeftBound(), getRightBound())
     }
   }, [valueChange])
+
+  const updateSlider = () => {
+    if (sliderBoundRef.current == null) return 
+    let rect = sliderBoundRef.current.getBoundingClientRect()
+    setSliderWidth(rect.width)
+  }
+
+  const getSliderWidth = (): number => {
+    if (sliderBoundRef.current == null) return 0
+    let rect = sliderBoundRef.current.getBoundingClientRect()
+    return rect.width
+  }
 
   const leftArrayIndex = (): number => {
     if (rangeArray && valueTransform) {
