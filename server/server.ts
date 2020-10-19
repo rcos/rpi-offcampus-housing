@@ -14,11 +14,10 @@ dotenv.config({ path: `../.env.${process.env.NODE_ENV!.replace(" ", "")}` });
 
 const PORT = process.env.SERVER_PORT;
 
+const MONGO_PREFIX = process.env.MONGO_DB_PREFIX ?? "mongodb+srv";
 const MONGO_HOST = process.env.MONGO_DB_HOST ?? "cluster0.vsneo.mongodb.net";
 const MONGO_PORT = process.env.MONGO_DB_PORT ?? "27017";
-const MONGO_URI = `mongodb+srv://${process.env.MONGO_DB_CLUSTER_USERNAME}:${process.env.MONGO_DB_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/housing-database?retryWrites=true&w=majority`;
-console.log(MONGO_URI);
-// TODO, API CI -> https://www.freecodecamp.org/news/how-to-automate-rest-api-end-to-end-tests/
+const MONGO_URI = `${MONGO_PREFIX}://${process.env.MONGO_DB_CLUSTER_USERNAME}:${process.env.MONGO_DB_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/housing-database?retryWrites=true&w=majority`;
 
 // setup middleware
 import bodyParser from "body-parser";
