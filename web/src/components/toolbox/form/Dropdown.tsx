@@ -9,11 +9,12 @@ Dropdown
 */
 
 interface DropdownInterface {
-  options: string[]
-  onSelect?: (arg0: string) => void
+  options: any[]
+  onSelect?: (index: number) => void
+  selectedIndex?: number
 }
 
-const Dropdown = ({ options, onSelect }: DropdownInterface) => {
+const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
 
   const [selectedOption, setSelectedOption] = useState<number>(-1)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
@@ -27,13 +28,18 @@ const Dropdown = ({ options, onSelect }: DropdownInterface) => {
   }, [])
 
   useEffect(() => {
+    console.log(`SELECTED INDEX: ${selectedIndex}`)
+    if (selectedIndex != undefined) setSelectedOption(selectedIndex)
+  }, [selectedIndex])
+
+  useEffect(() => {
     if (showDropdown) dropdownSpring.set(1)
     else dropdownSpring.set(0)
   }, [showDropdown])
 
   useEffect(() => {
     if (onSelect && selectedOption >= 0 && selectedOption < options.length) {
-      onSelect( options[selectedOption] );
+      onSelect( selectedOption );
     }
   }, [selectedOption])
 
@@ -58,7 +64,7 @@ const Dropdown = ({ options, onSelect }: DropdownInterface) => {
       scaleY: scaleTransform
     }}>
       {
-        options.map((option_: string, i: number) => (<div 
+        options.map((option_: any, i: number) => (<div 
           key={i} 
           onClick={() => {selecteOption(i)}}
           className="option">{option_}</div>))

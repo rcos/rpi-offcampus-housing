@@ -17,17 +17,30 @@ import SearchAPI from '../API/SearchAPI'
 
 const clamp = (a: number, b: number, c: number) => Math.min(Math.max(a, b), c);
 
+const SearchParameters = {
+  
+  // min & max price on the range slider
+  priceRange: [300, 1600],
+
+  // room count options
+  roomCounts: [1, 2, 3, 4]
+
+}
 
 const SearchView = () => {
+
+  // search parameters settings
+  const priceRange = SearchParameters.priceRange
+  const roomCounts = SearchParameters.roomCounts
 
   // State Variables
   const [loading, setLoading] = useState<boolean>(true)
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
+  const [roomCountIndex, setRoomCountIndex] = useState<number>(-1)
 
   const [initialPriceBoundSet, setInitialPriceBoundSet] = useState<boolean>(false)
   const [priceBound, setPriceBound] = useState<number[]>([400, 600])
-  const [priceRange, setPriceRange] = useState<number[]>([300, 1400])
 
   useEffect(() => {
 
@@ -43,6 +56,9 @@ const SearchView = () => {
     if (_.has(searchParams, 'max_price')) bounds[1] = parseInt( searchParams["max_price"] as string )
     setPriceBound(bounds)
     setInitialPriceBoundSet(true)
+
+    // set the room count index from url params
+    setInitialRoomCount ()
 
   }, [])
 
@@ -75,13 +91,43 @@ const SearchView = () => {
   }, [searchPage])
 
   useEffect(() => {
-    console.log(`PRICE BOUNDS CHANGED: ${priceBound} (${initialPriceBoundSet})`)
     updatePageUrl()
-  }, [searchPage, priceBound])
+  }, [searchPage, priceBound, roomCountIndex])
+
+  const setInitialRoomCount = () => {
+    const searchParams = queryString.parse(window.location.search)
+    if (_.has(searchParams, 'nroom')) {
+      let nrooms: number = parseInt( searchParams["nroom"] as string )
+      // try to find the index that is closest to nrooms
+      let diff = Number.MAX_VALUE
+      let best_index = -1
+      for (let i = 0; i < roomCounts.length; ++i) {
+        let curr_diff = Math.abs(roomCounts[i] - nrooms)
+        // if there is an option that has the exact number of rooms, then it is the best choice
+        if (curr_diff == 0) {
+          best_index = i;
+          break;
+        }
+        if (curr_diff < diff) {
+          diff = curr_diff
+          best_index = i
+        }
+      }
+
+      if (best_index >= 0 && best_index < roomCounts.length) {
+        console.log(`Best Room Count Index: ${best_index}`)
+        setRoomCountIndex(best_index)
+      }
+      else {
+        setRoomCountIndex(0)
+      }
+    }
+  }
 
   const updatePageUrl = () => {
-    console.log(`Page url updating to: ${`/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}`}`)
-    window.history.replaceState(null, document.title, `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}`)
+    let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts.length - 1 : roomCounts[roomCountIndex]
+    let destination = `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}&nroom=${nrooms}`
+    window.history.replaceState(null, document.title, destination)
   }
 
   const handlePageChange = (page_direction: number): void => {
@@ -101,6 +147,10 @@ const SearchView = () => {
     setPriceBound(clamped_bounds)
   }
 
+  const handleRoomCountSelect = (new_index: number) => {
+    setRoomCountIndex(new_index)
+  }
+
   return (<div>
     <ViewWrapper>
       <div>
@@ -110,6 +160,9 @@ const SearchView = () => {
             priceBound={priceBound}
             setPriceBound={handlePriceBoundSet}
             priceRange={priceRange}
+            roomCounts={roomCounts}
+            selectedRoomCountIndex={roomCountIndex}
+            handleRoomCountSelect={handleRoomCountSelect}
           /></div>
           <div className="right-area"><SearchResultsArea 
             loading={loading} 
@@ -131,8 +184,11 @@ interface ISearchFilterArea {
   priceRange: number[]
   priceBound: number[]
   setPriceBound: Function
+  roomCounts: number[]
+  selectedRoomCountIndex: number
+  handleRoomCountSelect: (arg0: number) => void
 }
-const SearchFilterArea = ({priceBound, setPriceBound, priceRange}: ISearchFilterArea) => {
+const SearchFilterArea = ({priceBound, setPriceBound, priceRange, roomCounts, selectedRoomCountIndex, handleRoomCountSelect}: ISearchFilterArea) => {
 
   // State
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -253,8 +309,9 @@ const SearchFilterArea = ({priceBound, setPriceBound, priceRange}: ISearchFilter
             <div className="input-label">Available Rooms</div>
             <div className="padded-2 upper">
               <Dropdown 
-                options={["1", "2", "3"]}
-                onSelect={() => {console.log(`default select callback.`)}}
+                options={roomCounts}
+                onSelect={handleRoomCountSelect}
+                selectedIndex={selectedRoomCountIndex}
               />
             </div>
           </div>
