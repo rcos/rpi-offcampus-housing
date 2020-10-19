@@ -36,6 +36,6 @@ jobs:
           MONGO_DB_CLUSTER_USERNAME: test
           MONGO_DB_PASSWORD: test
           MONGO_DB_HOST: mongo
-          MONGO_DB_PORT: ${{ jobs.services.mongo.ports[27017] }}
+          MONGO_DB_PORT: ${{ job.services.mongo.ports[27017] }}
           SERVER_PORT: 3000
         working-directory: server
