@@ -65,6 +65,5 @@ jobs:
           MONGO_DB_PASSWORD: test
           MONGO_DB_HOST: localhost:${{ job.services.mongo.ports[27017] }}
           MONGO_DB_PREFIX: mongodb
-          MONGO_DB_AUTH_SOURCE: admin
           SERVER_PORT: 3000
         working-directory: server
