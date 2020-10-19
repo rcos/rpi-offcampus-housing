@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  api_tests:
+    name: API tests
+
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test
+          MONGO_INITDB_ROOT_PASSWORD: test
+          MONGO_INITDB_DATABASE: housing-database
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - uses: actions/cache@v2
+        with:
+          path: server/node_modules
+          key: ci-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server
+      - name: Run tests
+        run: npm test
+        env:
+          MONGO_DB_CLUSTER_USERNAME: test
+          MONGO_DB_PASSWORD: test
+          MONGO_DB_HOST: mongo
+          MONGO_DB_PORT: ${{ jobs.services.mongo.ports[27017] }}
+          SERVER_PORT: 3000
+        working-directory: server
