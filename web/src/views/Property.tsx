@@ -218,7 +218,7 @@ const PropertyPageRightSide = ({propertyData, loading}: IPropertyPageRightSide) 
   const getAddress = (): string => {
     if (!propertyData) return "<placeholder>"
     let location = (propertyData as any).location
-    return `${location.address}, ${location.city} ${location.state}, ${location.zip}`
+    return location
   }
 
   return (<div>

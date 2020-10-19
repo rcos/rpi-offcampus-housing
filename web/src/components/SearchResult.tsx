@@ -18,7 +18,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
     if (!result) return "<undefined>"
     // 212 15th St, Troy NY 12180
     let location = (result as any).location
-    return `${location.address}, ${location.city} ${location.state}, ${location.zip}`
+    return location
   }
 
   return (<div className={`search-result ${featured ? 'featured' : ''}`}>
