@@ -33,7 +33,7 @@ jobs:
         run: npm ci
         working-directory: server
       - name: Seed housing-database
-        run: bash reload_db.sh mongodb://test:test@localhost:${{ job.services.mongo.ports[27017] }}/housing-database
+        run: bash reload_db.sh mongodb://test:test@localhost:${{ job.services.mongo.ports[27017] }}/housing-database?authSource=admin
         working-directory: server/test_data
       - name: Run tests
         run: npm test
@@ -43,5 +43,6 @@ jobs:
           MONGO_DB_HOST: localhost
           MONGO_DB_PORT: ${{ job.services.mongo.ports[27017] }}
           MONGO_DB_PREFIX: mongodb
+          MONGO_DB_AUTH_SOURCE: admin
           SERVER_PORT: 3000
         working-directory: server
