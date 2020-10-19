@@ -2,9 +2,14 @@ import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
 
-import * as faker from "faker";
+import faker from "faker";
 
 import { ObjectID } from "mongodb";
+
+import { ILandlord } from "../schemas/landlord.schema";
+import { IProperty } from "../schemas/property.schema";
+import { IReview } from "../schemas/review.schema";
+import { IStudent } from "../schemas/student.schema";
 
 // defaults
 const DEFAULT_OUT_DIRECTORY = ".";
@@ -19,21 +24,11 @@ const DEFAULT_NUM_STUDENT_REVIEWS = 50;
 const DEFAULT_SEED = 1;
 
 // helper models
-type Counter = number;
 
 // need to do this way so stringify is valid
 type MongoObjectID = {
   $oid: ObjectID;
 };
-
-interface MongoObject {
-  _id: MongoObjectID;
-}
-
-interface Content {
-  text: string;
-  images: string[];
-}
 
 interface Profile {
   first_name: string;
@@ -51,8 +46,6 @@ const seedGenerator = ({ seed }: SeedProps) => {
 };
 seedGenerator({ seed: DEFAULT_SEED });
 
-const getRandomIdIndex = (counter: Counter) => faker.random.number(counter);
-
 const objectFactory = <T>(n: number, generator: () => T) => {
   const objects: T[] = [];
   for (let i = 0; i < n; i++) {
@@ -66,26 +59,12 @@ const writeFileAsync = promisify(fs.writeFile);
 /** Return random rating 1-5 inclusive */
 const getRandomRating = () => faker.random.number({ min: 1, max: 5 });
 
-const getRandomContent = (): Content => ({
-  text: faker.lorem.paragraph(faker.random.number({ min: 3, max: 10 })),
-  images: Array.from({ length: faker.random.number(10) }, () =>
-    faker.image.image()
-  ),
-});
-
 const getRandomTerm = () => {
-  const season = faker.random.arrayElement([
-    "Spring",
-    "Summer",
-    "Fall",
-    "Winter",
-  ]);
-  const year = new Date().getFullYear() - faker.random.number(5);
-
+  const start_date = faker.date.past(faker.random.number(2));
+  const end_date = faker.date.future(faker.random.number(2), start_date);
   return {
-    start_date: "",
-    end_date: "",
-    name: `${season} ${year}`,
+    start_date,
+    end_date,
   };
 };
 
@@ -121,7 +100,9 @@ const getRcsId = (first_name: string, last_name: string) => {
 };
 
 // students
-type Student = MongoObject & Profile;
+type Student = Omit<IStudent, "_id"> & {
+  _id: MongoObjectID;
+};
 
 const studentIds: MongoObjectID[] = [];
 const getStudentId = () => {
@@ -139,10 +120,7 @@ const generateStudent = (values?: Partial<Student>): Student => ({
 const generateStudents = (n: number) => objectFactory(n, generateStudent);
 
 // landlord
-type Landlord = {
-  rating: number;
-} & MongoObject &
-  Profile;
+type Landlord = Omit<ILandlord, "_id"> & { _id: MongoObjectID };
 
 const landlordIds: MongoObjectID[] = [];
 const getLandlordId = () => {
@@ -161,27 +139,11 @@ const generateLandlord = (values?: Partial<Landlord>): Landlord => ({
 const generateLandlords = (n: number) => objectFactory(n, generateLandlord);
 
 // property
-type Property = {
-  landlord_id: MongoObjectID;
-  location: {
-    address: string;
-    city: string;
-    state: string;
-    zip: string;
-  };
-  property_id: MongoObjectID;
-  description: Content;
-  date_update: Date;
-  period_available: {
-    start: Date;
-    end: Date;
-  };
-  lease_duration: string;
-  price: number;
-  amenities: string[];
-  // utility_included: boolean;
-  sq_ft: number;
-} & MongoObject;
+type Property = Omit<IProperty, "_id" | "landlord" | "reviews"> & {
+  _id: MongoObjectID;
+  landlord: MongoObjectID;
+  reviews: MongoObjectID[];
+};
 
 const propertyIds: MongoObjectID[] = [];
 const generatePropertyId = () => {
@@ -196,25 +158,20 @@ const generateProperty = (values?: Partial<Property>): Property => {
     faker.random.number({ min: 10, max: 200 })
   );
   const lease_duration = faker.random.boolean() ? 6 : 12;
+  const lease_end = new Date(
+    lease_start.setMonth(lease_start.getMonth() + lease_duration)
+  );
 
   return {
     _id: generatePropertyId(),
-    landlord_id: getRandomLandlordId(),
-    location: {
-      address: faker.address.streetAddress(),
-      city: faker.address.city(),
-      state: faker.address.state(),
-      zip: faker.address.zipCode(),
-    },
-    property_id: getRandomPropertyId(),
-    description: getRandomContent(),
-    date_update: faker.date.recent(faker.random.number(100)),
-    period_available: {
-      start: lease_start,
-      end: new Date(
-        lease_start.setMonth(lease_start.getMonth() + lease_duration)
-      ),
-    },
+    landlord: getRandomLandlordId(),
+    location: faker.fake(
+      "{{address.streetAddress}}, {{address.city}}, {{address.stateAbbr}} {{address.zipCode}}"
+    ),
+    description: faker.lorem.lines(faker.random.number(10)), //getRandomContent(),
+    reviews: [], // this population is gonna have to be hacked
+    date_updated: faker.date.recent(faker.random.number(100)).toString(),
+    period_available: `${lease_start.toDateString()} - ${lease_end.toDateString()}`,
     lease_duration: `${lease_duration} months`,
     price: faker.random.number({ min: 300, max: 2000 }),
     amenities: faker.random.words(faker.random.number(5)).split(" "),
@@ -226,19 +183,11 @@ const generateProperty = (values?: Partial<Property>): Property => {
 const generateProperties = (n: number) => objectFactory(n, generateProperty);
 
 // student reviews
-type StudentReview = {
+type StudentReview = Omit<IReview, "_id" | "property_id" | "student_id"> & {
+  _id: MongoObjectID;
   property_id: MongoObjectID;
   student_id: MongoObjectID;
-  content: Content;
-  rating: {
-    property: number;
-    landlord: number;
-  };
-  term: {
-    start_date: string;
-    end_date: string;
-  };
-} & MongoObject;
+};
 
 const studentReviewIds: MongoObjectID[] = [];
 const generateStudentReviewId = () => {
@@ -257,11 +206,8 @@ const generateStudentReview = (
     _id: generateStudentReviewId(),
     property_id,
     student_id: getRandomStudentId(),
-    content: getRandomContent(),
-    rating: {
-      property: getRandomRating(),
-      landlord: getRandomRating(),
-    },
+    content: faker.lorem.lines(faker.random.number(10)),
+    rating: getRandomRating(),
     term: getRandomTerm(),
     ...values,
   };
@@ -290,6 +236,19 @@ const generateData = ({
   const properties = generateProperties(numProperties);
   const landlords = generateLandlords(numLandlords);
   const studentReviews = generateStudentReviews(numStudentReviews);
+
+  // Hack for populating properties -> review shortcut
+  studentReviews.forEach((studentReview) => {
+    const reviewedProperty = properties.find(
+      (property) => property._id.$oid === studentReview.property_id.$oid
+    );
+
+    if (reviewedProperty === undefined) {
+      return;
+    }
+
+    reviewedProperty.reviews.push(studentReview._id);
+  });
 
   return {
     students,
