@@ -67,7 +67,7 @@ const CollectionEntry = () => {
       {/* Thumbnails */}
       <div className="image-previews">
         {Array.from(new Array(3), (x, i:number) => {
-          return <div className="image-preview-entry"></div>
+          return <div className="image-preview-entry" key={i}></div>
         })}
       </div>
     </div>

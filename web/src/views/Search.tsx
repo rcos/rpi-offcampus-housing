@@ -125,7 +125,7 @@ const SearchView = () => {
   }
 
   const updatePageUrl = () => {
-    let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts.length - 1 : roomCounts[roomCountIndex]
+    let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts[roomCounts.length - 1] : roomCounts[roomCountIndex]
     let destination = `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}&nroom=${nrooms}`
     window.history.replaceState(null, document.title, destination)
   }
@@ -231,21 +231,17 @@ const SearchFilterArea = ({priceBound, setPriceBound, priceRange, roomCounts, se
     accurate. So I will calculate the height 5 times at the start
     after some time has passed to get the accurate height.
     */
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 10)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 100)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 500)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 1000)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 3000)
+    let t_1 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 10)
+    let t_2 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 100)
+    let t_3 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 500)
+    let t_4 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 1000)
+
+    return () => {
+      clearTimeout(t_1);
+      clearTimeout(t_2);
+      clearTimeout(t_3);
+      clearTimeout(t_4);
+    }
   }, [])
 
   const recalculateMapHeight = () => {
@@ -392,11 +388,19 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
   // effects
   useEffect(() => {
     setViewportHeight(calculateResultsViewportHeight())
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 500)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 1000)
+    let t_1 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
+    let t_2 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
+    let t_3 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 500)
+    let t_4 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 1000)
     window.addEventListener('resize', updateResultsViewportHeight)
+
+    return () => {
+      clearTimeout(t_1);
+      clearTimeout(t_2);
+      clearTimeout(t_3);
+      clearTimeout(t_4);
+      window.removeEventListener('resize', updateResultsViewportHeight)
+    }
   }, []);
 
   const updateResultsViewportHeight = (): void => {

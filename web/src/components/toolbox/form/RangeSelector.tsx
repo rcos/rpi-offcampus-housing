@@ -90,6 +90,7 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
 
   useEffect(() => {
 
+    let timeouts: NodeJS.Timeout[] = []
     // initialize the min and max of the range slider
     let actual_min = min ? min : 0
     let actual_max = max ? max : 1
@@ -104,11 +105,16 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
       console.log(`Range ref is no longer null`)
       let rect = sliderBoundRef.current.getBoundingClientRect()
       setSliderWidth(rect.width)
-      setTimeout(() => {setSliderWidth(rect.width)}, 10)
-      setTimeout(() => {setSliderWidth(rect.width)}, 100)
-      setTimeout(() => {setSliderWidth(rect.width)}, 500)
-      setTimeout(() => {setSliderWidth(rect.width)}, 1000)
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 10))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 100))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 500))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 1000))
       console.log(`Width: ${rect.width}`)
+    }
+
+    return () => {
+      // clear the timeouts on unmount
+      timeouts.forEach(timeout_ => {clearTimeout(timeout_)})
     }
   }, []);
 
