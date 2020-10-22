@@ -16,6 +16,7 @@ if(process.env.NODE_ENV === "production") {
     serverBaseURL: APIServerBaseURL
   }, function(profile, done) {
     var login = profile.user.toLowerCase();
+    //need user endpoint with valid CAS credentials
     User.findOne({user_id: login}, function (err, user) {
       if (err) {
         return done(err);
@@ -35,6 +36,7 @@ if(process.env.NODE_ENV === "production") {
     serverBaseURL: APIServerBaseURL
   }, function(profile, done) {
     var login = profile.user.toLowerCase();
+    //need user endpoint with valid CAS credentials
     User.findOne({user_id: login}, function (err, user) {
       if (err) {
         return done(err);
@@ -73,6 +75,7 @@ authRoutes.get("/loginCAS", (req, res, next) => {
           let housingSID = generateSID()
           Promise.resolve(housingSID).then(resolvedSID => {
             if(resolvedSID != null) {
+              //need user endpoint to update
               User.findOneAndUpdate({user_id: user.user_id},{connect_sid: resolvedSID},function(err,user) {
                 if(err || user == null) {
                   return next(err);
@@ -81,12 +84,12 @@ authRoutes.get("/loginCAS", (req, res, next) => {
                   if(process.env.NODE_ENV === "production") {
                     return res.redirect(APIServerBaseURL + '#/redirectCASLogin');
                   } else {
-                    console.log("I entered here. using url", FrontEndServerBaseURL())
-                    return res.redirect(`${FrontEndServerBaseURL()}/#/redirectCASLogin`);
+                    console.log("I entered here. using url", FrontEndServerBaseURL)
+                    return res.redirect(`${FrontEndServerBaseURL}/#/redirectCASLogin`);
                   }
                 }
               })
-              return res.redirect(FrontEndServerBaseURL());
+              return res.redirect(FrontEndServerBaseURL);
             }
           })
         }
