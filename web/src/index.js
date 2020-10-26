@@ -18,6 +18,8 @@ import './assets/css/fonts.scss'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
+import StudentLoginView from './views/StudentLogin'
+import StudentRegisterView from './views/StudentRegister'
 import NotFound from './views/NotFound'
 import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext'
@@ -54,6 +56,8 @@ const Routes = () => {
           <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />
           <Route exact path="/landlord/register" component={LandlordRegisterView} />
+          <Route exact path="/student/login" component={StudentLoginView} />
+          <Route exact path="/student/register" component={StudentRegisterView} />
           <Route exact path="/search" component={SearchView} />
           <Route exact path="/" component={LandingView} />
           <Route component={NotFound} />
