@@ -17,17 +17,38 @@ const SearchView = () => {
       <div style={{height: `30px`}}></div>
       <LeftAndRight 
         left={<Logo />}
-        right={<Button 
-          text="Login"
+        // sideright={<Button 
+        //   text="Student"
+        //   icon={<BiLogIn/>}
+        //   background="#1E2019"
+        //   textColor="white"
+        //   iconLocation="right"
+        //   onClick={() => history.push('/student/login')}
+        // />}
+        right={<div>
+          <Button 
+          text="Student"
+          icon={<BiLogIn/>}
+          background="#1E2019"
+          textColor="white"
+          iconLocation="right"
+          onClick={() => history.push('/student/login')}
+          />
+          <br/>
+          <Button 
+          text="Landlord"
           icon={<BiLogIn/>}
           background="#1E2019"
           textColor="white"
           iconLocation="right"
           onClick={() => history.push('/landlord/login')}
-        />}
+          />
+        </div>}
+       
+       
       />
     </div>
-
+   
 
     </ViewWrapper>
 
