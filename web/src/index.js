@@ -16,9 +16,11 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
+import HomeView from './views/HomeView'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
+import CollectionView from './views/Collection'
 import StudentLoginView from './views/StudentLogin'
 import StudentRegisterView from './views/StudentRegister'
 import NotFound from './views/NotFound'

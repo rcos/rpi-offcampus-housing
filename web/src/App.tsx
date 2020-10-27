@@ -21,8 +21,8 @@ function App() {
         <div className="padded"><Toggle onLabel="Toggle on 123" offLabel="Toggle off" /></div>
         <div className="padded"><Toggle onLabel="Toggle on 123" offLabel="Toggle off" initialValue={true} /></div>
         <div className="padded" style={{width: '200px'}}>
-          <Dropdown options={["Volvo", "Porche", "BMW", "Toyota", "Tesla"]} onSelect={(x:string) => {
-            console.log(`Selected: ${x}`)
+          <Dropdown options={["Volvo", "Porche", "BMW", "Toyota", "Tesla"]} onSelect={(index: number) => {
+            console.log(`Selected Index: ${index}`)
           }} />
         </div>
         <div className="padded">

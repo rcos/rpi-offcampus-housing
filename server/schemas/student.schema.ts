@@ -16,6 +16,7 @@ var StudentSchema = new Schema({
     last_name: String,
     email: String,
     phone_number: String,
+    saved_properties: [{ type: mongoose.Types.ObjectId, ref: 'Property' }] 
     auth_info: Object
 });
 
