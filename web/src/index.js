@@ -23,6 +23,8 @@ import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext'
 import AlertController from './components/AlertController'
 import PropertyView from './views/Property'
+import StudentLoginView from './views/StudentLoginView'
+import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
 // setup routes
 const Routes = () => {
@@ -51,8 +53,10 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
+          <Route exact path="/student/auth-cas" component={StudentCASAuth} />
           <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />
+          <Route exact path="/student/login" component={StudentLoginView} />
           <Route exact path="/landlord/register" component={LandlordRegisterView} />
           <Route exact path="/search" component={SearchView} />
           <Route exact path="/" component={LandingView} />

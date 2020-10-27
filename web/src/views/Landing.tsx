@@ -8,7 +8,6 @@ import Button from '../components/toolbox/form/Button'
 import {BiLogIn} from 'react-icons/bi'
 
 const SearchView = () => {
-  const history = useHistory()
 
   return (<div>
     <ViewWrapper>
@@ -17,19 +16,43 @@ const SearchView = () => {
       <div style={{height: `30px`}}></div>
       <LeftAndRight 
         left={<Logo />}
-        right={<Button 
-          text="Login"
-          icon={<BiLogIn/>}
-          background="#1E2019"
-          textColor="white"
-          iconLocation="right"
-          onClick={() => history.push('/landlord/login')}
-        />}
+        right={<LandingAction />}
       />
     </div>
 
 
     </ViewWrapper>
+
+  </div>)
+}
+
+const LandingAction = () => {
+
+  const history = useHistory()
+
+  return (<div style={{
+    display: 'flex'
+  }}>
+    
+    <div style={{marginRight: '10px'}}>
+      <Button 
+        text="Student Login"
+        icon={<BiLogIn/>}
+        background="#E0777D"
+        textColor="white"
+        iconLocation="right"
+        onClick={() => history.push('/student/login')}
+      />
+    </div>
+
+    <Button 
+      text="Landlord Login"
+      icon={<BiLogIn/>}
+      background="#1E2019"
+      textColor="white"
+      iconLocation="right"
+      onClick={() => history.push('/landlord/login')}
+    />
 
   </div>)
 }
