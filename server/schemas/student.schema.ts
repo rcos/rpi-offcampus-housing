@@ -8,13 +8,15 @@ interface IStudentDoc extends mongoose.Document {
     email: string
     phone_number: string
     _id: string
+    auth_info: Object
 }
 
 var StudentSchema = new Schema({
     first_name: String,
     last_name: String,
     email: String,
-    phone_number: String
+    phone_number: String,
+    auth_info: Object
 });
 
 const Student = mongoose.model<IStudentDoc>("Student", StudentSchema);

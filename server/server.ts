@@ -25,6 +25,13 @@ app.use(cors({
   origin: 'http://localhost:3000'
 }))
 
+// Passport CAS Auth
+import passport from 'passport'
+import AuthRouter from './casauth'
+app.use(passport.initialize())
+app.use(passport.session())
+app.use('/auth', AuthRouter)
+
 // API routes
 import test from './API/test'
 import StudentGET from './API/Student/student.get'

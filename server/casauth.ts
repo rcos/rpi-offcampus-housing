@@ -1,58 +1,83 @@
-const passport = require('passport')
-const APIServerBaseURL = 'http://localhost:3000'
-const FrontEndServerBaseURL = 'http://localhost:9010'
+import passport from 'passport'
+import chalk from 'chalk'
 
-passport.serializeUser(function(user, done) {
+import Student, {IStudentDoc} from './schemas/student.schema'
+
+passport.serializeUser(function(user: any, done: Function) {
   done(null, user);
 });
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 //IF PROD
-if(process.env.NODE_ENV === "production") {
-  passport.use(new (require('passport-cas').Strategy)({
-    version: 'CAS3.0',
-    ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
-    serverBaseURL: APIServerBaseURL
-  }, function(profile, done) {
-    var login = profile.user.toLowerCase();
-    //need user endpoint with valid CAS credentials
-    User.findOne({user_id: login}, function (err, user) {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, {message: 'Unknown user'});
-      }
-      user.attributes = profile.attributes;
-      return done(null, user);
-    });
-  }));
-//IF ANYTHING OTHER THAN PROD
-} else {
-  passport.use(new (require('passport-cas').Strategy)({
-    version: 'CAS3.0',
-    ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
-    serverBaseURL: APIServerBaseURL
-  }, function(profile, done) {
-    var login = profile.user.toLowerCase();
-    //need user endpoint with valid CAS credentials
-    User.findOne({user_id: login}, function (err, user) {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, {message: 'Unknown user'});
-      }
-      user.attributes = profile.attributes;
-      return done(null, user);
-    });
-  }));
-}
+passport.use(
+  new (require('passport-cas').Strategy)
+({
+  version: 'CAS3.0',
+  ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
+  serverBaseURL: 'http://localhost:9010'
+}, 
+
+function(profile: any, done: Function) {
+
+  console.log(chalk.cyan('👉 In Passport Authenticate'))
+  let cas_id = profile.user
+  console.log(`CAS ID: ${cas_id}`)
+
+  // if the user exists, log the user in
+  // otherwise, sign them up
+  Student.findOne({
+    'auth_info.cas_id': cas_id
+  }, async (err: any, student_doc: IStudentDoc) => {
+    if (err) {
+
+      // send an error if a problem occurred
+      console.log(chalk.bgRed(`Error looking for student where auth_info.cas_id = ${cas_id}`))
+      done(err)
+    }
+    else if (!student_doc) {
+
+      // register the user if they do not exist
+      console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
+
+      let new_student: IStudentDoc = new Student({
+        auth_info: { cas_id }
+      })
+
+      let saved_user = await new_student.save()
+      done(null, new_student, { new: true })
+
+    }
+    else {
+      
+      done(null, student_doc, { new: false })
+    }
+  })
+
+  done(null, {data: 123})
+}));
+
 
 
 //need to create api route for CAS login
-authRoutes.get("/loginCAS", (req, res, next) => {
+import express from 'express'
+const authRouter = express.Router()
+authRouter.get("/cas-auth", (req, res, next) => {
+  console.log(chalk.bgCyan(`👉 CAS Auth`))
+
+  passport.authenticate('cas', (err, user, info) => {
+    console.log(`err: ${err}`)
+    console.log(`user: ${user}`)
+    console.log(`info: ${info}`)
+
+    return next({
+      err,
+      user,
+      info
+    })
+  })(req, res, next)
+
+  /*
   passport.authenticate('cas', function (err, user, info) {
     if (err) {
       return next(err);
@@ -96,4 +121,8 @@ authRoutes.get("/loginCAS", (req, res, next) => {
       });
     }
   })(req, res, next);
+  */
+
 });
+
+export default authRouter
