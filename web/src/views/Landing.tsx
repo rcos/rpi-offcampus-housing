@@ -19,7 +19,7 @@ const SearchView = () => {
         right={<LandingAction />}
       />
     </div>
-
+   
 
     </ViewWrapper>
 
