@@ -1,4 +1,4 @@
-import express, { application } from 'express'
+import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import cors from 'cors'
@@ -22,8 +22,23 @@ const MONGO_URI = `mongodb+srv://rpioffcampusprojectteam:${process.env.MONGO_DB_
 import bodyParser from 'body-parser'
 app.use(express.json())
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: ['http://localhost:3000'],
+  credentials: true
 }))
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// Passport CAS Auth
+import passport from 'passport'
+import session from 'express-session'
+import AuthRouter from './casauth'
+app.use(session({
+  secret: (process.env.SESSION_SECRET as string),
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use('/auth', AuthRouter)
 
 // API routes
 import test from './API/test'

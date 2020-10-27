@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -7,7 +7,8 @@ import {
   Switch,
   Route
 } from "react-router-dom"
-import ReactCSSTransitionGroup from 'react-transition-group';
+import AuthRoute from './modules/auth/AuthRoute'
+import AccessLevels from './modules/auth/accessLevels.json'
 
 // stylesheets
 import './assets/css/style.scss'
@@ -25,6 +26,8 @@ import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext'
 import AlertController from './components/AlertController'
 import PropertyView from './views/Property'
+import StudentLoginView from './views/StudentLoginView'
+import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
 // setup routes
 const Routes = () => {
@@ -53,13 +56,18 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
-          <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
-          <Route exact path="/landlord/login" component={LandlordLoginView} />
-          <Route exact path="/landlord/register" component={LandlordRegisterView} />
-          <Route exact path="/student/login" component={StudentLoginView} />
-          <Route exact path="/student/register" component={StudentRegisterView} />
-          <Route exact path="/search" component={SearchView} />
+
+          {/* Unrestricted Paths */}
           <Route exact path="/" component={LandingView} />
+          <Route exact path="/student/auth-cas" component={StudentCASAuth} />
+          <Route exact path="/landlord/login" component={LandlordLoginView} />
+          <Route exact path="/student/login" component={StudentLoginView} />
+          <Route exact path="/landlord/register" component={LandlordRegisterView} />
+
+          
+          {/* Restricted Paths */}
+          <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
+          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
           <Route component={NotFound} />
         </Switch>
     </AlertContext.Provider>
