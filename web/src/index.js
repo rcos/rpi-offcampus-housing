@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -7,7 +7,8 @@ import {
   Switch,
   Route
 } from "react-router-dom"
-import ReactCSSTransitionGroup from 'react-transition-group';
+import AuthRoute from './modules/auth/AuthRoute'
+import AccessLevels from './modules/auth/accessLevels.json'
 
 // stylesheets
 import './assets/css/style.scss'
@@ -53,13 +54,18 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
+
+          {/* Unrestricted Paths */}
+          <Route exact path="/" component={LandingView} />
           <Route exact path="/student/auth-cas" component={StudentCASAuth} />
-          <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <Route exact path="/landlord/login" component={LandlordLoginView} />
           <Route exact path="/student/login" component={StudentLoginView} />
           <Route exact path="/landlord/register" component={LandlordRegisterView} />
-          <Route exact path="/search" component={SearchView} />
-          <Route exact path="/" component={LandingView} />
+
+          
+          {/* Restricted Paths */}
+          <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
+          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
           <Route component={NotFound} />
         </Switch>
     </AlertContext.Provider>
