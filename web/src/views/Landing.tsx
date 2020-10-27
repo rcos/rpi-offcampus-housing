@@ -10,7 +10,6 @@ import SuggestionInput from '../components/toolbox/form/SuggestionInput'
 import Input from '../components/toolbox/form/Input'
 
 const SearchView = () => {
-  const history = useHistory()
 
   return (<div>
     
@@ -20,14 +19,7 @@ const SearchView = () => {
         <div style={{marginTop: `20px`}}></div>
         <LeftAndRight 
             left={<Logo />}
-            right={<Button 
-              text="Login"
-              icon={<BiLogIn/>}
-              background="#1E2019"
-              textColor="white"
-              iconLocation="right"
-              onClick={() => history.push('/landlord/login')}
-            />}
+            right={<LandingAction />}
           />
 
           <div style={{width: `400px`, marginTop: `30px`}}>
@@ -51,6 +43,37 @@ const SearchView = () => {
 
       </React.Fragment>
     </Centered>
+
+  </div>)
+}
+
+const LandingAction = () => {
+
+  const history = useHistory()
+
+  return (<div style={{
+    display: 'flex'
+  }}>
+    
+    <div style={{marginRight: '10px'}}>
+      <Button 
+        text="Student Login"
+        icon={<BiLogIn/>}
+        background="#E0777D"
+        textColor="white"
+        iconLocation="right"
+        onClick={() => history.push('/student/login')}
+      />
+    </div>
+
+    <Button 
+      text="Landlord Login"
+      icon={<BiLogIn/>}
+      background="#1E2019"
+      textColor="white"
+      iconLocation="right"
+      onClick={() => history.push('/landlord/login')}
+    />
 
   </div>)
 }

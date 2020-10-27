@@ -8,6 +8,7 @@ interface IStudentDoc extends mongoose.Document {
     email: string
     phone_number: string
     _id: string
+    auth_info: Object
 }
 
 var StudentSchema = new Schema({
@@ -16,6 +17,7 @@ var StudentSchema = new Schema({
     email: String,
     phone_number: String,
     saved_properties: [{ type: mongoose.Types.ObjectId, ref: 'Property' }] 
+    auth_info: Object
 });
 
 const Student = mongoose.model<IStudentDoc>("Student", StudentSchema);
