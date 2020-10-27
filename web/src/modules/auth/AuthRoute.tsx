@@ -6,6 +6,7 @@ import AuthAPI from '../../API/AuthAPI'
 interface IAuthStatus {
   isAuthenticated: boolean
   user: Object | undefined
+  loaded?: boolean
 }
 
 
@@ -38,23 +39,30 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   const [auth, setAuth] = useState<IAuthStatus>({
     isAuthenticated: false,
-    user: undefined
+    user: undefined,
+    loaded: false
   })
 
   useEffect(() => {
 
     Auth.status(accessLevel)
     .then(res => {
-      setAuth(res)
+      setAuth({...res, loaded: true})
     })
     .catch(err => {
-      setAuth(err)
+      setAuth({...err, loaded: false})
     })
 
   }, [])
 
-  return (<Route {...rest} render={(props) => 
-    ( auth.isAuthenticated ? <Component {...props} /> : <Redirect to="/" /> )} 
+  return (<Route {...rest} render={(props) => {
+    if (auth.loaded) {
+      if (auth.isAuthenticated) return <Component {...props} />
+      else return <Redirect to="/" />
+    }
+    else return <div />
+    
+  }} 
   />)
 }
 
