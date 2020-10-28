@@ -32,6 +32,10 @@ import StudentRegisterComplete from './views/StudentRegisterCompleteView'
 
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
+// Redux setup
+import store from './redux/store'
+import {Provider} from 'react-redux'
+
 // setup routes
 const Routes = () => {
 
@@ -79,9 +83,9 @@ const Routes = () => {
 }
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <Routes />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 
