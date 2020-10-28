@@ -9,19 +9,38 @@ import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult, {SearchResultLoading} from '../components/SearchResult'
-import {BiFilterAlt, BiSort, BiHomeAlt} from 'react-icons/bi'
+import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
 
 // API
 import SearchAPI from '../API/SearchAPI'
-import Loading from '../components/toolbox/misc/Loading'
 
+const clamp = (a: number, b: number, c: number) => Math.min(Math.max(a, b), c);
+
+const SearchParameters = {
+  
+  // min & max price on the range slider
+  priceRange: [300, 1600],
+
+  // room count options
+  roomCounts: [1, 2, 3, 4]
+
+}
 
 const SearchView = () => {
 
+  // search parameters settings
+  const priceRange = SearchParameters.priceRange
+  const roomCounts = SearchParameters.roomCounts
+
+  // State Variables
+  const [loading, setLoading] = useState<boolean>(true)
   const [searchPage, setSearchPage] = useState<number>(0)
   const [searchResults, setSearchResults] = useState<Object []>()
-  const [loading, setLoading] = useState<boolean>(true)
+  const [roomCountIndex, setRoomCountIndex] = useState<number>(-1)
+
+  const [initialPriceBoundSet, setInitialPriceBoundSet] = useState<boolean>(false)
+  const [priceBound, setPriceBound] = useState<number[]>([400, 600])
 
   useEffect(() => {
 
@@ -30,6 +49,16 @@ const SearchView = () => {
     if (_.has(searchParams, 'p')) {
       setSearchPage( parseInt( searchParams["p"] as string ))
     }
+
+    // set the price bounds from the params
+    let bounds = [priceRange[0], priceRange[1]]
+    if (_.has(searchParams, 'min_price')) bounds[0] = parseInt( searchParams["min_price"] as string )
+    if (_.has(searchParams, 'max_price')) bounds[1] = parseInt( searchParams["max_price"] as string )
+    setPriceBound(bounds)
+    setInitialPriceBoundSet(true)
+
+    // set the room count index from url params
+    setInitialRoomCount ()
 
   }, [])
 
@@ -52,7 +81,6 @@ const SearchView = () => {
         setSearchResults(result.data.properties)
         setLoading(false)
         // window.location.href = `${window.location.host}/search?p=${searchPage}`
-        window.history.replaceState(null, document.title, `/search?p=${searchPage}`)
       }
     })
     .catch(err => {
@@ -61,6 +89,46 @@ const SearchView = () => {
     })
 
   }, [searchPage])
+
+  useEffect(() => {
+    updatePageUrl()
+  }, [searchPage, priceBound, roomCountIndex])
+
+  const setInitialRoomCount = () => {
+    const searchParams = queryString.parse(window.location.search)
+    if (_.has(searchParams, 'nroom')) {
+      let nrooms: number = parseInt( searchParams["nroom"] as string )
+      // try to find the index that is closest to nrooms
+      let diff = Number.MAX_VALUE
+      let best_index = -1
+      for (let i = 0; i < roomCounts.length; ++i) {
+        let curr_diff = Math.abs(roomCounts[i] - nrooms)
+        // if there is an option that has the exact number of rooms, then it is the best choice
+        if (curr_diff == 0) {
+          best_index = i;
+          break;
+        }
+        if (curr_diff < diff) {
+          diff = curr_diff
+          best_index = i
+        }
+      }
+
+      if (best_index >= 0 && best_index < roomCounts.length) {
+        console.log(`Best Room Count Index: ${best_index}`)
+        setRoomCountIndex(best_index)
+      }
+      else {
+        setRoomCountIndex(0)
+      }
+    }
+  }
+
+  const updatePageUrl = () => {
+    let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts[roomCounts.length - 1] : roomCounts[roomCountIndex]
+    let destination = `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}&nroom=${nrooms}`
+    window.history.replaceState(null, document.title, destination)
+  }
 
   const handlePageChange = (page_direction: number): void => {
     // load the next/previous page based on what page_direction is set to
@@ -74,14 +142,29 @@ const SearchView = () => {
     setSearchPage(Math.max(0, page_index))
   }
 
+  const handlePriceBoundSet = (new_bounds: number[]) => {
+    let clamped_bounds = [clamp(new_bounds[0], priceRange[0], priceRange[1]), clamp(new_bounds[1], priceRange[0], priceRange[1])]
+    setPriceBound(clamped_bounds)
+  }
+
+  const handleRoomCountSelect = (new_index: number) => {
+    setRoomCountIndex(new_index)
+  }
+
   return (<div>
     <ViewWrapper>
       <div>
 
-        <Navbar />
-
         <div className="search-page-contents">
-          <div className="left-area"><SearchFilterArea /></div>
+          <div className="left-area"><SearchFilterArea 
+            priceBound={priceBound}
+            setPriceBound={handlePriceBoundSet}
+            priceRange={priceRange}
+            roomCounts={roomCounts}
+            roomIndex={roomCountIndex}
+            selectedRoomCountIndex={roomCountIndex}
+            handleRoomCountSelect={handleRoomCountSelect}
+          /></div>
           <div className="right-area"><SearchResultsArea 
             loading={loading} 
             results={searchResults ? searchResults : []}
@@ -97,7 +180,17 @@ const SearchView = () => {
   </div>)
 }
 
-const SearchFilterArea = () => {
+interface ISearchFilterArea {
+  // the possible min/max values
+  priceRange: number[]
+  priceBound: number[]
+  setPriceBound: Function
+  roomCounts: number[]
+  roomIndex: number
+  selectedRoomCountIndex: number
+  handleRoomCountSelect: (arg0: number) => void
+}
+const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roomCounts, selectedRoomCountIndex, handleRoomCountSelect}: ISearchFilterArea) => {
 
   // State
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -140,25 +233,26 @@ const SearchFilterArea = () => {
     accurate. So I will calculate the height 5 times at the start
     after some time has passed to get the accurate height.
     */
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 10)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 100)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 500)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 1000)
-    setTimeout(() => {
-      setMapHeight(calculateMapHeight())
-    }, 3000)
+    let t_1 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 10)
+    let t_2 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 100)
+    let t_3 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 500)
+    let t_4 = setTimeout(() => {setMapHeight(calculateMapHeight())}, 1000)
+
+    return () => {
+      clearTimeout(t_1);
+      clearTimeout(t_2);
+      clearTimeout(t_3);
+      clearTimeout(t_4);
+    }
   }, [])
 
   const recalculateMapHeight = () => {
     setMapHeight(calculateMapHeight())
+  }
+
+  const handlePriceSlide = (a: number, b:number): void => {
+    // update the price range
+    setPriceBound([a.toFixed(2), b.toFixed(2)])
   }
 
   return (<div className="left-search-area">
@@ -194,9 +288,12 @@ const SearchFilterArea = () => {
         <div className="input-label">Price Per Room Range</div>
         <div className="padded-2 upper">
           <RangeSelector 
-            min={300}
-            max={10000}
+            min={priceRange[0]}
+            max={priceRange[1]}
             labelPrefix="$"
+            initialLeft={priceBound[0]}
+            initialRight={priceBound[1]}
+            onChange={handlePriceSlide}
           />
         </div>
       </div>
@@ -210,8 +307,9 @@ const SearchFilterArea = () => {
             <div className="input-label">Available Rooms</div>
             <div className="padded-2 upper">
               <Dropdown 
-                options={["1", "2", "3"]}
-                onSelect={() => {console.log(`default select callback.`)}}
+                options={roomCounts}
+                onSelect={handleRoomCountSelect}
+                selectedIndex={selectedRoomCountIndex}
               />
             </div>
           </div>
@@ -254,9 +352,8 @@ const SearchFilterArea = () => {
           />
         </div>
         <div className="subtext" style={{marginTop: '30px'}}>
-          You are looking to lease X bedrooms between the
-          prices of $Y and $Z from the beginning of 
-          {dateStr(startDate)} to the 
+          You are looking to lease {roomCounts[roomIndex]} {roomCounts[roomIndex] == 1 ? 'bedroom' : 'bedrooms'} between the
+          prices of ${priceBound[0]} and ${priceBound[1]} from the beginning of {dateStr(startDate)} to the 
           end of the {dateStr(endtDate)}.
         </div>
       </div>
@@ -292,11 +389,19 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
   // effects
   useEffect(() => {
     setViewportHeight(calculateResultsViewportHeight())
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 500)
-    setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 1000)
+    let t_1 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
+    let t_2 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
+    let t_3 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 500)
+    let t_4 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 1000)
     window.addEventListener('resize', updateResultsViewportHeight)
+
+    return () => {
+      clearTimeout(t_1);
+      clearTimeout(t_2);
+      clearTimeout(t_3);
+      clearTimeout(t_4);
+      window.removeEventListener('resize', updateResultsViewportHeight)
+    }
   }, []);
 
   const updateResultsViewportHeight = (): void => {
@@ -332,7 +437,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
         height: '35px',
         marginRight: '5px',
         transform: `translateY(2px)`,
-        minWidth: '20px'}}><BiHomeAlt /></div>
+        minWidth: '20px'}}><BiSearch /></div>
         <div style={{
           fontSize: '0.85rem'
         }}>
@@ -346,7 +451,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
 
       {loading && <div>
-        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading />))}  
+        {Array.from(new Array(10), (x: any, i: number) => (<SearchResultLoading key={i} />))}  
       </div>}
       {/* <SearchResult featured={true} /> */}
       {/* {Array.from(new Array(10), (x, i) => (<SearchResult key={i} />))} */}

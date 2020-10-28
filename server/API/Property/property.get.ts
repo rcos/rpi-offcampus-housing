@@ -37,7 +37,7 @@ propertyRouter.get('/:id/reviews', (req, res) => {
                 resolve(null)
               }
               else {
-                resolve(review_doc)
+                resolve(review_doc.toObject())
               }
             })
           })
@@ -159,16 +159,18 @@ propertyRouter.get('/:id', (req, res) => {
         console.log(chalk.bgGreen(`✔ Successfully found property with id ${property_id}`))
         res.json({
           success: true,
-          landlord: property_doc.landlord,
-          location: property_doc.location,
-          description: property_doc.description,
-          reviews: property_doc.reviews,
-          date_updated: property_doc.date_updated,
-          period_available: property_doc.period_available,
-          lease_duration: property_doc.lease_duration,
-          price: property_doc.price,
-          amenities: property_doc.amenities,
-          sq_ft: property_doc.sq_ft
+          property_data: {
+            landlord: property_doc.landlord,
+            location: property_doc.location,
+            description: property_doc.description,
+            reviews: property_doc.reviews,
+            date_updated: property_doc.date_updated,
+            period_available: property_doc.period_available,
+            lease_duration: property_doc.lease_duration,
+            price: property_doc.price,
+            amenities: property_doc.amenities,
+            sq_ft: property_doc.sq_ft
+          }
         })
 
       }

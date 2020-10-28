@@ -8,6 +8,7 @@ interface IStudent {
   email: string;
   phone_number: string;
   _id: string;
+  auth_info: Object;
 }
 
 type IStudentDoc = IStudent & mongoose.Document;
@@ -17,6 +18,8 @@ var StudentSchema = new Schema({
   last_name: String,
   email: String,
   phone_number: String,
+  saved_properties: [{ type: mongoose.Types.ObjectId, ref: "Property" }],
+  auth_info: Object,
 });
 
 const Student = mongoose.model<IStudentDoc>("Student", StudentSchema);

@@ -14,7 +14,6 @@ const NotFound = () => {
 
   return (<ViewWrapper>
     <div>
-      <Navbar />
       <div
       style={{
         fontWeight: 600,

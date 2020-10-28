@@ -3,6 +3,8 @@ import { range } from 'lodash';
 import React, {useState, useEffect, useRef} from 'react'
 
 interface RangeSelectorInterface {
+  initialLeft?: number
+  initialRight?: number
   min: number
   max: number
   labelPrefix?: string
@@ -19,13 +21,13 @@ interface RangeSelectorInterface {
 }
 
 const clamp = (a: number, b: number, c: number) => {
-
   return Math.min(Math.max(a, b), c);
 }
 
 const RangeSelector = ({min, max, labelPrefix, 
   labelPostfix, onSlide, onChange,
-rangeArray, valueTransform}: RangeSelectorInterface) => {
+rangeArray, valueTransform,
+initialLeft, initialRight}: RangeSelectorInterface) => {
 
   const [minVal, setMinVal] = useState<number>(0)
   const [maxVal, setMaxVal] = useState<number>(0)
@@ -80,15 +82,20 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
   }
 
   const getRangeWidth = ():number => {
-    let width_: number = sliderWidth;
+    // let width_ = updateSlider();
+    // let width_: number = sliderWidth;
+    let width_ = getSliderWidth();
     return (rightVal * width_) - (leftVal * width_);
   }
 
   useEffect(() => {
 
+    let timeouts: NodeJS.Timeout[] = []
     // initialize the min and max of the range slider
-    setMinVal(min ? min : 0)
-    setMaxVal(max ? max : 1)
+    let actual_min = min ? min : 0
+    let actual_max = max ? max : 1
+    setMinVal(actual_min)
+    setMaxVal(actual_max)
 
     // set the slider width
     if (sliderBoundRef.current == null) {
@@ -98,13 +105,34 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
       console.log(`Range ref is no longer null`)
       let rect = sliderBoundRef.current.getBoundingClientRect()
       setSliderWidth(rect.width)
-      setTimeout(() => {setSliderWidth(rect.width)}, 10)
-      setTimeout(() => {setSliderWidth(rect.width)}, 100)
-      setTimeout(() => {setSliderWidth(rect.width)}, 500)
-      setTimeout(() => {setSliderWidth(rect.width)}, 1000)
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 10))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 100))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 500))
+      timeouts.push(setTimeout(() => {setSliderWidth(rect.width)}, 1000))
       console.log(`Width: ${rect.width}`)
     }
+
+    return () => {
+      // clear the timeouts on unmount
+      timeouts.forEach(timeout_ => {clearTimeout(timeout_)})
+    }
   }, []);
+
+  useEffect(() => {
+    let actual_min = minVal
+    let actual_max = maxVal
+    if (initialLeft) {
+      setLeftVal( clamp((initialLeft - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
+
+    if (initialRight) {
+      setRightVal( clamp((initialRight - actual_min)/(actual_max - actual_min), 0, 1) )
+    }
+  }, [initialLeft, initialRight])
+
+  useEffect(() => {
+
+  }, [minVal, maxVal])
 
   useEffect(() => {
     setMinVal(min)
@@ -118,6 +146,8 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
       }
       else onSlide (getLeftBound(), getRightBound())
     }
+
+    updateSlider ()
   }, [leftVal, rightVal])
 
   useEffect(() => {
@@ -128,6 +158,18 @@ rangeArray, valueTransform}: RangeSelectorInterface) => {
       else onChange (getLeftBound(), getRightBound())
     }
   }, [valueChange])
+
+  const updateSlider = () => {
+    if (sliderBoundRef.current == null) return 
+    let rect = sliderBoundRef.current.getBoundingClientRect()
+    setSliderWidth(rect.width)
+  }
+
+  const getSliderWidth = (): number => {
+    if (sliderBoundRef.current == null) return 0
+    let rect = sliderBoundRef.current.getBoundingClientRect()
+    return rect.width
+  }
 
   const leftArrayIndex = (): number => {
     if (rangeArray && valueTransform) {
