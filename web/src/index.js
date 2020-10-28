@@ -28,6 +28,8 @@ import AlertContext from './components/context/AlertContext'
 import AlertController from './components/AlertController'
 import PropertyView from './views/Property'
 import StudentLoginView from './views/StudentLoginView'
+import StudentRegisterComplete from './views/StudentRegisterCompleteView'
+
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
 // setup routes
@@ -67,6 +69,7 @@ const Routes = () => {
 
           
           {/* Restricted Paths */}
+          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
           <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
           <Route component={NotFound} />
