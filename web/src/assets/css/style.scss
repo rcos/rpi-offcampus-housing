@@ -688,10 +688,16 @@ body {
 }
 
 .comment-bubble {
-  background-color: #82AEF9;
   padding: 15px 15px;
   border-radius: 5px;
   position: relative;
+
+  &.blue {
+    background-color: #82AEF9;
+  }
+  &.red {
+    background-color: #ff7070;
+  }
 
   .action-button {
     position: absolute;
