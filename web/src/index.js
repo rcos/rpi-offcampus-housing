@@ -65,17 +65,19 @@ const Routes = () => {
         <Switch>
 
           {/* Unrestricted Paths */}
-          <Route exact path="/" component={LandingView} />
-          <Route exact path="/student/auth-cas" component={StudentCASAuth} />
-          <Route exact path="/landlord/login" component={LandlordLoginView} />
-          <Route exact path="/student/login" component={StudentLoginView} />
-          <Route exact path="/landlord/register" component={LandlordRegisterView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/" component={LandingView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/student/auth-cas" component={StudentCASAuth} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/login" component={LandlordLoginView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/student/login" component={StudentLoginView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/register" component={LandlordRegisterView} />
 
           
           {/* Restricted Paths */}
           <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
           <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+          
+          {/* 404 */}
           <Route component={NotFound} />
         </Switch>
     </AlertContext.Provider>
