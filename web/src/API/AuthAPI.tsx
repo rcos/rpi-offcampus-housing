@@ -5,7 +5,7 @@ const AuthAPI = {
   API.get('/auth/status'),
 
   getUser: (): Promise<any> => 
-  new Promise ((resolve, reject) => resolve(false)) 
+  API.get('/auth/user')
   // todo create getUser that returns the current
   // logged in user or null. 
 }
