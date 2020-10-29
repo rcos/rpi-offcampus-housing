@@ -3,7 +3,7 @@ import Centered from '../components/toolbox/layout/Centered'
 import Button from '../components/toolbox/form/Button'
 import Input from '../components/toolbox/form/Input'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
-import {updateUser} from '../redux/actions/user'
+import {fetchUser} from '../redux/actions/user'
 
 import StudentAPI from '../API/StudentAPI'
 
@@ -57,24 +57,22 @@ const StudentRegisterCompleteView = () => {
   }, [user])
 
   const checkEligibility = (): void => {
-    userDataAlreadyComplete()
-    .then((user_complete: boolean) => {
-      console.log(`User complete? ${user_complete}`)
-      if (user_complete) history.push('/search')
-      else setEligibility(true)
-    })
+    if (userDataAlreadyComplete()) {
+      history.push('/search')
+    }
+    else {
+      setEligibility(true)
+    }
   }
 
-  const userDataAlreadyComplete = async (): Promise<boolean> => {
-    return user.then((user_data: any) => {
-      console.log(user_data)
-      console.log(user_data)
-      if (user_data == null) return true;
-      if (!_.has(user_data.user, 'first_name')) return false;
-      if (!_.has(user_data.user, 'last_name')) return false;
-      if (!_.has(user_data.user, 'email')) return false;
-      return true;
-    })
+  const userDataAlreadyComplete = (): boolean => {
+    
+    if (user == null) return true;
+    if (!_.has(user.user, 'first_name')) return false;
+    if (!_.has(user.user, 'last_name')) return false;
+    if (!_.has(user.user, 'email')) return false;
+    return true;
+    
   } 
 
   const formValid = ():boolean => {
@@ -97,36 +95,38 @@ const StudentRegisterCompleteView = () => {
       return;
     }
 
-    user.then((user_data: any) => {
-      
-      console.log(user_data)
-
-      StudentAPI.updateInfo(
-        user_data.user._id,
-        regData.first_name,
-        regData.last_name,
-        regData.email
-      )
-      .then((res: any) => {
-        console.log(`Update Info response:`)
-        console.log(res)
-
-        if (res.data.success) {
-          // successfully updated the user data,
-          // redux user data should be re-fetched
-          dispatch(updateUser())
-
-          // history.push('/search')
-        }
-        else {
-          // error occurred
-          setFormError({
-            hasError: true,
-            message: "Problem occurred on the server. Please try again at a later time."
-          })
-        }
+    if (user == null) {
+      setFormError({
+        hasError: true,
+        message: "Application could not find user's session."
       })
+      return;
+    }
 
+    StudentAPI.updateInfo(
+      user.user._id,
+      regData.first_name,
+      regData.last_name,
+      regData.email
+    )
+    .then((res: any) => {
+      console.log(`Update Info response:`)
+      console.log(res)
+
+      if (res.data.success) {
+        // successfully updated the user data,
+        // redux user data should be re-fetched
+        dispatch(fetchUser(user, { update: true }))
+
+        // history.push('/search')
+      }
+      else {
+        // error occurred
+        setFormError({
+          hasError: true,
+          message: "Problem occurred on the server. Please try again at a later time."
+        })
+      }
     })
   }
 

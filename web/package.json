@@ -38,6 +38,7 @@
     "react-scripts": "3.4.3",
     "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
     "typescript": "^4.0.3"
   },
   "scripts": {
