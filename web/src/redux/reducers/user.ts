@@ -15,6 +15,15 @@ const userReducer = async (
         return user_.data
       }
     break;
+    case 'UPDATE_USER':
+      /* UPDATE_USER: User data should be fetched
+         regardless of the current state of the user.
+         This should be used when modifications to the user
+         have bene made and its state needs to be updated
+      */
+      let user_ = await AuthAPI.getUser()
+      return user_.data
+    break;
   }
 
   return null
