@@ -3,7 +3,7 @@ import queryString from 'query-string'
 import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
-import Navbar from '../components/Navbar'
+import Navbar from '../components/AuthNavbar'
 
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'

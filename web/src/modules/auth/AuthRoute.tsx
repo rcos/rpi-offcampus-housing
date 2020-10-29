@@ -3,36 +3,16 @@ import {Route, Redirect} from 'react-router'
 import AccessLevels from './accessLevels.json'
 import AuthAPI from '../../API/AuthAPI'
 
+import _ from 'lodash'
+
+// redux
+import {getUser, fetchUser} from '../../redux/actions/user'
+import {useDispatch, useSelector} from 'react-redux'
+
 interface IAuthStatus {
   isAuthenticated: boolean
   user: Object | undefined
   loaded?: boolean
-}
-
-
-const Auth = {
-  status: (accessLevel: number): Promise<IAuthStatus> => {
-    return AuthAPI.status()
-    .then(res => {
-
-      console.log("AUTH STATUS")
-      console.log(res)
-      console.log(res.data.authenticated)
-
-      return {
-        user: undefined,
-        isAuthenticated: res.data.authenticated
-      }
-
-    })
-    .catch(() => {
-      console.log(`AUTH ERROR`)
-      return {
-        user: undefined,
-        isAuthenticated: false
-      }
-    })
-  }
 }
 
 const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
@@ -43,22 +23,49 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     loaded: false
   })
 
+  const dispatch = useDispatch()
+  const user = useSelector((state: any) => state.user)
+
   useEffect(() => {
 
-    Auth.status(accessLevel)
-    .then(res => {
-      setAuth({...res, loaded: true})
-    })
-    .catch(err => {
-      setAuth({...err, loaded: false})
-    })
+    // get the user if the user does not exist
+    dispatch(fetchUser(user, {update: false}))
 
   }, [])
 
+  useEffect(() => {
+
+    setAuth({
+      isAuthenticated: 
+        _.has(user, 'authenticated') ? user.authenticated : false,
+      user: 
+        _.has(user, 'user') ? user.user : null,
+      loaded: 
+      user == null ? false : true
+    })
+  }, [user])
+
   return (<Route {...rest} render={(props) => {
-    if (auth.loaded) {
-      if (auth.isAuthenticated) return <Component {...props} />
-      else return <Redirect to="/" />
+
+    // if this route is set for any user level (no restriction)
+    if (accessLevel == AccessLevels.ANY) return <Component {...props} />
+
+    else if (auth.loaded) {
+      // If I am authenticated, I can access components with accessLevel of authenticated user
+      if (auth.isAuthenticated) {
+
+        if (accessLevel == AccessLevels.UNAUTH) return <Redirect to="/home" />
+        else if (accessLevel == AccessLevels.STUDENT
+          || accessLevel == AccessLevels.LANDLORD
+          || accessLevel == AccessLevels.STUDENT_AND_LANDLORD) return <Component {...props} />
+
+      }
+      else {
+
+        if (accessLevel == AccessLevels.UNAUTH) return <Component {...props} />
+        else return <Redirect to="/" />
+
+      }
     }
     else return <div />
     

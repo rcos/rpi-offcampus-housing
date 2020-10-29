@@ -92,7 +92,7 @@ authRouter.get("/cas-auth", (req, res, next) => {
 
 });
 
-authRouter.get("/status", (req, res) => {
+authRouter.get("/user", (req, res) => {
   res.json({
     user: req.user,
     authenticated: req.isAuthenticated()

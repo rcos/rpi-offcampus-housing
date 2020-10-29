@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Centered from './toolbox/layout/Centered'
 
-import Navbar from './Navbar'
+import Navbar from './AuthNavbar'
 import PopupBubble from './toolbox/misc/PopupBubble'
 
 import { BiSearch, BiCollection, BiHomeAlt } from "react-icons/bi";

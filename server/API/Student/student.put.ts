@@ -1,7 +1,7 @@
 import express from 'express'
 import chalk from 'chalk'
 import Student, {IStudentDoc} from '../../schemas/student.schema'
-import _ from 'lodash'
+import _, { update } from 'lodash'
 
 const studentRouter = express.Router();
 
@@ -92,6 +92,49 @@ studentRouter.put('/', (req, res) => {
       })
     }
   })
+
+})
+
+studentRouter.put('/:id/', (req, res) => {
+
+  /*
+  Update the document information for the user with the specified id
+  */
+ let user_id = req.params.id
+ console.log(chalk.bgBlue(`👉 PUT /api/students/:id`))
+
+ let updated_info = req.body
+ Student.findById(user_id, async (err: any, student_doc: IStudentDoc) => {
+   if (err) {
+     console.log(chalk.bgRed(`❌ Error occurred looking for student with id ${user_id}`))
+     res.json({
+       success: false,
+       error: "Internal serfver error"
+     })
+   }
+
+   else if (!student_doc) {
+     console.log(chalk.bgRed(`❌ Error: Attempting to update info for nonexisting user`))
+     res.json({
+       success: false,
+       error: "Invalid user id"
+     })
+   }
+
+   else {
+     // update the fields
+     if (_.has(updated_info, "first_name")) student_doc.first_name = updated_info.first_name
+     if (_.has(updated_info, "last_name")) student_doc.last_name = updated_info.last_name
+     if (_.has(updated_info, "email")) student_doc.email = updated_info.email
+
+     let updated_student_doc = await student_doc.save()
+
+     res.json({
+       success: true,
+       updated_student: updated_student_doc.toObject()
+     })
+   }
+ })
 
 })
 
