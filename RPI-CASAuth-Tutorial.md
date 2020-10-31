@@ -23,8 +23,20 @@ dedicated CASAuth route (E.g. localhost:9010/casauth).  Make sure to URL encode 
 
 ![server-passport-setup](/img/server_passport_setup.png)
 
-5. Create your serialization and deserialization functions.
+5. Configure `express-sessions` as shown below
 
-6. Callback and request handling
+![express-sessions-setup](/img/express_sessions_setup.png)
 
-7. Parsing authenticated user information and session information.
+6. Create your serialization and deserialization functions.  With your serialization function, the data returned from the passport strategy is serialized.
+
+![serialization](/img/serialize.png)
+
+![deserialization](/img/deserialize.png)
+
+7. Callback and request handling
+
+![request](/img/request.png)
+
+![authout](/img/authout.png)
+
+8. Parsing authenticated user information and session information.
