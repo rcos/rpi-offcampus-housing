@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon server.ts",
+    "server": "nodemon --ignore '*.spec.*' server.ts",
     "dev-server": "cross-env NODE_ENV=development npm run server",
     "newman": "node_modules/.bin/newman run",
-    "gen-test-data": "cd test_data && npx tsc seed.ts && node -e \"require('./seed.js').writeData();\""
+    "gen-test-data": "tsc && node -e \"require('./build/test_data/seed.js').writeData({directory:'../../test_data'});\"",
+    "mocha": "cross-env USING_MOCHA=true mocha --file API/mocha_globals.ts -r ts-node/register API/**/*.spec.ts",
+    "test": "cross-env NODE_ENV=test npm run mocha",
+    "tdd-server": "cross-env-shell NODE_ENV=development nodemon -e ts,json --exec \"npm run mocha || true\""
   },
   "keywords": [],
   "author": "",
@@ -31,10 +34,15 @@
     "passport-cas": "^0.1.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
     "@types/faker": "^5.1.2",
+    "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.2",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "cross-env": "^7.0.2",
     "faker": "^5.1.0",
+    "mocha": "^8.2.0",
     "newman": "^5.2.0",
     "nodemon": "^2.0.4",
     "npx": "^10.2.2",

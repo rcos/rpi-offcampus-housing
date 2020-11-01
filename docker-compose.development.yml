@@ -6,7 +6,7 @@ volumes:
 
 services:
   server:
-    command: npx nodemon server.ts
+    command: npm run dev-server
     environment:
       - NODE_ENV=development
     env_file:

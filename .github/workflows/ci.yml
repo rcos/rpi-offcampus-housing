@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  server_ts_build:
+    name: Check server ts build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server
+      - name: Check tsc
+        run: npx tsc
+        working-directory: server
+
+  api_tests:
+    name: API tests
+    needs: server_ts_build
+
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test
+          MONGO_INITDB_ROOT_PASSWORD: test
+          MONGO_INITDB_DATABASE: housing-database
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server
+      - name: Seed housing-database
+        run: bash reload_db.sh mongodb://test:test@localhost:${{ job.services.mongo.ports[27017] }}/housing-database?authSource=admin
+        working-directory: server/test_data
+      - name: Run tests
+        run: npm test
+        env:
+          MONGO_DB_CLUSTER_USERNAME: test
+          MONGO_DB_PASSWORD: test
+          MONGO_DB_HOST: localhost:${{ job.services.mongo.ports[27017] }}
+          MONGO_DB_PREFIX: mongodb
+          SERVER_PORT: 3000
+          SESSION_SECRET: test
+        working-directory: server
