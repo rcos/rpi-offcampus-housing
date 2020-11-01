@@ -1,4 +1,5 @@
 RPI Offcampus Housing
+![CI](https://github.com/rcos/rpi-offcampus-housing/workflows/CI/badge.svg?branch=master)
 
 ### Development Commands for Docker
 
