@@ -31,6 +31,7 @@ const reviews: IReview[] = rawReviews.map((review) => ({
   _id: convertOidToStr(review._id),
   student_id: convertOidToStr(review.student_id),
   property_id: convertOidToStr(review.property_id),
+  landlord_id: convertOidToStr(review.landlord_id),
 }));
 
 const students: IStudent[] = rawStudents.map((student) => ({

@@ -115,6 +115,7 @@ const getRandomStudentId = () =>
 const generateStudent = (values?: Partial<Student>): Student => ({
   _id: getStudentId(),
   ...getRandomProfile(true),
+  auth_info: {},
   ...values,
 });
 const generateStudents = (n: number) => objectFactory(n, generateStudent);
@@ -183,10 +184,14 @@ const generateProperty = (values?: Partial<Property>): Property => {
 const generateProperties = (n: number) => objectFactory(n, generateProperty);
 
 // student reviews
-type StudentReview = Omit<IReview, "_id" | "property_id" | "student_id"> & {
+type StudentReview = Omit<
+  IReview,
+  "_id" | "property_id" | "student_id" | "landlord_id"
+> & {
   _id: MongoObjectID;
   property_id: MongoObjectID;
   student_id: MongoObjectID;
+  landlord_id: MongoObjectID;
 };
 
 const studentReviewIds: MongoObjectID[] = [];
@@ -200,14 +205,20 @@ const getRandomStudentReviewId = () =>
 const generateStudentReview = (
   studentReviewValues?: Partial<StudentReview>
 ): StudentReview => {
-  const { rating: ratingValues, ...values } = studentReviewValues ?? {};
+  const { rating_categories: ratingValues, ...values } =
+    studentReviewValues ?? {};
   const property_id = getRandomPropertyId();
   return {
     _id: generateStudentReviewId(),
     property_id,
     student_id: getRandomStudentId(),
+    landlord_id: getRandomLandlordId(),
     content: faker.lorem.lines(faker.random.number(10)),
-    rating: getRandomRating(),
+    rating_categories: {
+      responsiveness: getRandomRating(),
+      sound_quality: getRandomRating(),
+      ...ratingValues,
+    },
     term: getRandomTerm(),
     ...values,
   };
