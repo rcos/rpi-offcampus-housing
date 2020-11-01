@@ -5,6 +5,7 @@ const Review = require("./review.schema");
 var Schema = mongoose.Schema;
 
 interface IProperty {
+  _id: string;
   landlord: string;
   location: string;
   description: string;
@@ -15,6 +16,7 @@ interface IProperty {
   price: number;
   amenities: string[];
   sq_ft: number;
+  rooms: number;
 }
 
 type IPropertyDoc = IProperty & mongoose.Document;
@@ -40,6 +42,7 @@ var PropertySchema = new Schema({
   price: Number,
   amenities: [String],
   sq_ft: Number,
+  rooms: Number,
 });
 
 const Property = mongoose.model<IPropertyDoc>("Property", PropertySchema);

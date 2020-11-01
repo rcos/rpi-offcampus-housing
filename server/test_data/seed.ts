@@ -178,6 +178,7 @@ const generateProperty = (values?: Partial<Property>): Property => {
     amenities: faker.random.words(faker.random.number(5)).split(" "),
     // utility_included: faker.random.boolean(),
     sq_ft: faker.random.number({ min: 500, max: 2000 }),
+    rooms: faker.random.number({ min: 1, max: 5 }),
     ...values,
   };
 };

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 var Schema = mongoose.Schema;
 
 interface IReview {
+  _id: string;
   property_id: string;
   landlord_id: string;
   student_id: string;
