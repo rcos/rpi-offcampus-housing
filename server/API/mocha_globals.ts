@@ -1,24 +1,44 @@
 import "mocha";
 import mongoose from "mongoose";
 
-import { connectMongo, server } from "../server";
+import chai from "chai";
+import chaiHttp = require("chai-http");
 
-before(async () => {
-  await connectMongo();
-  console.log(`✔ Successfully connect to MongoDB instance.`);
-});
+chai.use(chaiHttp);
 
-after(async () => {
-  await mongoose.disconnect();
-  console.log(`✔ Successfully disconnected from MongoDB instance.`);
-  await new Promise((res, rej) =>
-    server.close((err) => {
-      if (err) {
-        rej(err);
-      } else {
-        res();
-      }
+import { app, connectMongo } from "../server";
+
+let client: ChaiHttp.Agent;
+
+before((done) => {
+  console.log("✔ Starting tests");
+  connectMongo()
+    .then(() => {
+      client = chai.request(app).keepOpen();
+      console.log(`✔ Successfully started server.`);
+      done();
     })
-  );
-  console.log(`✔ Successfully closed server.`);
+    .catch((err) => {
+      throw done(err);
+    });
 });
+
+after((done) => {
+  console.log("✔ All done with tests");
+  mongoose
+    .disconnect()
+    .then(() => {
+      console.log(`✔ Successfully disconnected from MongoDB instance.`);
+      return client.close((err) => {
+        if (!err) {
+          console.log(`✔ Successfully closed server.`);
+        }
+        done(err);
+      });
+    })
+    .catch((err) => {
+      done(err);
+    });
+});
+
+export { client, chai };

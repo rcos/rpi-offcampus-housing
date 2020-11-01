@@ -3,6 +3,7 @@ import chalk from "chalk";
 import Property, { IPropertyDoc } from "../../schemas/property.schema";
 import * as _ from "lodash";
 import { QuerySelector } from "mongodb";
+import { promisify } from "util";
 
 const searchRouter = express.Router();
 
@@ -97,9 +98,9 @@ class PropertiesSearchFiltersObject implements PropertiesSearchFilters {
       filters.price = this.price.toMongoFilters();
     }
 
-    // if (!_.isUndefined(this.rooms)) {
-    //   filters.rooms = this.rooms;
-    // }
+    if (!_.isUndefined(this.rooms)) {
+      filters.rooms = this.rooms;
+    }
 
     // if (!_.isUndefined(this.maxDistanceFromCampus)) {
     //   filters.maxDistanceFromCampus = this.maxDistanceFromCampus;
@@ -113,13 +114,26 @@ class PropertiesSearchFiltersObject implements PropertiesSearchFilters {
   }
 }
 
-searchRouter.get("/properties", (req, res) => {
-  const offset = ifDef(req.query.offset as string, parseInt) ?? 0;
-  const limit = ifDef(req.query.limit as string, parseInt) ?? 10;
+searchRouter.get("/properties", async (req, res) => {
+  let offset: number;
+  let limit: number;
+  let filters: PropertiesSearchFiltersObject;
 
-  const filters = PropertiesSearchFiltersObject.parse(
-    req.query.filters as qs.ParsedQs
-  );
+  try {
+    offset = ifDef(req.query.offset as string, parseInt) ?? 0;
+    limit = ifDef(req.query.limit as string, parseInt) ?? 10;
+
+    filters = PropertiesSearchFiltersObject.parse(
+      req.query.filters as qs.ParsedQs
+    );
+  } catch (err) {
+    console.log(chalk.bgRed(`❌ Bad properties search query.`));
+    res.status(400).json({
+      success: false,
+      error: `Bad query`,
+    });
+    return;
+  }
 
   console.log(chalk.bgBlue(`👉 GET /api/search/properties`));
   console.log(chalk.blue(`\toffset: ${offset}`));
@@ -128,51 +142,39 @@ searchRouter.get("/properties", (req, res) => {
   // TODO get search properties from body
   // (min/max price, available rooms, max distance from campus, lease period)
   console.log(filters.toMongoFilters());
-  Property.find(filters.toMongoFilters())
-    .sort({ _id: "asc" })
-    .skip(offset)
-    .limit(limit)
-    .exec((err, properties_docs) => {
-      if (err) {
-        console.log(chalk.bgRed(`❌ Error searching for properties.`));
-        console.log(err);
+  try {
+    const properties_docs = await Property.find(filters.toMongoFilters())
+      .sort({ _id: "asc" })
+      .skip(offset)
+      .limit(limit)
+      .exec();
 
-        res.json({
-          success: false,
-          error: `Query error`,
-        });
-      } else {
-        // Must run second query to find the count of possible results
-        Property.find(filters.toMongoFilters())
-          .count()
-          .exec((err, doc_count) => {
-            if (err) {
-              console.log(
-                chalk.bgRed(`❌ Error trying to get count of search results.`)
-              );
-              res.json({
-                success: false,
-                error: `Internal server error`,
-              });
-            } else {
-              console.log(
-                chalk.bgGreen(
-                  `✔ Successfully found ${
-                    properties_docs ? properties_docs.length : 0
-                  } property documents!`
-                )
-              );
-              res.json({
-                success: true,
-                count: doc_count,
-                properties: properties_docs
-                  ? properties_docs.map((prop_) => prop_.toObject())
-                  : [],
-              });
-            }
-          });
-      }
+    const doc_count = await Property.find(filters.toMongoFilters())
+      .countDocuments()
+      .exec();
+
+    console.log(
+      chalk.bgGreen(
+        `✔ Successfully found ${
+          properties_docs ? properties_docs.length : 0
+        } property documents!`
+      )
+    );
+    res.json({
+      success: true,
+      count: doc_count,
+      properties: properties_docs
+        ? properties_docs.map((prop_) => prop_.toObject())
+        : [],
     });
+  } catch (err) {
+    console.log(chalk.bgRed(`❌ Error in search.`));
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      error: `Internal server error`,
+    });
+  }
 });
 
 export default searchRouter;

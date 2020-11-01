@@ -87,10 +87,10 @@ const connectMongo = () =>
     )
   );
 
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+if (process.env.USING_MOCHA !== "true") {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 
-  if (process.env.USING_MOCHA !== "true") {
     connectMongo()
       .then(() => {
         console.log(`✔ Successfully connect to MongoDB instance.`);
@@ -100,7 +100,6 @@ const server = app.listen(PORT, () => {
         console.error(err);
         process.exit(1);
       });
-  }
-});
-
-export { app, connectMongo, server, MONGO_URI };
+  });
+}
+export { app, connectMongo, MONGO_URI };
