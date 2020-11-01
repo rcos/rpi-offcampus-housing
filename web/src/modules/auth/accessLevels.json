@@ -1,0 +1,7 @@
+{
+  "UNAUTH": 0,
+  "STUDENT": 1,
+  "LANDLORD": 2,
+  "STUDENT_AND_LANDLORD": 3,
+  "ANY": 4
+}

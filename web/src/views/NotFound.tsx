@@ -1,7 +1,7 @@
 import React from 'react'
 import {useHistory} from 'react-router-dom'
 
-import Navbar from '../components/Navbar'
+import Navbar from '../components/AuthNavbar'
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
 
@@ -14,7 +14,6 @@ const NotFound = () => {
 
   return (<ViewWrapper>
     <div>
-      <Navbar />
       <div
       style={{
         fontWeight: 600,

@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {motion, useSpring, useTransform} from 'framer-motion'
-
+import {useOutsideAlerter} from '../../helpers/OutsideRef'
 /*
 Dropdown
 @desc A selectable dropdown menu form component
@@ -9,11 +9,18 @@ Dropdown
 */
 
 interface DropdownInterface {
-  options: string[]
-  onSelect?: (arg0: string) => void
+  options: any[]
+  onSelect?: (index: number) => void
+  selectedIndex?: number
 }
 
-const Dropdown = ({ options, onSelect }: DropdownInterface) => {
+const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
+
+  const handleOutsideDropdownClick = (e: MouseEvent, showDropdown: boolean) => {
+    console.log(`handle outside click (${showDropdown})`)
+    if (showDropdown) setShowDropdown(false)
+  }
+
 
   const [selectedOption, setSelectedOption] = useState<number>(-1)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
@@ -21,23 +28,37 @@ const Dropdown = ({ options, onSelect }: DropdownInterface) => {
   const dropdownSpring = useSpring(0, {stiffness: 100})
   const scaleTransform = useTransform(dropdownSpring, [0, 1], [0, 1], {clamp: false})
 
+
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  useOutsideAlerter(dropdownRef, handleOutsideDropdownClick, showDropdown)
+
   // on mount
   useEffect(() => {
 
   }, [])
 
   useEffect(() => {
-    if (showDropdown) dropdownSpring.set(1)
+    console.log(`SELECTED INDEX: ${selectedIndex}`)
+    if (selectedIndex != undefined) setSelectedOption(selectedIndex)
+  }, [selectedIndex])
+
+  useEffect(() => {
+    // useOutsideAlerter(dropdownRef, handleOutsideDropdownClick)
+    if (showDropdown) {
+      // update the animation spring
+      dropdownSpring.set(1)
+    }
     else dropdownSpring.set(0)
   }, [showDropdown])
 
   useEffect(() => {
     if (onSelect && selectedOption >= 0 && selectedOption < options.length) {
-      onSelect( options[selectedOption] );
+      onSelect( selectedOption );
     }
   }, [selectedOption])
 
   const selecteOption = (index: number): void => {
+    console.log(`Option Selected: ${index}`)
     setSelectedOption(index)
     setShowDropdown(false)
   }
@@ -48,20 +69,25 @@ const Dropdown = ({ options, onSelect }: DropdownInterface) => {
   }
   
   const toggleDropdown = (): void => {
-    setShowDropdown(!showDropdown)
+    console.log(`toggle triggered`)
+    
+    let v_ = dropdownSpring.get()
+    if (v_ == 0 || v_ == 1) setShowDropdown(!showDropdown)
   }
 
   return (<div className="form dropdown">
     <div className="label" onClick={toggleDropdown}>{getOption()}</div>
-    <motion.div className="dropdown-list" style={{
+    <motion.div 
+      ref={dropdownRef}
+      className="dropdown-list" style={{
       opacity: dropdownSpring,
       scaleY: scaleTransform
     }}>
       {
-        options.map((option_: string, i: number) => (<div 
+        options.map((option_: any, i: number) => (<div 
           key={i} 
           onClick={() => {selecteOption(i)}}
-          className="option">{option_}</div>))
+          className={`option ${i == selectedIndex? 'selected' : ''}`}>{option_}</div>))
       }
     </motion.div>
   </div>)

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -7,7 +7,8 @@ import {
   Switch,
   Route
 } from "react-router-dom"
-import ReactCSSTransitionGroup from 'react-transition-group';
+import AuthRoute from './modules/auth/AuthRoute'
+import AccessLevels from './modules/auth/accessLevels.json'
 
 // stylesheets
 import './assets/css/style.scss'
@@ -15,14 +16,25 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
+import HomeView from './views/HomeView'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
+import CollectionView from './views/Collection'
+import StudentRegisterView from './views/StudentRegister'
 import NotFound from './views/NotFound'
 import LandingView from './views/Landing'
 import AlertContext from './components/context/AlertContext'
 import AlertController from './components/AlertController'
 import PropertyView from './views/Property'
+import StudentLoginView from './views/StudentLoginView'
+import StudentRegisterComplete from './views/StudentRegisterCompleteView'
+
+import StudentCASAuth from './modules/redirects/StudentCASAuth'
+
+// Redux setup
+import store from './redux/store'
+import {Provider} from 'react-redux'
 
 // setup routes
 const Routes = () => {
@@ -51,11 +63,21 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
-          <Route exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
-          <Route exact path="/landlord/login" component={LandlordLoginView} />
-          <Route exact path="/landlord/register" component={LandlordRegisterView} />
-          <Route exact path="/search" component={SearchView} />
-          <Route exact path="/" component={LandingView} />
+
+          {/* Unrestricted Paths */}
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/" component={LandingView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/student/auth-cas" component={StudentCASAuth} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/login" component={LandlordLoginView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/student/login" component={StudentLoginView} />
+          <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/register" component={LandlordRegisterView} />
+
+          
+          {/* Restricted Paths */}
+          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
+          <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
+          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+          
+          {/* 404 */}
           <Route component={NotFound} />
         </Switch>
     </AlertContext.Provider>
@@ -63,9 +85,9 @@ const Routes = () => {
 }
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <Routes />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 

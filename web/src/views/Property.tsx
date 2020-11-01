@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
+import {Line} from 'react-chartjs-2'
+// @ts-ignore
+import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
+import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
+
+import PropertyAPI from '../API/PropertyAPI'
 
 import ViewWrapper from '../components/ViewWrapper'
-import Navbar from '../components/Navbar'
 import Button from '../components/toolbox/form/Button'
 import {BsArrowLeft} from 'react-icons/bs'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -19,12 +24,15 @@ const Property = ({ property_id }: IProperty) => {
   const location = useLocation()
   const history = useHistory()
   const [showBackButton, setShowBackButton] = useState<boolean>(false)
+  const [propertyData, setPropertyData] = useState<{} | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     if (_.has(location.state, 'fromSearchPage')) {
       setShowBackButton(true)
     }
   }, [location])
+
 
   const navigateBack = () => {
     
@@ -35,11 +43,29 @@ const Property = ({ property_id }: IProperty) => {
   }
 
   useEffect(() => {
-    console.log(`Prop ID: ${property_id}`)
+    
+    // get the property data
+    PropertyAPI.property(property_id)
+    .then(res => {
+      if (res.data.success) {
+        setPropertyData(res.data.property_data)
+        setLoading(false)
+      }
+      else {
+        console.error(`Property API returned success = false`)
+        console.error(res.data.error)
+        setLoading(false)
+        history.push('/search')
+      }
+    })
+    .catch(err => {
+      console.error(`Error fetching property data for id ${property_id}`)
+      history.push('/search')
+    })
+
   }, [property_id])
 
   return (<ViewWrapper>
-    <Navbar />
     
     
     <div style={{display: 'flex'}}>
@@ -52,7 +78,10 @@ const Property = ({ property_id }: IProperty) => {
       /></div>
       <div
         style={{flexGrow: 1, marginLeft: '20px'}}
-      ><PropertyPageRightSide /></div>
+      ><PropertyPageRightSide 
+        propertyData={propertyData}
+        loading={loading}
+      /></div>
 
     </div>
 
@@ -154,7 +183,11 @@ const PropertyPageLeftSide = ({
   </div>)
 }
 
-const PropertyPageRightSide = () => {
+interface IPropertyPageRightSide {
+  propertyData: {} | null
+  loading: boolean
+}
+const PropertyPageRightSide = ({propertyData, loading}: IPropertyPageRightSide) => {
 
   const detailsRef = useRef<HTMLDivElement>(null)
   const [detailViewHeight, setDetailViewHeight] = useState<number>(0)
@@ -182,6 +215,12 @@ const PropertyPageRightSide = () => {
     }
   }
 
+  const getAddress = (): string => {
+    if (!propertyData) return "<placeholder>"
+    let location = (propertyData as any).location
+    return location
+  }
+
   return (<div>
     
     {/* Property Address Line */}
@@ -190,7 +229,8 @@ const PropertyPageRightSide = () => {
       fontSize: '1.2rem',
       marginBottom: '30px'
     }}>
-      212 15th St, Troy NY 12180
+      {loading && <div style={{width: `70%`}}><div className="block-loading" /></div>}
+      {!loading && getAddress()}
     </div>
     <div
       ref={detailsRef}
@@ -259,7 +299,91 @@ const PropertyPageRightSide = () => {
             </div>
             <div style={{flexGrow: 1, marginLeft: '20px'}}>
               <div className='graph-holder'>
-                INTERACTABLE GRAPH GOES HERE
+                
+                {/* ChartJS Chart */}
+                <Line 
+                    data={{
+                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                      datasets: [
+                        {
+                        label: 'Property Ratings Over Time',
+                        backgroundColor: 'rgba(224, 119, 125, 0.3)',
+                        borderColor: 'rgba(224, 119, 125,1)',
+                        borderWidth: 1,
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                        }
+                      ]
+                    }}
+                    options={{
+                      maintainAspectRatio: true,
+                      title: {
+                        text: "Property Ratings Over Time",
+                        display: true,
+                        position: 'top'
+                      },
+                      legend: { // ChartJSDraggablePlugin
+                        display: false
+                      },
+                      scales: {
+                        yAxes: [{
+                          ticks: {
+                            suggestedMax: 100,
+                            suggestedMin: 0,
+                            stepSize: 20
+                          }
+                        }],
+                        xAxes: [{
+                          gridLines: {
+                            color: `white`
+                          }
+                        }]
+                      },
+
+                      annotation: {
+                        annotations: [{
+                          type: 'line',
+                          mode: 'horizontal',
+                          scaleID: 'y-axis-0',
+                          value: 25,
+
+                          // @ts-ignore
+                          draggable: true,
+                          // @ts-ignore
+                          onDragStart: (e) => {
+                            console.log(`Drag started`)
+                          },
+                          // @ts-ignore
+                          onDrag: (e) => {
+                            console.log(`Dragged`)
+                          },
+                        }]
+                      },
+
+                      plugins: {
+                        annotation: { // ChartJSAnnotationPlugin
+                          drawTime: 'afterDatasetsDraw',
+                          events: ['click'],
+                          dblClickSpeed: 350,
+                          annotations: [{
+                            drawTime: 'afterDraw',
+                            id: 'a-line-1',
+                            type: 'line',
+                            mode: 'horizontal',
+                            scaleID: 'y-axis-0',
+                            value: '25',
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            onClick: function(e: any) {
+                              console.log(`Annotation Plugin: onClick callback`)
+                            }
+                          }]
+                        }
+                      }
+                    }}
+                  />
+
               </div>
             </div>
           </div>
@@ -288,7 +412,44 @@ const PropertyPageRightSide = () => {
             </div>
             <div style={{flexGrow: 1, marginLeft: '20px'}}>
               <div className='graph-holder'>
-                INTERACTABLE GRAPH GOES HERE
+                
+                {/* ChartJS Line */}
+                <Line 
+                    data={{
+                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                      datasets: [
+                        {
+                        label: 'Landlord Ratings Over Time',
+                        backgroundColor: 'rgba(224, 119, 125, 0.3)',
+                        borderColor: 'rgba(224, 119, 125,1)',
+                        borderWidth: 1,
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                        }
+                      ]
+                    }}
+                    options={{ 
+                      maintainAspectRatio: true,
+                      title: {
+                        text: "Landlord Ratings Over Time",
+                        display: true,
+                        position: 'top'
+                      },
+                      legend: {
+                        display: false
+                      },
+                      scales: {
+                        yAxes: [{
+                          ticks: {
+                            suggestedMax: 100,
+                            suggestedMin: 0
+                          }
+                        }]
+                      }
+                    }}
+                  />
+
               </div>
             </div>
           </div>

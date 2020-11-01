@@ -5,13 +5,20 @@ interface ICommentBubble {
   header: string
   action?: string
   onActionClick?: Function
+  color?: string
 }
 
 const CommentBubble = ({
-  message, header, action, onActionClick
+  message, header, action, onActionClick, color
 }: ICommentBubble) => {
 
-  return (<div className="comment-bubble">
+  const getColor = (): string => {
+    if (color) return color
+    // default
+    return 'blue'
+  }
+
+  return (<div className={`comment-bubble ${getColor()}`}>
     <div
     style={{
       fontWeight: 600,
