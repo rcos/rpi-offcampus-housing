@@ -9,7 +9,10 @@ import Centered from '../components/toolbox/layout/Centered'
 import SuggestionInput from '../components/toolbox/form/SuggestionInput'
 import Input from '../components/toolbox/form/Input'
 
+import {useFormController} from '../components/helpers/useFormController'
+
 const SearchView = () => {
+
 
   return (<div>
     
@@ -21,25 +24,6 @@ const SearchView = () => {
             left={<Logo />}
             right={<LandingAction />}
           />
-
-          <div style={{width: `400px`, marginTop: `30px`}}>
-            <div style={{marginBottom: '20px'}}>
-              <Input label="Sample" />
-            </div>
-
-            <SuggestionInput
-              label="School"
-              onChange={(val: string): string[] => {
-                if (val.length == 0) return []
-                let schools=["Rensselaer Polytechnic Institute", "Rochester Institute of Technology", "Rutgers"]
-
-                return schools.filter(school_ => {
-                  return school_.toLowerCase().includes(val.toLowerCase())
-                })
-
-              }}
-            />
-          </div>
 
       </React.Fragment>
     </Centered>
