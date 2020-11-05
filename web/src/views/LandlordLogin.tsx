@@ -44,10 +44,15 @@ const LandlordLogin = () => {
       })
       LandlordAPI.login(loginFields.email, loginFields.password)
     .then(res => {
-      console.log(res)
+      if (res.data.success) {
+        history.push('/landlord/dashboard')
+      }
     })
     .catch(err => {
-      console.log(err)
+      setFormError({
+        hasError: true,
+        message: "Error logging in."
+      })
     })
     }
 
