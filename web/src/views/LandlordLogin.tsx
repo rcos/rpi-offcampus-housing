@@ -1,6 +1,7 @@
 import React from 'react'
 import {useHistory} from 'react-router'
 
+import LandlordAPI from '../API/LandlordAPI'
 import Centered from '../components/toolbox/layout/Centered'
 import Logo from '../components/Logo'
 import Input from '../components/toolbox/form/Input'
@@ -13,7 +14,15 @@ const LandlordLogin = () => {
   const history = useHistory()
 
   const handleLogin = () => {
-    
+
+    LandlordAPI.login('sample@gmail.com', 'sample')
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
   }
 
   return (<Centered width={400} height={500}>

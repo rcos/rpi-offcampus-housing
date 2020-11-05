@@ -11,6 +11,10 @@ const LandlordAPI = {
     last_name: last_name,
     email: email,
     password: password
+  }),
+
+  login: (email: string, password: string): Promise<any> => API.post('/auth/local-auth', {
+    email: email, password: password
   })
 }
 
