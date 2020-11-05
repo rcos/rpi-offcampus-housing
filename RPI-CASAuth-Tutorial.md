@@ -38,7 +38,7 @@ dedicated CASAuth route (E.g. http://localhost:9010/casauth).  Make sure to URL 
 ![request](/img/request.png)
 
 
-Make sure to remember to export your authRouter out! You need to specify that Express should use the authRouter you created.
+**Note:** Make sure to remember to export your authRouter out! You need to specify that Express should use the authRouter you created.
 ![authout](/img/authout.png)
 
 8. Parsing authenticated user information and session information.  This is the final step, handling the result json recieved after making our request.  There are 2 main parts to the result, the user object and the authenticated object.  The user object specifies user credentials provided the login was successful, and null otherwise.  The authenticated object utilizes the isAuthenticated function on our result, providing just a simple false if the user is not authenticated, and true otherwise.
