@@ -44,9 +44,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       user == null ? false : true
     })
 
-    console.log(`User:`)
-    console.log(user)
-
   }, [user])
 
   return (<Route {...rest} render={(props) => {
@@ -59,9 +56,35 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       if (auth.isAuthenticated) {
 
         if (accessLevel == AccessLevels.UNAUTH) return <Redirect to="/home" />
-        else if (accessLevel == AccessLevels.STUDENT
-          || accessLevel == AccessLevels.LANDLORD
-          || accessLevel == AccessLevels.STUDENT_AND_LANDLORD) return <Component {...props} />
+
+        /*
+        If we try to access a route only allowed to students, as a student, allow it.
+        If we are not a student, redirect us to the landlord route
+        */
+        else if (accessLevel == AccessLevels.STUDENT) {
+          if (auth.user != undefined && _.has(auth.user, 'type') && (auth.user as any).type == "student") {
+            return <Component {...props} />
+          }
+          else return <Redirect to="/" />
+        }
+
+        else if (accessLevel == AccessLevels.LANDLORD) {
+          if (auth.user != undefined && _.has(auth.user, 'type') && (auth.user as any).type == "landlord") {
+            return <Component {...props} />
+          }
+          else return <Redirect to="/" />
+        }
+
+        else if (accessLevel == AccessLevels.STUDENT_AND_LANDLORD) {
+          if (auth.user != undefined && _.has(auth.user, 'type') && 
+          ((auth.user as any).type == "landlord" || (auth.user as any).type == "student")) {
+            return <Component {...props} />
+          }
+          else return <Redirect to="/" />
+        }
+
+        // default case
+        else return <Component {...props} />
 
       }
       else {
