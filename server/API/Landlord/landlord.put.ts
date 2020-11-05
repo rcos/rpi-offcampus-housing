@@ -99,10 +99,12 @@ landlordRouter.put('/', (req, res) => {
               console.log(chalk.bgGreen(`✔ Successfully created new user [first_name: ${new_landlord_doc.first_name}, last_name: ${new_landlord_doc.last_name}]`))
               res.json({
                 success: true,
-                _id: new_landlord_doc._id,
-                first_name: new_landlord_doc.first_name,
-                last_name: new_landlord_doc.last_name,
-                email: new_landlord_doc.email
+                landlord_info: {
+                  _id: new_landlord_doc._id,
+                  first_name: new_landlord_doc.first_name,
+                  last_name: new_landlord_doc.last_name,
+                  email: new_landlord_doc.email
+                }
               })
             }
           })

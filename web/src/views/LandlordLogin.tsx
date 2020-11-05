@@ -12,6 +12,10 @@ const LandlordLogin = () => {
 
   const history = useHistory()
 
+  const handleLogin = () => {
+    
+  }
+
   return (<Centered width={400} height={500}>
     <div>
 
@@ -47,6 +51,7 @@ const LandlordLogin = () => {
           left={<div style={{fontSize: '0.8rem'}}>Forgot password?</div>}
           right={<Button 
             text="Login"
+            onClick={handleLogin}
             textColor="white"
             background="#E0777D"
             icon={<FiLogIn />}

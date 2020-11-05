@@ -1,8 +1,7 @@
 import passport from 'passport'
 import chalk from 'chalk'
 
-import mongoose from 'mongoose'
-import Student, {IStudentDoc} from './schemas/student.schema'
+import Student, {IStudentDoc} from '../schemas/student.schema'
 
 passport.serializeUser(function(user: any, done: Function) {
   done(null, user);
