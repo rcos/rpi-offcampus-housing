@@ -20,7 +20,7 @@ jobs:
           path: ~/.npm
           key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: server
       - name: Check tsc
         run: npx tsc
@@ -52,7 +52,7 @@ jobs:
           path: ~/.npm
           key: ci-server-${{ runner.os }}-${{ hashFiles('server/package-lock.json') }}
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: server
       - name: Seed housing-database
         run: bash reload_db.sh mongodb://test:test@localhost:${{ job.services.mongo.ports[27017] }}/housing-database?authSource=admin

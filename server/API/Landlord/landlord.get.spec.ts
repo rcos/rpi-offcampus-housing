@@ -11,7 +11,8 @@ const { expect } = chai;
 
 describe("Get landlord", () => {
   it("should return landlord", () => {
-    const landlord = TestData.landlords[0];
+    // Ignore password
+    const { password, ...landlord } = TestData.landlords[0];
 
     return chai
       .request(app)

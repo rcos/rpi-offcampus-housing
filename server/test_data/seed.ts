@@ -5,6 +5,7 @@ import { promisify } from "util";
 import faker from "faker";
 
 import { ObjectID } from "mongodb";
+import bcrypt from "bcrypt";
 
 import { ILandlord } from "../schemas/landlord.schema";
 import { IProperty } from "../schemas/property.schema";
@@ -81,6 +82,9 @@ const getRandomProfile = (isStudent?: boolean): Profile => {
   };
 };
 
+const getRandomHashedPassword = () =>
+  bcrypt.hashSync(faker.internet.password(), 1);
+
 const rcsIdCounter: { [rcsIdName: string]: number } = {};
 const getRcsIdName = (first_name: string, last_name: string) =>
   `${last_name.toLowerCase().slice(0, 5)}${first_name[0].toLowerCase()}`;
@@ -134,6 +138,7 @@ const getRandomLandlordId = () =>
 const generateLandlord = (values?: Partial<Landlord>): Landlord => ({
   _id: getLandlordId(),
   rating: getRandomRating(),
+  password: getRandomHashedPassword(),
   ...getRandomProfile(),
   ...values,
 });
