@@ -29,6 +29,7 @@ import AlertController from './components/AlertController'
 import PropertyView from './views/Property'
 import StudentLoginView from './views/StudentLoginView'
 import StudentRegisterComplete from './views/StudentRegisterCompleteView'
+import LandlordDashboard from './views/LandlordDashboard'
 
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
@@ -70,12 +71,17 @@ const Routes = () => {
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/login" component={LandlordLoginView} />
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/student/login" component={StudentLoginView} />
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/landlord/register" component={LandlordRegisterView} />
-
           
           {/* Restricted Paths */}
-          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
-          <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
-          <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+            {/* Student Only  */}
+            <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
+            <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+
+            {/* Landlord Only */}
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
+
+            {/* Landlord and Student */}
+            <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
           
           {/* 404 */}
           <Route component={NotFound} />

@@ -1,8 +1,8 @@
 import passport from 'passport'
 import chalk from 'chalk'
 
-import mongoose from 'mongoose'
-import Student, {IStudentDoc} from './schemas/student.schema'
+import Student, {IStudentDoc} from '../schemas/student.schema'
+import Landlord from '../schemas/landlord.schema'
 
 passport.serializeUser(function(user: any, done: Function) {
   done(null, user);
@@ -13,11 +13,17 @@ passport.deserializeUser(function(user: any, done: Function) {
   console.log(user)
   // try to find the user in student
   Student.findById(user._id, (err: any, student_doc: IStudentDoc) => {
-    if (!err && student_doc) done(null, student_doc)
+    if (!err && student_doc) done(null, {...student_doc.toObject(), type: 'student'})
     else if (err) done(err, null)
     
     // student doesnt exsit
-    // else
+    else {
+      Landlord.findById(user._id, (err: any, landlord_doc) => {
+        if (!err && landlord_doc) done (null, {...landlord_doc.toObject(), type: 'landlord'})
+        else if (err) done(err, null)
+        else done(null, false)
+      })
+    }
   })
 
   // TODO try to find the user in landlord

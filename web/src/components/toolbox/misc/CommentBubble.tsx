@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useEffect, useRef} from 'react'
+import {motion, useSpring, useTransform} from 'framer-motion'
 
 interface ICommentBubble {
   message: string
@@ -6,11 +7,49 @@ interface ICommentBubble {
   action?: string
   onActionClick?: Function
   color?: string
+  show?: boolean
 }
 
 const CommentBubble = ({
-  message, header, action, onActionClick, color
+  message, header, action, onActionClick, color, show
 }: ICommentBubble) => {
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  const appearSpring = useSpring(0, {stiffness: 90})
+  const heightTransform = useTransform(appearSpring, x => {
+    if (containerRef.current == null) return 0;
+
+    let height_: number = (containerRef.current! as any).offsetHeight
+    return -1  * (1 - x) * height_
+  })
+
+  useEffect(() => {
+    // updateShow()
+    let height_: number = (containerRef.current! as any).offsetHeight
+    updateShow()
+  }, [containerRef])
+
+  useEffect(() => {
+    appearSpring.set(1)
+  }, [])
+
+  useEffect(() => {
+    if (show != null) {
+      if (show) appearSpring.set(1)
+      else appearSpring.set(0)
+    }
+  }, [show])
+
+  const updateShow = () => {
+    if (show == null) {
+      appearSpring.set(1)
+    }
+    else {
+      if (show) appearSpring.set(1)
+      else appearSpring.set(0)
+    }
+  }
 
   const getColor = (): string => {
     if (color) return color
@@ -18,13 +57,19 @@ const CommentBubble = ({
     return 'blue'
   }
 
-  return (<div className={`comment-bubble ${getColor()}`}>
+  return (<div ref={containerRef}>
+    <motion.div 
+    style={{
+      opacity: appearSpring,
+      marginTop: heightTransform
+    }}
+    className={`comment-bubble ${getColor()}`}>
     <div
     style={{
       fontWeight: 600,
       textTransform: 'uppercase',
-      fontSize: '0.7rem',
-      marginBottom: '10px'
+      fontSize: '0.65rem',
+      marginBottom: '5px'
     }}
     >{header}</div>
 
@@ -32,7 +77,8 @@ const CommentBubble = ({
     style={{
       display: 'flex',
       justifyContent: 'space-between',
-      flexDirection: 'row'
+      flexDirection: 'row',
+      fontSize: '0.9rem'
     }}>
       <div>{message}</div>
       {
@@ -44,6 +90,7 @@ const CommentBubble = ({
         }}>{action}</div>
       }
     </div>
+  </motion.div>
   </div>)
 }
 

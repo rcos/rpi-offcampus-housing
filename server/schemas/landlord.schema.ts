@@ -9,6 +9,7 @@ interface ILandlord {
   email: string;
   phone_number: string;
   rating: number;
+  password: string;
 }
 
 type ILandlordDoc = ILandlord & mongoose.Document;
@@ -17,6 +18,7 @@ var LandlordSchema = new Schema({
   first_name: String,
   last_name: String,
   email: String,
+  password: String,
   phone_number: String,
   rating: Number, //included to be able to access landlord rating quickly
 });

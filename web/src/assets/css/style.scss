@@ -688,7 +688,7 @@ body {
 }
 
 .comment-bubble {
-  padding: 15px 15px;
+  padding: 10px 15px;
   border-radius: 5px;
   position: relative;
 
@@ -710,8 +710,8 @@ body {
     cursor: pointer;
     transform: scale(1);
     transition: transform 0.25s;
-    right: 15px;
-    bottom: 15px;
+    right: 10px;
+    bottom: 10px;
 
     &:active {
       transform: scale(0.9);
