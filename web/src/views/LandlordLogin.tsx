@@ -10,6 +10,9 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 
+import {useDispatch, useSelector} from 'react-redux'
+import {fetchUser} from '../redux/actions/user'
+
 interface ILoginFields {
   email: string
   password: string
@@ -23,6 +26,8 @@ interface IFormError {
 const LandlordLogin = () => {
 
   const history = useHistory()
+  const dispatch = useDispatch()
+  const user = useSelector((state: any) => state.user)
   const [formError, setFormError] = useState<IFormError>({
     hasError: false, message: ""
   })
@@ -45,7 +50,8 @@ const LandlordLogin = () => {
       LandlordAPI.login(loginFields.email, loginFields.password)
     .then(res => {
       if (res.data.success) {
-        history.push('/landlord/dashboard')
+
+        dispatch(fetchUser(user, {update: true}))
       }
     })
     .catch(err => {
