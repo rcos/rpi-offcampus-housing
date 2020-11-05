@@ -1,6 +1,7 @@
 import passport from 'passport'
 import chalk from 'chalk'
 
+import mongoose from 'mongoose'
 import Student, {IStudentDoc} from './schemas/student.schema'
 
 passport.serializeUser(function(user: any, done: Function) {
@@ -67,8 +68,6 @@ function(profile: any, done: Function) {
   })
 }));
 
-
-
 //need to create api route for CAS login
 import express from 'express'
 const authRouter = express.Router()
@@ -98,5 +97,7 @@ authRouter.get("/user", (req, res) => {
     authenticated: req.isAuthenticated()
   })
 })
+
+
 
 export default authRouter
