@@ -40,3 +40,5 @@ dedicated CASAuth route (E.g. localhost:9010/casauth).  Make sure to URL encode 
 ![authout](/img/authout.png)
 
 8. Parsing authenticated user information and session information.
+
+![authparse](/img/authparse.png)
