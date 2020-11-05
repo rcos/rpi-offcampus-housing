@@ -20,7 +20,11 @@ const Navbar = () => {
     }
   }, [user])
 
-  const getName = (): string => `${user.user.first_name} ${user.user.last_name}`
+  const getName = (): string => {
+
+    if (!_.has(user, 'user')) return `undefined`
+    return `${user.user.first_name} ${user.user.last_name}`
+  }
 
   return (<React.Fragment>
     <div style={{marginTop: '20px'}}></div>
