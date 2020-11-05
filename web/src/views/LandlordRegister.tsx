@@ -8,6 +8,7 @@ import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
+import LandlordAPI from '../API/LandlordAPI'
 
 interface IFormError {
   message: string
@@ -60,6 +61,34 @@ const LandlordRegister = () => {
     }
     else {
 
+      if (registerFields.confirm_email != registerFields.email) {
+        setFormError({
+          hasError: true,
+          message: "Emails must match"
+        })
+      }
+      else if (registerFields.confirm_password != registerFields.password) {
+        setFormError({
+          hasError: true,
+          message: "Passwords must match"
+        })
+      }
+
+      else {
+        // submit the form!
+        setFormError({
+          hasError: false,
+          message: ''
+        })
+        
+        LandlordAPI.createLandlord(
+          registerFields.first_name,
+          registerFields.last_name,
+          registerFields.email,
+          registerFields.password
+        )
+      }
+
     }
   }
 
@@ -69,7 +98,7 @@ const LandlordRegister = () => {
       {/* Error area */}
       <CommentBubble 
         header="Error"
-        message="Error occurred while registering landlord."
+        message={formError.message}
         action="dismiss"
         show={formError.hasError}
         onActionClick={clearError}
