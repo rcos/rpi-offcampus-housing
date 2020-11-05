@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {useHistory} from 'react-router'
 
+import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import LandlordAPI from '../API/LandlordAPI'
 import Centered from '../components/toolbox/layout/Centered'
 import Logo from '../components/Logo'
@@ -9,27 +10,79 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 
+interface ILoginFields {
+  email: string
+  password: string
+}
+
+interface IFormError {
+  hasError: boolean
+  message: string
+}
+
 const LandlordLogin = () => {
 
   const history = useHistory()
+  const [formError, setFormError] = useState<IFormError>({
+    hasError: false, message: ""
+  })
+  const [loginFields, setLoginFields] = useState<ILoginFields>({
+    email: "", password: ""
+  })
 
   const handleLogin = () => {
 
-    LandlordAPI.login('sample@gmail.com', 'sample')
+    if (loginFields.email.length == 0 || loginFields.password.length == 0) {
+      setFormError({
+        hasError: true,
+        message: "Fields must not be left empty"
+      })
+    }
+    else {
+      setFormError({
+        hasError: false, message: ""
+      })
+      LandlordAPI.login(loginFields.email, loginFields.password)
     .then(res => {
       console.log(res)
     })
     .catch(err => {
       console.log(err)
     })
+    }
 
+  }
+
+  const fieldCallback = (field_name: 'email' | 'password') => {
+    return (new_value: string) => {
+      let currentFields: any = loginFields
+      currentFields[field_name] = new_value
+      setLoginFields(currentFields)
+    }
+  }
+
+  const clearError = () => {
+    setFormError({
+      hasError: false,
+      message: ''
+    })
   }
 
   return (<Centered width={400} height={500}>
     <div>
 
+      {/* Error Area */}
+      <CommentBubble 
+        header="Error"
+        message={formError.message}
+        show={formError.hasError}
+        color="red"
+        action="dismiss"
+        onActionClick={clearError}
+      />
+
       {/* Header */}
-      <div style={{display: 'flex'}}>
+      <div className="padded upper" style={{display: 'flex'}}>
         <div style={{width: '40px', height: '40px'}}>
           <Logo />
         </div>
@@ -46,12 +99,14 @@ const LandlordLogin = () => {
       <div className="padded upper">
         <Input 
           label="email"
+          onChange={fieldCallback('email')}
         />
       </div>
       <div className="padded upper">
         <Input 
           label="password"
           type="password"
+          onChange={fieldCallback('password')}
         />
       </div>
 

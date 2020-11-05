@@ -43,6 +43,10 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       loaded: 
       user == null ? false : true
     })
+
+    console.log(`User:`)
+    console.log(user)
+
   }, [user])
 
   return (<Route {...rest} render={(props) => {

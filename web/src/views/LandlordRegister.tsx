@@ -122,6 +122,7 @@ const LandlordRegister = () => {
         header="Error"
         message={formError.message}
         action="dismiss"
+        color="red"
         show={formError.hasError}
         onActionClick={clearError}
       />
