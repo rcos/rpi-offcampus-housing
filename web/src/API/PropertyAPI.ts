@@ -1,4 +1,3 @@
-import Property from '../views/Property'
 import API from './API'
 
 const PropertyAPI = {
