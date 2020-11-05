@@ -87,6 +87,28 @@ const LandlordRegister = () => {
           registerFields.email,
           registerFields.password
         )
+        .then(res => {
+
+          if (res.data.success) {
+
+            // the user should be logged in now
+            history.push('/')
+
+          }
+          else {
+            setFormError({
+              hasError: true,
+              message: res.data.error
+            })
+          }
+
+        })
+        .catch(err => {
+          setFormError({
+            hasError: true,
+            message: "Error processing registration"
+          })
+        })
       }
 
     }
