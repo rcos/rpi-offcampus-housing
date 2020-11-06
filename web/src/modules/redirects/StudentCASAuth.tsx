@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import useRedirect from './Redirect'
 
 const handleLogin = (): boolean => {
   

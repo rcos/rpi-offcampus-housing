@@ -25,31 +25,31 @@ const CommentBubble = ({
   })
 
   useEffect(() => {
-    // updateShow()
-    let height_: number = (containerRef.current! as any).offsetHeight
+    // let height_: number = (containerRef.current! as any).offsetHeight
+
+    const updateShow = () => {
+      if (show == null) {
+        appearSpring.set(1)
+      }
+      else {
+        if (show) appearSpring.set(1)
+        else appearSpring.set(0)
+      }
+    }
+
     updateShow()
-  }, [containerRef])
+  }, [containerRef, appearSpring, show])
 
   useEffect(() => {
     appearSpring.set(1)
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (show != null) {
       if (show) appearSpring.set(1)
       else appearSpring.set(0)
     }
-  }, [show])
-
-  const updateShow = () => {
-    if (show == null) {
-      appearSpring.set(1)
-    }
-    else {
-      if (show) appearSpring.set(1)
-      else appearSpring.set(0)
-    }
-  }
+  }, [show, appearSpring])
 
   const getColor = (): string => {
     if (color) return color
