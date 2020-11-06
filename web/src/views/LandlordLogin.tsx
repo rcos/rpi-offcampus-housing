@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -34,6 +34,19 @@ const LandlordLogin = () => {
   const [loginFields, setLoginFields] = useState<ILoginFields>({
     email: "", password: ""
   })
+
+  useEffect (() => {
+
+    const submitOnEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") handleLogin()
+    }
+
+    window.addEventListener('keypress', submitOnEnter)
+    
+    return () => {
+      window.removeEventListener('keypress', submitOnEnter)
+    }
+  }, [])
 
   const handleLogin = () => {
 
