@@ -1,6 +1,6 @@
 ![CI](https://github.com/rcos/rpi-offcampus-housing/workflows/CI/badge.svg?branch=master)
 
-![Unnamed Project #1001](https://i.imgur.com/UMrydJc.png)
+![Unnamed Project #1001](https://i.imgur.com/n0Hut25.png)
 ---
 
 ### Development Stack
