@@ -7,7 +7,7 @@ import {fetchUser} from '../redux/actions/user'
 
 import StudentAPI from '../API/StudentAPI'
 
-import _, { update } from 'lodash'
+import _ from 'lodash'
 import {useSelector, useDispatch} from 'react-redux'
 import {useHistory} from 'react-router'
 
@@ -37,10 +37,6 @@ const StudentRegisterCompleteView = () => {
     confirm_email: ""
   })
 
-  // stores whether or not the user is eligible to submit this function
-  // (needed in case the redirect on load is slower than the user submitting the application)
-  const [eligeble, setEligibility] = useState<boolean>(false)
-
   // 
   const [formError, setFormError] = useState<IFormError>({
     hasError: false
@@ -60,9 +56,6 @@ const StudentRegisterCompleteView = () => {
     if (userDataAlreadyComplete()) {
       history.push('/search')
     }
-    else {
-      setEligibility(true)
-    }
   }
 
   const userDataAlreadyComplete = (): boolean => {
@@ -76,11 +69,11 @@ const StudentRegisterCompleteView = () => {
   } 
 
   const formValid = ():boolean => {
-    if (regData.first_name.length == 0) return false;
-    if (regData.last_name.length == 0) return false;
-    if (regData.email.length == 0) return false;
-    if (regData.confirm_email.length == 0) return false;
-    if (regData.confirm_email != regData.email) return false
+    if (regData.first_name.length === 0) return false;
+    if (regData.last_name.length === 0) return false;
+    if (regData.email.length === 0) return false;
+    if (regData.confirm_email.length === 0) return false;
+    if (regData.confirm_email !== regData.email) return false
     return true;
   }
 

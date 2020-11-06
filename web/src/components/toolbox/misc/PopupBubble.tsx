@@ -14,8 +14,8 @@ const PopupBubble = ({children, width, message, direction}: IPopupBubble) => {
     <div className={`message-area ${direction}`}
       style={{
         width: `${width}px`,
-        left: direction == "right" ? `calc(100% + 20px)` : 'none',
-        right: direction == "left" ? `calc(100% + 20px)` : 'none'
+        left: direction === "right" ? `calc(100% + 20px)` : 'none',
+        right: direction === "left" ? `calc(100% + 20px)` : 'none'
       }}
     >{message}
     </div>

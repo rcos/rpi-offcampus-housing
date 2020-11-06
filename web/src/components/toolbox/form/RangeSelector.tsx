@@ -1,5 +1,3 @@
-import { PRIORITY_NORMAL } from 'constants';
-import { range } from 'lodash';
 import React, {useState, useEffect, useRef} from 'react'
 
 interface RangeSelectorInterface {
@@ -116,7 +114,7 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
       // clear the timeouts on unmount
       timeouts.forEach(timeout_ => {clearTimeout(timeout_)})
     }
-  }, []);
+  }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     let actual_min = minVal
@@ -128,7 +126,7 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
     if (initialRight) {
       setRightVal( clamp((initialRight - actual_min)/(actual_max - actual_min), 0, 1) )
     }
-  }, [initialLeft, initialRight])
+  }, [initialLeft, initialRight, minVal, maxVal])
 
   useEffect(() => {
 
@@ -191,11 +189,11 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
     e.preventDefault();
     
     // bind the deinitializer on mouse up
-    if (pin_id == "left") {
+    if (pin_id === "left") {
       window.addEventListener("mouseup", deinitDragPin_Left)
       window.addEventListener("mousemove", moveDragPin_Left)
     }
-    else if (pin_id == "right") {
+    else if (pin_id === "right") {
       window.addEventListener("mouseup", deinitDragPin_Right)
       window.addEventListener("mousemove", moveDragPin_Right)
     }
@@ -205,8 +203,8 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
     setSliderWidth(sliderBoundRef.current!.getBoundingClientRect().width)
     // console.log(e.clientX)
     let rect = null;
-    if (pin_id == "left") rect = leftPinRef.current?.getBoundingClientRect()
-    if (pin_id == "right") rect = rightPinRef.current?.getBoundingClientRect()
+    if (pin_id === "left") rect = leftPinRef.current?.getBoundingClientRect()
+    if (pin_id === "right") rect = rightPinRef.current?.getBoundingClientRect()
     if (rect == null || sliderBoundRef.current == null) return;
 
     let sliderRect = sliderBoundRef.current?.getBoundingClientRect()
@@ -214,19 +212,19 @@ initialLeft, initialRight}: RangeSelectorInterface) => {
     // console.log(`${e.clientX} - ${sliderRect.left} / ${sliderWidth} = ${pos_ratio}`)
 
     // console.log(`Pos value: ${pos_ratio}`)
-    if (pin_id == "left") setLeftVal( clamp(pos_ratio, 0, rightVal - 0.05) )
-    if (pin_id == "right") setRightVal( clamp(pos_ratio, leftVal + 0.05, 1) )
+    if (pin_id === "left") setLeftVal( clamp(pos_ratio, 0, rightVal - 0.05) )
+    if (pin_id === "right") setRightVal( clamp(pos_ratio, leftVal + 0.05, 1) )
   }
 
   const deinitDragPin = (pin_id: string, e: MouseEvent): void => {
 
-    setValueChange(valueChange == 0 ? 1 : 0)
+    setValueChange(valueChange === 0 ? 1 : 0)
 
-    if (pin_id == "left") {
+    if (pin_id === "left") {
       window.removeEventListener("mouseup", deinitDragPin_Left)
       window.removeEventListener("mousemove", moveDragPin_Left)
     }
-    if (pin_id == "right") {
+    if (pin_id === "right") {
       window.removeEventListener("mouseup", deinitDragPin_Right)
       window.removeEventListener("mousemove", moveDragPin_Right)
     }

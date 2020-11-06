@@ -1,5 +1,3 @@
-import AuthAPI from '../../API/AuthAPI'
-
 const userReducer = ( state: null, action: any) => {
 
   switch(action.type) {

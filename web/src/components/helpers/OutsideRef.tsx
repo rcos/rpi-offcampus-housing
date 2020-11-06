@@ -17,7 +17,7 @@ const useOutsideAlerter = (ref: React.RefObject<any>, onClick: (e: MouseEvent, d
           // Unbind the event listener on clean up
           document.removeEventListener("mousedown", handleOutsideClcik);
       };
-  }, [ref, dependency]);
+  }, [ref, dependency, onClick]);
 }
 
 export {useOutsideAlerter}

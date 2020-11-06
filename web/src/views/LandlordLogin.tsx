@@ -37,7 +37,7 @@ const LandlordLogin = () => {
 
   const handleLogin = () => {
 
-    if (loginFields.email.length == 0 || loginFields.password.length == 0) {
+    if (loginFields.email.length === 0 || loginFields.password.length === 0) {
       setFormError({
         hasError: true,
         message: "Fields must not be left empty"

@@ -39,7 +39,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
 
   useEffect(() => {
     console.log(`SELECTED INDEX: ${selectedIndex}`)
-    if (selectedIndex != undefined) setSelectedOption(selectedIndex)
+    if (selectedIndex !== undefined) setSelectedOption(selectedIndex)
   }, [selectedIndex])
 
   useEffect(() => {
@@ -49,13 +49,13 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
       dropdownSpring.set(1)
     }
     else dropdownSpring.set(0)
-  }, [showDropdown])
+  }, [showDropdown, dropdownSpring])
 
   useEffect(() => {
     if (onSelect && selectedOption >= 0 && selectedOption < options.length) {
       onSelect( selectedOption );
     }
-  }, [selectedOption])
+  }, [selectedOption, onSelect, options])
 
   const selecteOption = (index: number): void => {
     console.log(`Option Selected: ${index}`)
@@ -64,7 +64,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
   }
 
   const getOption = (): string => {
-    if (selectedOption == -1) return 'select option'
+    if (selectedOption === -1) return 'select option'
     return options[selectedOption]
   }
   
@@ -72,7 +72,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
     console.log(`toggle triggered`)
     
     let v_ = dropdownSpring.get()
-    if (v_ == 0 || v_ == 1) setShowDropdown(!showDropdown)
+    if (v_ === 0 || v_ === 1) setShowDropdown(!showDropdown)
   }
 
   return (<div className="form dropdown">
@@ -87,7 +87,7 @@ const Dropdown = ({ options, onSelect, selectedIndex }: DropdownInterface) => {
         options.map((option_: any, i: number) => (<div 
           key={i} 
           onClick={() => {selecteOption(i)}}
-          className={`option ${i == selectedIndex? 'selected' : ''}`}>{option_}</div>))
+          className={`option ${i === selectedIndex? 'selected' : ''}`}>{option_}</div>))
       }
     </motion.div>
   </div>)

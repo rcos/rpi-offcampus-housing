@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
 import {Line} from 'react-chartjs-2'
 // @ts-ignore
-import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
-import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
+// import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
+// import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 
 import PropertyAPI from '../API/PropertyAPI'
 
@@ -63,7 +63,7 @@ const Property = ({ property_id }: IProperty) => {
       history.push('/search')
     })
 
-  }, [property_id])
+  }, [property_id, history])
 
   return (<ViewWrapper>
     
@@ -166,7 +166,7 @@ const PropertyPageLeftSide = ({
             backgroundSize: '100% 100%'
           }}
           onClick={() => changePreviewImage(index)}
-          className={`image-preview-thumbnail ${index == propertyImageIndex ? 'active' : ''}`} />)
+          className={`image-preview-thumbnail ${index === propertyImageIndex ? 'active' : ''}`} />)
       })}
     </div>
 
@@ -200,7 +200,7 @@ const PropertyPageRightSide = ({propertyData, loading}: IPropertyPageRightSide) 
     setTimeout(() => {calculateDetailViewHeight ()}, 1000)
 
     window.addEventListener('resize', onResizeFunction)
-  }, [])
+  })
 
   const onResizeFunction = () => {
     calculateDetailViewHeight() 

@@ -16,14 +16,14 @@ const Minimizable = ({
   const minimizeSpring = useSpring(0)
   const minimizeTransform = useTransform(minimizeSpring, [0, 1], [0, 1])
   const displayTransform = useTransform(minimizeSpring, (x) => {
-    if (x == 0) return 'none'
+    if (x === 0) return 'none'
     else return 'block'
   })
 
   useEffect(() => {
     if (minimized) minimizeSpring.set(0)
     else minimizeSpring.set(1)
-  }, [minimized])
+  }, [minimized, minimizeSpring])
 
   return (<div className="minimizable">
 

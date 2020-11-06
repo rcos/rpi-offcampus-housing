@@ -18,7 +18,7 @@ const Navbar = () => {
       if (!_.has(user.user, 'last_name')) history.push('/student/register/complete')
       if (!_.has(user.user, 'email')) history.push('/student/register/complete')
     }
-  }, [user])
+  }, [user, history])
 
   const getName = (): string => {
 
