@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -34,6 +34,20 @@ const LandlordRegister = () => {
     first_name: '', last_name: '', email: '', confirm_email: '',
     password: '', confirm_password: ''
   })
+
+  useEffect(() => {
+
+    // handleRegistrationCompletion
+    const submitOnEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") handleRegistrationCompletion()
+    }
+
+    window.addEventListener('keypress', submitOnEnter)
+    
+    return () => {
+      window.removeEventListener('keypress', submitOnEnter)
+    }
+  }, [])
 
   const clearError = () => { setFormError({hasError: false, message: ''}) }
 
