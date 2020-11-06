@@ -38,7 +38,7 @@ const SearchView = () => {
   const [searchResults, setSearchResults] = useState<Object []>()
   const [roomCountIndex, setRoomCountIndex] = useState<number>(-1)
 
-  const [__, setInitialPriceBoundSet] = useState<boolean>(false)
+  // const [__, setInitialPriceBoundSet] = useState<boolean>(false)
   const [priceBound, setPriceBound] = useState<number[]>([400, 600])
 
   useEffect(() => {
@@ -54,9 +54,38 @@ const SearchView = () => {
     if (_.has(searchParams, 'min_price')) bounds[0] = parseInt( searchParams["min_price"] as string )
     if (_.has(searchParams, 'max_price')) bounds[1] = parseInt( searchParams["max_price"] as string )
     setPriceBound(bounds)
-    setInitialPriceBoundSet(true)
+    // setInitialPriceBoundSet(true)
 
     // set the room count index from url params
+    const setInitialRoomCount = () => {
+      const searchParams = queryString.parse(window.location.search)
+      if (_.has(searchParams, 'nroom')) {
+        let nrooms: number = parseInt( searchParams["nroom"] as string )
+        // try to find the index that is closest to nrooms
+        let diff = Number.MAX_VALUE
+        let best_index = -1
+        for (let i = 0; i < roomCounts.length; ++i) {
+          let curr_diff = Math.abs(roomCounts[i] - nrooms)
+          // if there is an option that has the exact number of rooms, then it is the best choice
+          if (curr_diff === 0) {
+            best_index = i;
+            break;
+          }
+          if (curr_diff < diff) {
+            diff = curr_diff
+            best_index = i
+          }
+        }
+  
+        if (best_index >= 0 && best_index < roomCounts.length) {
+          console.log(`Best Room Count Index: ${best_index}`)
+          setRoomCountIndex(best_index)
+        }
+        else {
+          setRoomCountIndex(0)
+        }
+      }
+    }
     setInitialRoomCount ()
 
   }, [])
@@ -89,51 +118,23 @@ const SearchView = () => {
 
   }, [searchPage])
 
+
   useEffect(() => {
-    updatePageUrl()
-  }, [searchPage, priceBound, roomCountIndex])
 
-  const setInitialRoomCount = () => {
-    const searchParams = queryString.parse(window.location.search)
-    if (_.has(searchParams, 'nroom')) {
-      let nrooms: number = parseInt( searchParams["nroom"] as string )
-      // try to find the index that is closest to nrooms
-      let diff = Number.MAX_VALUE
-      let best_index = -1
-      for (let i = 0; i < roomCounts.length; ++i) {
-        let curr_diff = Math.abs(roomCounts[i] - nrooms)
-        // if there is an option that has the exact number of rooms, then it is the best choice
-        if (curr_diff == 0) {
-          best_index = i;
-          break;
-        }
-        if (curr_diff < diff) {
-          diff = curr_diff
-          best_index = i
-        }
-      }
-
-      if (best_index >= 0 && best_index < roomCounts.length) {
-        console.log(`Best Room Count Index: ${best_index}`)
-        setRoomCountIndex(best_index)
-      }
-      else {
-        setRoomCountIndex(0)
-      }
+    const updatePageUrl = () => {
+      let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts[roomCounts.length - 1] : roomCounts[roomCountIndex]
+      let destination = `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}&nroom=${nrooms}`
+      window.history.replaceState(null, document.title, destination)
     }
-  }
 
-  const updatePageUrl = () => {
-    let nrooms = roomCountIndex >= roomCounts.length || roomCountIndex < 0 ? roomCounts[roomCounts.length - 1] : roomCounts[roomCountIndex]
-    let destination = `/search?p=${searchPage}&min_price=${priceBound[0]}&max_price=${priceBound[1]}&nroom=${nrooms}`
-    window.history.replaceState(null, document.title, destination)
-  }
+    updatePageUrl()
+  }, [searchPage, roomCounts, priceBound, roomCountIndex])
 
   const handlePageChange = (page_direction: number): void => {
     // load the next/previous page based on what page_direction is set to
     let next_page = searchPage
-    if (page_direction == 0) next_page = Math.max(0, next_page - 1)
-    if (page_direction == 1) next_page += 1 // todo clamp to max
+    if (page_direction === 0) next_page = Math.max(0, next_page - 1)
+    if (page_direction === 1) next_page += 1 // todo clamp to max
     setSearchPage(next_page)
   }
 
@@ -223,6 +224,10 @@ const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roo
   }
 
   useEffect(() => {
+    const recalculateMapHeight = () => {
+      setMapHeight(calculateMapHeight())
+    }
+
     setMapHeight(calculateMapHeight())
     window.addEventListener('resize', recalculateMapHeight)
 
@@ -242,12 +247,9 @@ const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roo
       clearTimeout(t_2);
       clearTimeout(t_3);
       clearTimeout(t_4);
+      window.removeEventListener('resize', recalculateMapHeight)
     }
   }, [])
-
-  const recalculateMapHeight = () => {
-    setMapHeight(calculateMapHeight())
-  }
 
   const handlePriceSlide = (a: number, b:number): void => {
     // update the price range
@@ -351,7 +353,7 @@ const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roo
           />
         </div>
         <div className="subtext" style={{marginTop: '30px'}}>
-          You are looking to lease {roomCounts[roomIndex]} {roomCounts[roomIndex] == 1 ? 'bedroom' : 'bedrooms'} between the
+          You are looking to lease {roomCounts[roomIndex]} {roomCounts[roomIndex] === 1 ? 'bedroom' : 'bedrooms'} between the
           prices of ${priceBound[0]} and ${priceBound[1]} from the beginning of {dateStr(startDate)} to the 
           end of the {dateStr(endtDate)}.
         </div>
@@ -387,6 +389,11 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
   // effects
   useEffect(() => {
+
+    const updateResultsViewportHeight = (): void => {
+      setViewportHeight(calculateResultsViewportHeight())
+    }
+
     setViewportHeight(calculateResultsViewportHeight())
     let t_1 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 10)
     let t_2 = setTimeout(() => {setViewportHeight(calculateResultsViewportHeight())}, 100)
@@ -402,10 +409,6 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
       window.removeEventListener('resize', updateResultsViewportHeight)
     }
   }, []);
-
-  const updateResultsViewportHeight = (): void => {
-    setViewportHeight(calculateResultsViewportHeight())
-  }
 
   const calculateResultsViewportHeight = (): number => {
     if (resultViewportRef.current == null) return 0;
@@ -468,7 +471,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
           return (<div 
             key={i}
             onClick={() => {goToPage(i)}}
-            className={`page-index ${i == page ? 'active' : ''}`}>{i + 1}</div>);
+            className={`page-index ${i === page ? 'active' : ''}`}>{i + 1}</div>);
         })}
         {/* <div className="page-index active">1</div>
         <div className="page-index">2</div>
