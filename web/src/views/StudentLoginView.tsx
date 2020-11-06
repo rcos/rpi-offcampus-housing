@@ -1,5 +1,4 @@
 import React from 'react'
-import {useHistory} from 'react-router'
 
 import Centered from '../components/toolbox/layout/Centered'
 import Button from '../components/toolbox/form/Button'
@@ -7,7 +6,7 @@ import {BiLogIn} from 'react-icons/bi'
 
 const StudentLoginView = () => {
 
-  const history = useHistory()
+  // const history = useHistory()
 
   return (<Centered width={400} height={300}>
 
