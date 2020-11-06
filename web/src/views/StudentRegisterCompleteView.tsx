@@ -46,6 +46,16 @@ const StudentRegisterCompleteView = () => {
     // check if the user needs to be on this page
     // (if their data is already filled, they should be redirected to the app home page)
     checkEligibility()
+
+    const submitOnEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") completeRegistration()
+    }
+
+    window.addEventListener('keypress', submitOnEnter)
+    
+    return () => {
+      window.removeEventListener('keypress', submitOnEnter)
+    }
   }, [])
 
   useEffect(() => {
