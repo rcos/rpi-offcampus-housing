@@ -14,14 +14,18 @@ const ViewWrapper = ({children}: {children: any}) => {
   const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
 
   useEffect(() => {
+    const handleResize = (e:any) => {
+      let w = e.target.innerWidth
+      updateViewWidth(w)
+    }
+
     updateViewWidth(window.innerWidth)
     window.addEventListener('resize', handleResize)
-  }, [])
 
-  const handleResize = (e:any) => {
-    let w = e.target.innerWidth
-    updateViewWidth(w)
-  }
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const updateViewWidth = (new_width: number) => {
     if (new_width >= 1400) setViewWidth(1400)
@@ -66,7 +70,7 @@ const ViewWrapper = ({children}: {children: any}) => {
 
             if (navbarMinMode)
               return (<div key={index} style={{marginBottom: '15px'}} onClick={() => history.push((pageLinks as any)[page_].target)}>
-                <div className={`icon-link ${window.location.pathname.toLowerCase() == (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                <div className={`icon-link ${window.location.pathname.toLowerCase() === (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
                   {(pageLinks as any)[page_].icon}
                   <div className="link-desc">{(pageLinks as any)[page_].name}</div>
                 </div>
@@ -81,7 +85,7 @@ const ViewWrapper = ({children}: {children: any}) => {
                   width={60}
                 >
                   <div 
-                  className={`icon-link ${window.location.pathname.toLowerCase() == (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                  className={`icon-link ${window.location.pathname.toLowerCase() === (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
                     {(pageLinks as any)[page_].icon}
                   </div>
                 </PopupBubble>
