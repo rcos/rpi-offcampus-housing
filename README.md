@@ -1,6 +1,15 @@
-RPI Offcampus Housing
 ![CI](https://github.com/rcos/rpi-offcampus-housing/workflows/CI/badge.svg?branch=master)
 
+![Unnamed Project #1001](https://i.imgur.com/UMrydJc.png)
+---
+
+### Development Stack
+![Development Stack](https://i.imgur.com/2xfwy5Z.png)
+
+#### Frontend: ReactJS + Redux
+#### Backend: NodeJS + MongoDB, Resources provided by REST API
+
+---
 ### Development Commands for Docker
 
 - Running the application: `bin/roh-compose-development up` and stop with `Ctrl+c`
