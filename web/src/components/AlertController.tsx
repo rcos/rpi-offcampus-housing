@@ -21,14 +21,14 @@ const AlertController = ({alertInfo}: AlertControllerInterface) => {
     setAlertMessage(alertInfo.value)
     setAlertType(alertInfo.type)
 
-    if (alertInfo.id != 0) {
+    if (alertInfo.id !== 0) {
       alertSpring.set(1)
       setTimeout(() => {
         alertSpring.set(0)
       }, 2000)
     }
 
-  }, [alertInfo])
+  }, [alertInfo, alertSpring])
 
   return (<motion.div 
     style={{

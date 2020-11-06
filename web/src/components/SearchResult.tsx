@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import AlertContext from './context/AlertContext'
 import {useHistory} from 'react-router'
 

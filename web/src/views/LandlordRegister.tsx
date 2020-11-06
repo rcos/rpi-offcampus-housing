@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {useHistory} from 'react-router'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -52,7 +52,7 @@ const LandlordRegister = () => {
   }
 
   const handleRegistrationCompletion = () => {
-    let error_fields = Object.keys(registerFields).filter(key_ => (registerFields as any)[key_].length == 0)
+    let error_fields = Object.keys(registerFields).filter(key_ => (registerFields as any)[key_].length === 0)
     if (error_fields.length > 0) {
       setFormError({
         message: "Some of the fields are empty",
@@ -61,13 +61,13 @@ const LandlordRegister = () => {
     }
     else {
 
-      if (registerFields.confirm_email != registerFields.email) {
+      if (registerFields.confirm_email !== registerFields.email) {
         setFormError({
           hasError: true,
           message: "Emails must match"
         })
       }
-      else if (registerFields.confirm_password != registerFields.password) {
+      else if (registerFields.confirm_password !== registerFields.password) {
         setFormError({
           hasError: true,
           message: "Passwords must match"
