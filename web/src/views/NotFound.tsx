@@ -1,7 +1,6 @@
 import React from 'react'
 import {useHistory} from 'react-router-dom'
 
-import Navbar from '../components/AuthNavbar'
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
 

@@ -3,7 +3,6 @@ import queryString from 'query-string'
 import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
-import Navbar from '../components/AuthNavbar'
 
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
@@ -39,7 +38,7 @@ const SearchView = () => {
   const [searchResults, setSearchResults] = useState<Object []>()
   const [roomCountIndex, setRoomCountIndex] = useState<number>(-1)
 
-  const [initialPriceBoundSet, setInitialPriceBoundSet] = useState<boolean>(false)
+  const [__, setInitialPriceBoundSet] = useState<boolean>(false)
   const [priceBound, setPriceBound] = useState<number[]>([400, 600])
 
   useEffect(() => {
