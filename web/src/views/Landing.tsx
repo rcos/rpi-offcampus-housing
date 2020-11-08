@@ -41,7 +41,7 @@ const LandingAction = () => {
         icon={<BiLogIn/>}
         background="#E0777D"
         textColor="white"
-        iconLocation="left"
+        iconLocation="right"
         onClick={() => history.push('/student/login')}
       />
     </div>

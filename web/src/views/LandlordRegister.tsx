@@ -9,6 +9,7 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 import LandlordAPI from '../API/LandlordAPI'
+import {BiCheck} from 'react-icons/bi'
 
 interface IFormError {
   message: string
@@ -203,11 +204,13 @@ const LandlordRegister = () => {
 
       <div className="padded upper">
         <LeftAndRight
-          left={<div style={{fontSize: '0.8rem'}}>Forgot password?</div>}
+          left={<div></div>}
           right={<Button 
-            text="Continue"
+            text="Complete"
             textColor="white"
             background="#E0777D"
+            icon={<BiCheck/>}
+            iconLocation="right"
             onClick={handleRegistrationCompletion}
           />}
         />

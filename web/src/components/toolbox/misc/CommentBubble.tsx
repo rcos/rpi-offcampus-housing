@@ -69,7 +69,8 @@ const CommentBubble = ({
       fontWeight: 600,
       textTransform: 'uppercase',
       fontSize: '0.65rem',
-      marginBottom: '5px'
+      marginBottom: '5px',
+      letterSpacing: '1px'
     }}
     >{header}</div>
 
@@ -80,7 +81,7 @@ const CommentBubble = ({
       flexDirection: 'row',
       fontSize: '0.9rem'
     }}>
-      <div>{message}</div>
+      {message == "" ? <div style={{color: 'rgba(0, 0, 0, 0)'}}>x</div> : <div>{message}</div>}
       {
         action &&
         <div 
