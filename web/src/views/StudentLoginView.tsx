@@ -19,7 +19,7 @@ const StudentLoginView = () => {
         textColor="white"
         iconLocation="right"
         onClick={() => {
-          window.location.replace("https://cas-auth.rpi.edu/cas/login?service=http%3A%2F%2Flocalhost%3A9010%2Fauth%2Fcas-auth")
+          window.location.replace("https://cas-auth.rpi.edu/cas/login?service=http%3A%2F%2Flocalhost%3A9010%2Fauth%2Frpi%2Fcas-auth")
         }}
       />
     </div>
