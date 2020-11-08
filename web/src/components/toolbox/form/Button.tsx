@@ -3,7 +3,7 @@ import React from 'react'
 interface ButtonInterface {
   text?: string
   icon?: any
-  iconLocation?: string
+  iconLocation?: "left" | "right"
   border?: string
   textColor?: string
   background?: string
@@ -18,14 +18,14 @@ const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, b
     return background ? background : "#1E2019"
   }
 
-  const getIconLocation = (): string => {
+  const getIconLocation = (): "left" | "right" | "" => {
 
     if (!icon) return ""
     return iconLocation && ["left", "right"].includes(iconLocation! as string) ? 
     iconLocation : "left"
   }
 
-  return (<div className="app-button"
+  return (<div className={`app-button ${getIconLocation()}-icon`}
     onClick={() => {
       if (onClick) onClick ()
     }}
@@ -36,10 +36,16 @@ const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, b
       width: `${width ?? width}px`
     }}
   >
-    <div className={`text-area ${getIconLocation()}`}>{text}</div>
     {
-      icon &&
-      <div className={`icon-area right ${getIconLocation()}`}>
+      getIconLocation() == "left" &&
+      <div className={`icon-area ${getIconLocation()}`}>
+        {icon}
+      </div>
+    }
+    <div className={`text-area`}>{text}</div>
+    {
+      getIconLocation() == "right" &&
+      <div className={`icon-area ${getIconLocation()}`}>
         {icon}
       </div>
     }

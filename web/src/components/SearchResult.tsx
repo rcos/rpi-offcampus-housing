@@ -44,8 +44,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
         text="View"
         icon={<BiRightArrowAlt />}
         iconLocation="right"
-        background={featured ? '#ffeebd' : 'white'}
-        border="black"
+        background={featured ? '#ffeebd' : '#99E1D9'}
         onClick={() => { history.push( result ? {
 
           // go to the property page, if this result has an id
