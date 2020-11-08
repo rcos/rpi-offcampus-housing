@@ -77,7 +77,7 @@ const Property = ({ property_id }: IProperty) => {
         navBack={navigateBack}
       /></div>
       <div
-        style={{flexGrow: 1, marginLeft: '20px'}}
+        style={{width: "calc(60% - 20px)", marginLeft: '20px'}}
       ><PropertyPageRightSide 
         propertyData={propertyData}
         loading={loading}
