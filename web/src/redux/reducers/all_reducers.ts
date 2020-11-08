@@ -1,13 +1,13 @@
 // reducers
-import {userReducer} from './user'
+import {userReducer, institutionReducer} from './user'
 
 // reducer combiner
 import {combineReducers} from 'redux'
 
 // @ts-ignore
 const allReducers = combineReducers({
-  // @ts-ignore
-  user: userReducer
+  user: userReducer,
+  institution: institutionReducer
 })
 
 

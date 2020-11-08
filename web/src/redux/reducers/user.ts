@@ -13,4 +13,14 @@ const userReducer = ( state: null, action: any) => {
 
 }
 
-export { userReducer }
+const institutionReducer = (state: null, action: any) => {
+  switch(action.type) {
+    case 'GET_INSTITUTION':
+      return null
+    case 'RECIEVED_INSTITUTION':
+      return action.institution
+  }
+  return null
+}
+
+export { userReducer, institutionReducer }
