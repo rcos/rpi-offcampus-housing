@@ -382,6 +382,7 @@ interface ISearchResultsArea {
 const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}: ISearchResultsArea) => {
 
   // refs
+  const searchResultContainerRef = useRef<HTMLDivElement>(null)
   const resultViewportRef = useRef<HTMLDivElement>(null)
 
   // state
@@ -420,6 +421,18 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     return clientHeight - (rect_.top + 10)
   }
 
+  const scrollTo = (element: any, to: number, duration: number) => {
+    if (duration <= 0) return;
+    var difference = to - element.scrollTop;
+    var perTick = difference / duration * 10;
+  
+    setTimeout(function() {
+        element.scrollTop = element.scrollTop + perTick;
+        if (element.scrollTop === to) return;
+        scrollTo(element, to, duration - 10);
+    }, 10);
+  }
+
   return (<div className="search-results-area" 
     style={{
       height: `${resultsViewportHeight}px`
@@ -449,7 +462,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     </div>
 
     {/* Search Results Container */}
-    <div className="search-results-container">
+    <div className="search-results-container" ref={searchResultContainerRef}>
 
 
       {loading && <div>
@@ -463,14 +476,24 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
     {/* Pagination */}
     <div className="search-pagination">
-      <div className="left-arrow-area" onClick={() => handlePageChange(0)}>
+      <div className="left-arrow-area" onClick={() => {
+        handlePageChange(0)
+        if (searchResultContainerRef.current) {
+          scrollTo(searchResultContainerRef.current, 0, 150)
+        }
+      }}>
         <FiArrowLeft />
       </div>
       <div className="page-indexes">
         {Array.from(new Array(5), (_, i: number) => {
           return (<div 
             key={i}
-            onClick={() => {goToPage(i)}}
+            onClick={() => {
+              goToPage(i);
+              if (searchResultContainerRef.current) {
+                scrollTo(searchResultContainerRef.current, 0, 150)
+              }
+            }}
             className={`page-index ${i === page ? 'active' : ''}`}>{i + 1}</div>);
         })}
         {/* <div className="page-index active">1</div>
@@ -479,7 +502,13 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
         <div className="page-index">4</div>
         <div className="page-index">5</div> */}
       </div>
-      <div className="right-arrow-area active" onClick={() => handlePageChange(1)}>
+      <div className="right-arrow-area active" onClick={() => {
+        handlePageChange(1)
+        // scroll to top of search view
+        if (searchResultContainerRef.current) {
+          scrollTo(searchResultContainerRef.current, 0, 150)
+        }
+      }}>
         <FiArrowRight />
       </div>
     </div>
