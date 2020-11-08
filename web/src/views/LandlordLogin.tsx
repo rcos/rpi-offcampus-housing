@@ -9,6 +9,8 @@ import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
+import { BsAt } from "react-icons/bs";
+import { BiKey } from "react-icons/bi";
 
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUser} from '../redux/actions/user'
@@ -124,12 +126,14 @@ const LandlordLogin = () => {
         <Input 
           label="email"
           onChange={fieldCallback('email')}
+          icon={<BsAt />}
         />
       </div>
       <div className="padded upper">
         <Input 
           label="password"
           type="password"
+          icon={<BiKey />}
           onChange={fieldCallback('password')}
         />
       </div>

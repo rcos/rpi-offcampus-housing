@@ -9,7 +9,7 @@ import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult, {SearchResultLoading} from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
-import { FiArrowRight, FiArrowLeft } from "react-icons/fi"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 // API
 import SearchAPI from '../API/SearchAPI'
@@ -433,6 +433,17 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     }, 10);
   }
 
+  /* Return true if there is a page to go to on the previous or next. */
+  const isActive = ({prev, next}: {prev?: boolean, next?: boolean}): boolean => {
+    if (prev) {
+      return page > 0
+    }
+    if (next) {
+      return page < 4 // temporary page limiting
+    }
+    return false;
+  }
+
   return (<div className="search-results-area" 
     style={{
       height: `${resultsViewportHeight}px`
@@ -476,15 +487,15 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
     {/* Pagination */}
     <div className="search-pagination">
-      <div className="left-arrow-area" onClick={() => {
+      <div className={`left-arrow-area ${isActive({prev: true}) ? 'active' : 'inactive'} `} onClick={() => {
         handlePageChange(0)
         if (searchResultContainerRef.current) {
           scrollTo(searchResultContainerRef.current, 0, 150)
         }
       }}>
-        <FiArrowLeft />
+        <IoIosArrowBack />
       </div>
-      <div className="page-indexes">
+      <div className="page-indices">
         {Array.from(new Array(5), (_, i: number) => {
           return (<div 
             key={i}
@@ -502,14 +513,14 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
         <div className="page-index">4</div>
         <div className="page-index">5</div> */}
       </div>
-      <div className="right-arrow-area active" onClick={() => {
+      <div className={`right-arrow-area ${isActive({next: true}) ? 'active' : 'inactive'}`} onClick={() => {
         handlePageChange(1)
         // scroll to top of search view
         if (searchResultContainerRef.current) {
           scrollTo(searchResultContainerRef.current, 0, 150)
         }
       }}>
-        <FiArrowRight />
+        <IoIosArrowForward />
       </div>
     </div>
   </div>)

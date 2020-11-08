@@ -342,23 +342,24 @@ body {
 
 .input-field {
   border: 1px solid $black;
-  height: 40px;
+  height: 42px;
   border-radius: 3px;
   position: relative;
+  display: flex;
 
   .label-area {
+
     position: absolute;
     height: 40px;
     line-height: 40px;
-    background-color: white;
     color: $black;
     top: 0;
-    left: 0;
-    padding: 0 10px;
-    font-size: 0.7rem;
+    left: 10px;
+    font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    transform-origin: top left;
 
     transition: height 0.25s, 
       line-height 0.25s, 
@@ -367,25 +368,52 @@ body {
       background 0.25s,
       color 0.25s;
 
-    transition-timing-function: ease-out;
+    transition-timing-function: ease-in-out;
+
+    &.icon {
+      left: 30px;
+    }
 
     &.focused {
-      height: 15px;
-      line-height: 15px;
-      font-size: 0.5rem;
-      color: $black;
+      color: #4fa197;
     }
   }
 
-  input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 10px;
-    transform: translateY(12px);
+  .icon-area {
+    width: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 1.2rem;
+    transition: color 0.25s;
+    // border: 1px solid red;
+    &.focused {
+      color: #4fa197;
+    }
+  }
+
+  .input-area {
     height: 23px;
-    border: none;
-    background: none;
-    outline: none;
+    flex-grow: 1;
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 10px;
+      transform: translateY(16px);
+      height: 23px;
+      border: none;
+      background: none;
+      outline: none;
+      font-size: 0.75rem;
+      letter-spacing: 1.4px;
+    }
+
+    &.icon {
+      input {
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -475,24 +503,28 @@ body {
     bottom: 0;
     height: 30px;
     width: 100%;
-
     display: flex;
+
     .left-arrow-area, .right-arrow-area {
       width: 30px;
       height: 30px;
-      font-size: 1.2rem;
+      line-height: 35px;
+      font-size: 1rem;
       min-width: 30px;
       box-sizing: border-box;
-      line-height: 40px;
       text-align: center;
       cursor: pointer;
       transform: scale(1);
-      transition: transform 0.25s;
-      opacity: 0.5;
+      transition: transform 0.25s, box-shadow 0.25s;
       color: $black;
+      border: 1px solid #666666;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+      background-color: white;
 
       &:active {
         transform: scale(1);
+        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
       }
 
       &.active {
@@ -501,32 +533,35 @@ body {
           transform: scale(0.9);
         }
       }
+
+      &.inactive {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
 
-    .page-indexes {
+    .page-indices {
       flex-grow: 1;
       text-align: center;
       display: flex;
       justify-content: center;
 
       .page-index {
+        font-family: Arial, Helvetica, sans-serif;
         transform: scale(1);
         transform-origin: bottom;
         height: 20px;
         line-height: 24px;
-        padding: 0 8px;
-        margin: 0 5px;
+        margin: 0 10px;
         margin-top: 5px;
         box-sizing: border-box;
         cursor: pointer;
         font-size: 0.8rem;
         border-radius: 3px;
-        font-weight: 600;
         transition: transform 0.25s;
 
         &.active {
-          background-color: $purple;
-          color: white;
+          font-weight: 600;
         }
 
         &:active {
