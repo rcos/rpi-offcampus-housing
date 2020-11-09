@@ -493,7 +493,8 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
           scrollTo(searchResultContainerRef.current, 0, 150)
         }
       }}>
-        <IoIosArrowBack />
+        <div className="icon-area left"><IoIosArrowBack /></div>
+        <div>Prev</div>
       </div>
       <div className="page-indices">
         {Array.from(new Array(5), (_, i: number) => {
@@ -520,7 +521,8 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
           scrollTo(searchResultContainerRef.current, 0, 150)
         }
       }}>
-        <IoIosArrowForward />
+        <div>Next</div>
+        <div className="icon-area right"><IoIosArrowForward /></div>
       </div>
     </div>
   </div>)

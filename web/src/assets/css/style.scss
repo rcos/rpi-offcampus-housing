@@ -1,5 +1,6 @@
 $pink: #E0777D;
 $black: #1E2019;
+$grey: #6a6b67;
 $limewhite: #ebf5f1;
 $purple: #957FEF;
 $cyan: #99E1D9;
@@ -445,7 +446,7 @@ body {
   position: relative;
 
   .filter-area {
-    border: 1px solid $black;
+    border: 1px solid $grey;
     border-radius: 3px;
     padding: 12px 10px;
     background-color: white;
@@ -509,9 +510,8 @@ body {
     display: flex;
 
     .left-arrow-area, .right-arrow-area {
-      width: 30px;
       height: 30px;
-      line-height: 35px;
+      line-height: 32px;
       font-size: 1rem;
       min-width: 30px;
       box-sizing: border-box;
@@ -520,10 +520,23 @@ body {
       transform: scale(1);
       transition: transform 0.25s, box-shadow 0.25s;
       color: $black;
-      border: 1px solid #666666;
-      border-radius: 3px;
       box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
       background-color: white;
+      display: flex;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 600;
+
+      .icon-area {
+        line-height: 36px;
+
+        &.left {
+          margin-right: 6px;
+        }
+        &.right {
+          margin-left: 6px;
+        }
+      }
 
       &:active {
         transform: scale(1);
@@ -554,17 +567,19 @@ body {
         transform: scale(1);
         transform-origin: bottom;
         height: 20px;
-        line-height: 24px;
+        line-height: 20px;
         margin: 0 10px;
         margin-top: 5px;
         box-sizing: border-box;
         cursor: pointer;
         font-size: 0.8rem;
-        border-radius: 3px;
+        border-radius: 20px;
         transition: transform 0.25s;
 
         &.active {
           font-weight: 600;
+          background-color: rgba(0, 0, 0, 0.1);
+          padding: 0 15px;
         }
 
         &:active {

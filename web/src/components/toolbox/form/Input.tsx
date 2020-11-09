@@ -6,9 +6,10 @@ interface InputInterface {
   type?: string
   onChange?: (arg0: string) => void
   icon?: any
+  validators?: ((arg0: string) => boolean) []
 }
 
-const Input = ({label, type, onChange, icon}: InputInterface) => {
+const Input = ({label, type, onChange, icon, validators}: InputInterface) => {
 
   const inputRef = useRef<HTMLInputElement>(null)
   const focusSpring = useSpring(0, {stiffness: 120, damping: 20})
