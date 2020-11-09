@@ -9,6 +9,7 @@ import {
 } from "react-router-dom"
 import AuthRoute from './modules/auth/AuthRoute'
 import AccessLevels from './modules/auth/accessLevels.json'
+import { config } from './config'
 
 // stylesheets
 import './assets/css/style.scss'
@@ -89,6 +90,7 @@ const Routes = () => {
   </Router>)
 }
 
+config ()
 ReactDOM.render(
   <Provider store={store}>
     <Routes />
