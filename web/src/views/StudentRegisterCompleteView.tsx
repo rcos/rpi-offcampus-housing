@@ -4,6 +4,7 @@ import Button from '../components/toolbox/form/Button'
 import Input from '../components/toolbox/form/Input'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import {fetchUser} from '../redux/actions/user'
+import {useMediaQuery} from 'react-responsive'
 
 import StudentAPI from '../API/StudentAPI'
 
@@ -28,6 +29,7 @@ interface IFormError {
 
 const StudentRegisterCompleteView = () => {
 
+  const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
   const dispatch = useDispatch()
   const history = useHistory()
   const user = useSelector((state: any) => state.user)
@@ -134,7 +136,7 @@ const StudentRegisterCompleteView = () => {
     })
   }
 
-  return (<Centered width={400} height={500}>
+  return (<Centered width={isMobile ? 300 : 400} height={500}>
     <div>
       {formError.hasError && <div style={{marginBottom: "20px"}}>
         <CommentBubble 

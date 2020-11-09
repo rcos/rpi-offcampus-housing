@@ -11,6 +11,7 @@ import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 import { BsAt } from "react-icons/bs";
 import { BiKey } from "react-icons/bi";
+import {useMediaQuery} from 'react-responsive'
 
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUser} from '../redux/actions/user'
@@ -26,6 +27,8 @@ interface IFormError {
 }
 
 const LandlordLogin = () => {
+
+  const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -94,7 +97,7 @@ const LandlordLogin = () => {
     })
   }
 
-  return (<Centered width={400} height={500}>
+  return (<Centered width={isMobile ? 300 : 400} height={500}>
     <div>
 
       {/* Error Area */}
