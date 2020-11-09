@@ -29,7 +29,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
         return (
           <div 
           onClick={() => {
-            (locale as any).successAlert("Successfully added {Property Name} to your collection.")
+            (locale as any).successAlert({...result, type: 'collection-add'})
           }}
           className="add-to-collection">
             <BiAddToQueue />

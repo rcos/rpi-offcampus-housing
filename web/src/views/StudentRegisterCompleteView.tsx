@@ -11,7 +11,8 @@ import _ from 'lodash'
 import {useSelector, useDispatch} from 'react-redux'
 import {useHistory} from 'react-router'
 
-import {BiCheck} from "react-icons/bi"
+import {BiCheck, BiUser} from "react-icons/bi"
+import { BsAt } from "react-icons/bs";
 
 interface IRegData {
   first_name: string
@@ -149,6 +150,7 @@ const StudentRegisterCompleteView = () => {
       <div style={{display: 'flex'}}>
         <div style={{width: '50%', paddingRight: '20px'}}>
           <Input label="First Name" 
+            icon={<BiUser />}
             onChange={(val) => {
               let reg2 = regData; 
               reg2.first_name = val;
@@ -158,6 +160,7 @@ const StudentRegisterCompleteView = () => {
         </div>
         <div style={{width: '50%'}}>
         <Input label="Last Name" 
+          icon={<BiUser />}
           onChange={(val) => { let reg2 = regData; reg2.last_name = val; setRegData(reg2) }}
         />
         </div>
@@ -165,12 +168,14 @@ const StudentRegisterCompleteView = () => {
 
       <div className="padded upper">
         <Input label="Email" 
+          icon={<BsAt />}
           onChange={(val) => { let reg2 = regData; reg2.email = val; setRegData(reg2) }}
         />
       </div>
 
       <div className="padded upper">
         <Input label="Confirm Email" 
+          icon={<BsAt />}
           onChange={(val) => { let reg2 = regData; reg2.confirm_email = val; setRegData(reg2) }}
         />
       </div>

@@ -39,12 +39,12 @@ import {Provider} from 'react-redux'
 // setup routes
 const Routes = () => {
 
-  const [alertCtxValue, setAlertCtxValue] = useState({id: 0, value: ""})
-  const successAlert = (msg) => {
+  const [alertCtxValue, setAlertCtxValue] = useState({id: 0, value: "", data: null})
+  const successAlert = (data) => {
     setAlertCtxValue({
       id: alertCtxValue.id + 1,
-      value: msg,
-      type: 'success'
+      type: 'success',
+      data
     })
   }
 
