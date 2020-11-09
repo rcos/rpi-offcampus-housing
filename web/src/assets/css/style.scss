@@ -607,6 +607,14 @@ body {
     line-height: 40px;
     font-size: 1.3rem;
     cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: background 0.25s;
+    
+    &:active {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
   }
 
   .result-grid {

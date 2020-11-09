@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import {motion, useTransform, useSpring} from 'framer-motion'
 import _ from 'lodash'
 import { IoMdClose } from "react-icons/io";
+import {useHistory} from 'react-router'
 
 import { BiChevronRight } from "react-icons/bi";
 import Button from './toolbox/form/Button'
@@ -16,6 +17,7 @@ interface AlertControllerInterface {
 
 const AlertController = ({alertInfo}: AlertControllerInterface) => {
 
+  const history = useHistory()
   const dataRef = useRef<number>(-1)
 
   const [alertQueue, setAlertQueue] = useState<any []>([])
@@ -83,6 +85,7 @@ const AlertController = ({alertInfo}: AlertControllerInterface) => {
     if (alertQueueIndex >= alertQueue.length) {
       showSpring.set(0)
       setAlertQueueIndex(-1)
+      setAlertQueue([])
       dataRef.current = -1
     }
 
@@ -137,6 +140,7 @@ const AlertController = ({alertInfo}: AlertControllerInterface) => {
               text="Go to Collection"
               background="white"
               iconLocation="right"
+              onClick={() => history.push('/collection')}
               icon={<BiChevronRight />}
             />
           </div>
