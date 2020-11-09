@@ -21,7 +21,7 @@ const config = () => {
 const getFrontendBaseUrl = () => {
 
   if (process.env.REACT_APP_ENV == 'development') {
-    
+    return `http://localhost:${process.env.PORT}`
   }
   if (process.env.REACT_APP_ENV == 'production') {
     // TODO place base production url here
@@ -47,4 +47,8 @@ const backendPath = (path) => {
   return `${getBackendBaseUrl()}${path}`
 }
 
-export { config, backendPath}
+const frontendPath = (path) => {
+  return `${getFrontendBaseUrl()}${path}`
+}
+
+export { config, backendPath, frontendPath}
