@@ -6,7 +6,6 @@ import Logo from '../components/Logo'
 import Button from '../components/toolbox/form/Button'
 import {BiLogIn} from 'react-icons/bi'
 import Centered from '../components/toolbox/layout/Centered'
-import {useMediaQuery} from 'react-responsive'
 
 const SearchView = () => {
 
