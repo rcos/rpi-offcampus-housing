@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -9,6 +9,7 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 import LandlordAPI from '../API/LandlordAPI'
+import {BiCheck} from 'react-icons/bi'
 
 interface IFormError {
   message: string
@@ -34,6 +35,20 @@ const LandlordRegister = () => {
     first_name: '', last_name: '', email: '', confirm_email: '',
     password: '', confirm_password: ''
   })
+
+  useEffect(() => {
+
+    // handleRegistrationCompletion
+    const submitOnEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") handleRegistrationCompletion()
+    }
+
+    window.addEventListener('keypress', submitOnEnter)
+    
+    return () => {
+      window.removeEventListener('keypress', submitOnEnter)
+    }
+  }, [])
 
   const clearError = () => { setFormError({hasError: false, message: ''}) }
 
@@ -189,11 +204,13 @@ const LandlordRegister = () => {
 
       <div className="padded upper">
         <LeftAndRight
-          left={<div style={{fontSize: '0.8rem'}}>Forgot password?</div>}
+          left={<div></div>}
           right={<Button 
-            text="Continue"
+            text="Complete"
             textColor="white"
             background="#E0777D"
+            icon={<BiCheck/>}
+            iconLocation="right"
             onClick={handleRegistrationCompletion}
           />}
         />

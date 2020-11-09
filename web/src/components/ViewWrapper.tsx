@@ -63,7 +63,10 @@ const ViewWrapper = ({children}: {children: any}) => {
       <div>
         <Navbar />
       </div>
-      <div className="app-view-area">
+      <div className="app-view-area" style={{
+        width: `${viewWidth}px`,
+        maxWidth: `${viewWidth}px`
+      }}>
         <div className="user-navbar">
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {

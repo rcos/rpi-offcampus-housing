@@ -77,7 +77,7 @@ const Property = ({ property_id }: IProperty) => {
         navBack={navigateBack}
       /></div>
       <div
-        style={{flexGrow: 1, marginLeft: '20px'}}
+        style={{width: "calc(60% - 20px)", marginLeft: '20px'}}
       ><PropertyPageRightSide 
         propertyData={propertyData}
         loading={loading}
@@ -135,12 +135,12 @@ const PropertyPageLeftSide = ({
   }
 
   return (<div>
-    {showBackButton && <div style={{width: "170px", marginBottom: '20px'}}>
+    {showBackButton && <div style={{width: "200px", marginBottom: '20px'}}>
        <Button 
         text="Back to Search"
         icon={<BsArrowLeft />}
-        background="white"
-        border="black"
+        background="#e3e3e3"
+        border="#e3e3e3"
         iconLocation="left"
         onClick={() => navBack()}
       />

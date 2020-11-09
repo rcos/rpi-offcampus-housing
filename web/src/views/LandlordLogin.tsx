@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -9,6 +9,8 @@ import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
+import { BsAt } from "react-icons/bs";
+import { BiKey } from "react-icons/bi";
 
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUser} from '../redux/actions/user'
@@ -34,6 +36,19 @@ const LandlordLogin = () => {
   const [loginFields, setLoginFields] = useState<ILoginFields>({
     email: "", password: ""
   })
+
+  useEffect (() => {
+
+    const submitOnEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") handleLogin()
+    }
+
+    window.addEventListener('keypress', submitOnEnter)
+    
+    return () => {
+      window.removeEventListener('keypress', submitOnEnter)
+    }
+  }, [])
 
   const handleLogin = () => {
 
@@ -111,12 +126,14 @@ const LandlordLogin = () => {
         <Input 
           label="email"
           onChange={fieldCallback('email')}
+          icon={<BsAt />}
         />
       </div>
       <div className="padded upper">
         <Input 
           label="password"
           type="password"
+          icon={<BiKey />}
           onChange={fieldCallback('password')}
         />
       </div>
