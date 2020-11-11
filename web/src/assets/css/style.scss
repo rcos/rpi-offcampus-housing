@@ -512,6 +512,22 @@ body {
   }
 }
 
+.icon-button {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: background 0.25s;
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
 .search-result {
   position: relative;
 
@@ -526,23 +542,9 @@ body {
   }
 
   .add-to-collection {
-    width: 30px;
-    height: 30px;
     position: absolute;
     right: 10px;
     top: 10px;
-    text-align: center;
-    line-height: 40px;
-    font-size: 1.3rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    border-radius: 3px;
-    background-color: rgba(0, 0, 0, 0.1);
-    transition: background 0.25s;
-    
-    &:active {
-      background-color: rgba(0, 0, 0, 0.2);
-    }
   }
 
   .result-grid {
@@ -1104,10 +1106,6 @@ body {
 
 }
 
-.collection-container {
-  border: 1px solid red;
-}
-
 .pagination {
   position: absolute;
   bottom: 0;
@@ -1190,6 +1188,87 @@ body {
 
       &:active {
         transform: scale(0.9);
+      }
+    }
+  }
+}
+
+.collection-holder {
+  position: relative;
+
+  .pageination-holder {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    background-color: white;
+    height: 30px;
+  }
+
+  .collection-container {
+    position: relative;
+    overflow-y: scroll;
+  }  
+
+  .collection-grid {
+    padding-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 1rem;
+
+    .collection-entry {
+      height: 130px;
+      display: flex;
+      position: relative;
+
+      .image-holder {
+        width: 200px;
+        min-width: 200px;
+        display: flex;
+
+        .primary-image {
+          width: 130px;
+          min-width: 130px;
+          height: 130px;
+          background-color: $pink;
+          border-radius: 5px;
+        }
+
+        .secondary-images {
+          margin-left: 10px;
+          width: 60px;
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column;
+
+          .img-holder {
+            background-color: $pink;
+            height: 60px;
+            width: 60px;
+            min-width: 60px;
+            border-radius: 3px;
+          }
+        }
+      }
+
+      .property-desc {
+        padding: 0 10px;
+
+        .kv-pair {
+          margin-top: 8px;
+          .key {
+            display: inline-block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: 10px;
+          }
+
+          .value {
+            display: inline-block;
+            font-size: 0.8rem;
+          }
+        }
       }
     }
   }
