@@ -19,6 +19,10 @@ const Minimizable = ({
   const minimizeSpring = useSpring(0)
 
   const opacityTransform = useTransform(hideSpring, [0, 1], [0, 1])
+  const displayTransform = useTransform(hideSpring, (val: number) => {
+    if (val == 0) return 'hidden'
+    return 'visible'
+  })
   // const displayTransform = useTransform(minimizeSpring, (x) => {
   //   if (x === 0) return 'none'
   //   else return 'block'
@@ -76,7 +80,7 @@ const Minimizable = ({
       style={{
         zIndex: 1,
         opacity: opacityTransform,
-        // display: displayTransform
+        visibility: displayTransform,
         marginTop: offsetTransform
       }}
       className="content-area">
