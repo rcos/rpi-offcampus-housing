@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
+import {useMediaQuery} from 'react-responsive'
 
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import Centered from '../components/toolbox/layout/Centered'
@@ -27,6 +28,7 @@ interface IRegisterFields {
 
 const LandlordRegister = () => {
 
+  const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
   const history = useHistory()
   const [formError, setFormError] = useState<IFormError>({
     message: '', hasError: false
@@ -129,7 +131,7 @@ const LandlordRegister = () => {
     }
   }
 
-  return (<Centered width={400} height={600}>
+  return (<Centered width={isMobile ? 300 : 400} height={600}>
     <div>
 
       {/* Error area */}

@@ -12,6 +12,8 @@ if (!process.env.NODE_ENV) {
 }
 dotenv.config({ path: `../.env.${process.env.NODE_ENV!.replace(" ", "")}` });
 
+import {frontendPath} from './config'
+
 const PORT = process.env.SERVER_PORT;
 
 const MONGO_PREFIX = process.env.MONGO_DB_PREFIX ?? "mongodb+srv";
@@ -23,7 +25,7 @@ import bodyParser from "body-parser";
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [frontendPath(null)],
     credentials: true,
   })
 );

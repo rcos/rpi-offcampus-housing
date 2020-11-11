@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
@@ -9,10 +9,9 @@ import Centered from '../components/toolbox/layout/Centered'
 
 const SearchView = () => {
 
-
   return (<div>
     
-    <Centered width={1400} height="100%">
+    <Centered horizontalBuffer={400} height="100%">
       <React.Fragment>
 
         <div style={{marginTop: `20px`}}></div>
