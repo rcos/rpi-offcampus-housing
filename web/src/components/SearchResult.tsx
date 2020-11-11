@@ -31,7 +31,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
           onClick={() => {
             (locale as any).successAlert({...result, type: 'collection-add'})
           }}
-          className="add-to-collection">
+          className="add-to-collection icon-button">
             <BiAddToQueue />
           </div>
         )

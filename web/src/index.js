@@ -30,6 +30,7 @@ import PropertyView from './views/Property'
 import StudentLoginView from './views/StudentLoginView'
 import StudentRegisterComplete from './views/StudentRegisterCompleteView'
 import LandlordDashboard from './views/LandlordDashboard'
+import CollectionView from './views/Collection'
 
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
@@ -76,6 +77,7 @@ const Routes = () => {
             {/* Student Only  */}
             <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
             <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+            <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/collection" component={CollectionView} />
 
             {/* Landlord Only */}
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />

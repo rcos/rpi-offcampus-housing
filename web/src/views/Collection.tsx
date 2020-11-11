@@ -2,95 +2,142 @@ import React, { useEffect, useRef } from 'react'
 
 import ViewWrapper from '../components/ViewWrapper'
 import {BiCollection} from 'react-icons/bi'
+import Pagination from '../components/toolbox/layout/Pagination'
+import Button from '../components/toolbox/form/Button'
+import {BiRightArrowAlt, BiX} from 'react-icons/bi'
+import {BsThreeDotsVertical} from 'react-icons/bs'
+import ContextMenu from '../components/toolbox/misc/ContextMenu'
 
 const CollectionView = () => {
 
-  const collectionContainerRef = useRef<HTMLDivElement>(null)
+  // Container ref: the ref references the collection view, excluding the header
+  const headerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // on mount
   useEffect(() => {
-    setContainerHeight ()
-    window.addEventListener('resize', setContainerHeight)
+    const setContainerHeight = (h: number): void => {
+      if (containerRef.current == null) return
+      containerRef.current.style.height = `${h}px`
+    }
 
-    // on dismount
+    const calcualteContainerHeight = () => {
+      if (headerRef.current != null) {
+        let bottomOfHeader = headerRef.current.getBoundingClientRect().bottom
+        setContainerHeight ( document.documentElement.clientHeight - bottomOfHeader - 20 );
+      }
+    }
+
+    calcualteContainerHeight()
+    let a_t = setTimeout(calcualteContainerHeight, 100)
+    let b_t = setTimeout(calcualteContainerHeight, 300)
+    let c_t = setTimeout(calcualteContainerHeight, 500)
+    let d_t = setTimeout(calcualteContainerHeight, 1000)
+
+    window.addEventListener('resize', calcualteContainerHeight)
+    // unmount clean up
     return () => {
-      window.removeEventListener('resize', setContainerHeight)
+      window.removeEventListener('resize', calcualteContainerHeight)
+      clearTimeout(a_t)
+      clearTimeout(b_t)
+      clearTimeout(c_t)
+      clearTimeout(d_t)
     }
   }, [])
 
-  const setContainerHeight = () => {
-    // get the bounding rect of the collection container
-    if (collectionContainerRef.current == null) return;
-    let rect = collectionContainerRef.current.getBoundingClientRect()
+  return (<ViewWrapper>
+    <div className="collection-holder">
 
-    let height_: number = window.innerHeight - (rect.top + 20)
-    collectionContainerRef.current.style.height = `${height_}px`
-  }
+      {/* Collection Header */}
+      <div className="section-header left-and-right" ref={headerRef}>
+        <div className="icon-area"><BiCollection /></div>
+        <div className="title-area">Your Collection</div>
+      </div>
 
-  return(<ViewWrapper>
+      {/* Collection Entries Container */}
+      <div className="collection-container" ref={containerRef}>
 
-      <div className="left-and-right pointer activable active"
-        style={{
-          height: '35px',
-          lineHeight: '35px',
-          fontWeight: 600
-        }}
-      >
-        <div style={{width: '20px',
-        height: '35px',
-        marginRight: '5px',
-        transform: `translateY(2px)`,
-        minWidth: '20px'}}><BiCollection /></div>
-        <div style={{
-          fontSize: '0.85rem'
-        }}>
-          Collection
+        <div className="collection-grid">
+          {Array.from(new Array(15), (x, i) => {
+            return <CollectionEntry key={i} />
+          })}
         </div>
       </div>
 
-      {/* Collection Entry List */}
-      <div ref={collectionContainerRef} className="collection-entry-holder">
-        {Array.from(new Array(12), (x, i: number) => {
-          return (<CollectionEntry key={i} />)
-        })}
-      </div>
-
+      {/* Pagination Area */}
+      <div className="pageination-holder">
+          <Pagination 
+            page={0}
+            pageChange={() => {}}
+            page_range={{min: 0, max: 5}}
+          />
+        </div>
+    </div>
   </ViewWrapper>)
 }
 
 const CollectionEntry = () => {
 
-  return (<div className="collection-entry">
-    <div className="image-area">
-      <div className="image-container"></div>
+  // todo: define
+  const goToProperty = () => {}
+  const removeFromCollection = () => {}
 
-      {/* Thumbnails */}
-      <div className="image-previews">
-        {Array.from(new Array(3), (x, i:number) => {
-          return <div className="image-preview-entry" key={i}></div>
-        })}
+  return (<div className="collection-entry">
+    <div className="image-holder">
+      <div className="primary-image"></div>
+      <div className="secondary-images">
+        <div className="img-holder"></div>
+        <div className="img-holder"></div>
       </div>
     </div>
-    <div className="content-area">
-      <div style={{
-        fontWeight: 600,
-        fontSize: `1rem`
-      }}>
-        212 15th St, Troy NY 12180
+    <div className="property-desc">
+      
+      {/* Property Header */}
+      <div>
+        <span style={{fontWeight: 600, fontSize: '0.9rem'}}>Sample Property Address Goes Here</span>
       </div>
 
-      {/* Collection Attributes */}
-      <div style={{marginTop: `10px`}}>
-        <div className="attr-entry">
-          <div className="attr-key">Owned By</div>
-          <div className="attr-value">John Meyer</div>
-        </div>
-        <div className="attr-entry">
-          <div className="attr-key">Next Available Date</div>
-          <div className="attr-value">September 2021</div>
-        </div>
+      {/* Info goes here */}
+      <div className="kv-pair">
+        <div className="key">Date Added</div>
+        <div className="value">11/10/2020</div>
       </div>
+      
+      <div className="kv-pair">
+        <div className="key">Landlord</div>
+        <div className="value">Jimmy Joe</div>
+      </div>
+    </div>
 
+    {/* Top Right Buttons */}
+    <div style={{
+      position: 'absolute',
+      top: 0, right: '10px'
+    }}>
+      <ContextMenu
+      iconLocation="left"
+      position="top right"
+        menuItems={[
+          {label: 'View', icon: <BiRightArrowAlt />, onClick: goToProperty },
+          {label: 'Remove', icon: <BiX />, onClick: removeFromCollection }
+        ]}
+      >
+        <div className="icon-button" style={{position: 'relative'}}><BsThreeDotsVertical /></div>
+      </ContextMenu>
+    </div>
+
+    {/* Bottom Right Buttons */}
+    <div style={{
+      position: 'absolute',
+      right: '10px',
+      bottom: 0
+    }}>
+      <Button 
+        onClick={() => {goToProperty()}}
+        text="View"
+        icon={<BiRightArrowAlt />}
+        iconLocation="right"
+        background="#99E1D9"
+      />
     </div>
   </div>)
 }
