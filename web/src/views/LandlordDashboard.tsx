@@ -1,9 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react'
 import { BiHome, BiPlus } from 'react-icons/bi'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import { FiEdit2 } from 'react-icons/fi'
 import { motion, useSpring, useTransform } from 'framer-motion'
 import LandlordViewWrapper from '../components/LandlordViewWrapper'
 import Button from '../components/toolbox/form/Button'
 import Pagination from '../components/toolbox/layout/Pagination'
+import ContextMenu from '../components/toolbox/misc/ContextMenu'
 
 const LandlordDashboard = () => {
 
@@ -11,7 +14,7 @@ const LandlordDashboard = () => {
 
   const propertyFocusSpring = useSpring(0, {stiffness: 80})
   const propertyFocusWidthTransform = useTransform(propertyFocusSpring, (x: number) => {
-    return `${x * 50}%`
+    return `${x * 55}%`
   })
 
   const propertyShowSpring = useSpring(0)
@@ -139,7 +142,7 @@ const MainDashboardArea = ({ focusProperty }: IMainDashboardArea) => {
 
     {/* Body */}
     <div className="property-list padded upper"  style={{ overflowY: 'scroll'}} ref={propertyContainerRef}>
-      {Array.from(new Array(10), (x: any, i: number) => (<div>
+      {Array.from(new Array(10), (x: any, i: number) => (<div key={i}>
         <PropertyEntry focusProperty={focusProperty} />
       </div>))}
     </div>
@@ -204,10 +207,129 @@ const PropertyEntry = ({focusProperty}: IPropertyEntry) => {
 
 const LandlordPropertyOverview = () => {
 
+  const propertyContainerRef = useRef<HTMLDivElement>(null)
+  const headerContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const setContainerHeight = (height: number) => {
+      if (propertyContainerRef.current == null) return;
+      propertyContainerRef.current.style.height = `${height}px`
+    }
+
+    const initialHeight = () => {
+      if (headerContainerRef.current == null) return;
+      setContainerHeight ( document.documentElement.clientHeight - headerContainerRef.current.getBoundingClientRect().bottom - 50 )
+    }
+
+    initialHeight()
+    let a_t = setTimeout(() => initialHeight(), 50)
+    let b_t = setTimeout(() => initialHeight(), 100)
+    let c_t = setTimeout(() => initialHeight(), 500)
+    let d_t = setTimeout(() => initialHeight(), 1000)
+
+    const resizeContainer = () => {
+      if (headerContainerRef.current == null) return;
+
+      setContainerHeight ( document.documentElement.clientHeight - headerContainerRef.current.getBoundingClientRect().bottom - 50 )
+    }
+    
+    window.addEventListener('resize', resizeContainer)
+    // unmount
+    return () => {
+      window.removeEventListener('resize', resizeContainer)
+      clearInterval(a_t)
+      clearInterval(b_t)
+      clearInterval(c_t)
+      clearInterval(d_t)
+    }
+  }, [])
+
+  ////////////////////////////////////////////
+
   return (<div className="landlord-property-overview">
 
     {/* Header */}
-    <div className="header" style={{fontWeight: 600, letterSpacing: `1px`}}>101 Sample Address Location</div>
+    <div className="header" ref={headerContainerRef} style={{fontWeight: 600, letterSpacing: `1px`}}>101 Sample Address Location</div>
+
+    <div className="overview-container" ref={propertyContainerRef}>
+
+      {/* Active Lease Headeer */}
+      <div style={{display: 'flex'}}>
+        <div style={{flexGrow: 1, height: '38px', lineHeight: '38px'}} className="subheader">2 active leases</div>
+        <div><Button 
+          text="New Lease"
+          background="#99E1D9"
+          iconLocation="right"
+          icon={<BiPlus />}
+        /></div>
+      </div>
+
+      {/* Student Lease */}
+      {Array.from(new Array(2), (x: any, i: number) => <StudentLeaseModal key={i} />)}
+
+      {/* Pictures Area */}
+      <div>
+        <div style={{height: '38px', lineHeight: '38px', marginTop: '30px'}} className="subheader">20 pictures</div>
+
+
+        {/* Your Pictures */}
+        <div className="subheader-2" style={{marginBottom: '15px'}}>Your Pictures</div>
+        <div className="image-container">
+
+          <div className="icon-button edit-top-right"><FiEdit2 /></div>
+
+          <div className="left-side">
+            <div className="image-holder"></div>
+            <div className="image-holder"></div>
+            <div className="image-holder"></div>
+          </div>
+          <div className="right-side">
+            <div>+3 more photos</div>
+          </div>
+        </div>
+
+        {/* Student Pictures */}
+        <div className="subheader-2" style={{marginBottom: '15px'}}>Student Pictures</div>
+
+        <div className="image-container">
+
+          <div className="icon-button edit-top-right"><FiEdit2 /></div>
+
+          <div className="left-side">
+            <div className="image-holder"></div>
+            <div className="image-holder"></div>
+          </div>
+          <div className="right-side">
+            <div>+2 more photos</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>)
+}
+
+const StudentLeaseModal = () => {
+
+  return (<div className="student-lease-modal">
+
+    <div className="labeled-value student-name">
+      <div className="label">Room #1</div>
+      <div className="value">Student Name</div>
+    </div>
+
+    <div className="labeled-value lease-period">
+      <div className="label">Lease Period</div>
+      <div className="value">September 2021 - June 2021</div>
+    </div>
+
+    <ContextMenu
+      position="top right"
+      menuItems={[{label: 'Manage', icon: <BsThreeDotsVertical />}]}
+    >
+      <div className="icon-button" style={{position: 'relative'}}><BsThreeDotsVertical /></div>
+    </ContextMenu>
+
   </div>)
 }
 
