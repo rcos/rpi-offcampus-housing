@@ -5,6 +5,7 @@ $limewhite: #ebf5f1;
 $purple: #957FEF;
 $cyan: #99E1D9;
 $cyanDark: #79b5ae;
+$lightgrey: #E4E4E4;
 
 // transition animation
 .page-enter {
@@ -1106,6 +1107,27 @@ body {
 
 }
 
+.section-header-2 {
+
+  height: 40px;
+  line-height: 40px;
+  font-weight: 600;
+  
+
+  .icon-area {
+    width: 20px;
+    height: 40px;
+    margin-right: 5px;
+    transform: translateY(2px);
+    min-width: 20px;
+  }
+
+  .title-area {
+    font-size: 0.85rem;
+  }
+
+}
+
 .pagination {
   position: absolute;
   bottom: 0;
@@ -1124,7 +1146,6 @@ body {
     transform: scale(1);
     transition: transform 0.25s, box-shadow 0.25s;
     color: $black;
-    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
     background-color: white;
     display: flex;
     text-transform: uppercase;
@@ -1144,7 +1165,6 @@ body {
 
     &:active {
       transform: scale(1);
-      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
     }
 
     &.active {
@@ -1330,5 +1350,148 @@ body {
         font-size: 0.8rem;
       }
     }
+  }
+}
+
+.landlord-property-entry {
+  margin-bottom: 15px;
+  display: flex;
+
+  .image-area {
+    min-width: 150px;
+    max-width: 150px;
+
+    .img-holder {
+      width: 150px;
+      height: 150px;
+      border-radius: 5px;
+      background-color: $pink;
+    }
+  }
+
+  .desc-area {
+    flex-grow: 1;
+    margin-left: 15px;
+  }
+
+  .action-area {
+    margin-right: 10px;
+    div {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.kv-pair {
+  margin-top: 8px;
+  .key {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 10px;
+  }
+
+  .value {
+    display: inline-block;
+    font-size: 0.8rem;
+  }
+}
+
+.landlord-main-dashboard-area {
+  position: relative;
+
+  .property-list {
+    position: relative;
+  }
+
+  .pagination {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    background-color: white;
+  }
+}
+
+.landlord-property-overview {
+  margin-left: 20px;
+
+  .header {
+    height: 38px;
+    line-height: 38px;
+  }
+
+  .overview-container {
+    padding-top: 10px;
+    overflow-y: scroll;
+
+    .image-container {
+      display: flex;
+      margin-bottom: 20px;
+      position: relative;
+
+      .edit-top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .left-side {
+        display: flex;
+
+        .image-holder {
+          width: 150px;
+          margin-right: 10px;
+          height: 150px;
+          border-radius: 3px;
+          border-radius: 3px;
+          background-color: $pink;
+          display: flex;
+        }
+      }
+    }
+  }
+
+  .subheader {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .subheader-2 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+}
+
+.labeled-value {
+  font-weight: 600;
+
+  .label {
+    color: rgba(0, 0, 0, 0.6);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1.1px;
+  }
+
+  .value {
+    font-size: 0.9rem;
+    letter-spacing: 0.6px;
+  }
+}
+
+.student-lease-modal {
+  display: flex;
+  margin-top: 20px;
+
+  .student-name {
+    flex-grow: 1;
+  }
+
+  .lease-period {
+    flex-grow: 2;
   }
 }
