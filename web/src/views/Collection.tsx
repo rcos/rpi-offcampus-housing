@@ -4,7 +4,7 @@ import ViewWrapper from '../components/ViewWrapper'
 import {BiCollection} from 'react-icons/bi'
 import Pagination from '../components/toolbox/layout/Pagination'
 import Button from '../components/toolbox/form/Button'
-import {BiRightArrowAlt} from 'react-icons/bi'
+import {BiRightArrowAlt, BiX} from 'react-icons/bi'
 import {BsThreeDotsVertical} from 'react-icons/bs'
 import ContextMenu from '../components/toolbox/misc/ContextMenu'
 
@@ -77,6 +77,10 @@ const CollectionView = () => {
 
 const CollectionEntry = () => {
 
+  // todo: define
+  const goToProperty = () => {}
+  const removeFromCollection = () => {}
+
   return (<div className="collection-entry">
     <div className="image-holder">
       <div className="primary-image"></div>
@@ -110,12 +114,11 @@ const CollectionEntry = () => {
       top: 0, right: '10px'
     }}>
       <ContextMenu
-      iconLocation="right"
+      iconLocation="left"
       position="top right"
         menuItems={[
-          {label: 'Option One', icon: <BsThreeDotsVertical />},
-          {label: 'Option Two', icon: <BsThreeDotsVertical />},
-          {label: 'Option Three', icon: <BsThreeDotsVertical />}
+          {label: 'View', icon: <BiRightArrowAlt />, onClick: goToProperty },
+          {label: 'Remove', icon: <BiX />, onClick: removeFromCollection }
         ]}
       >
         <div className="icon-button" style={{position: 'relative'}}><BsThreeDotsVertical /></div>
@@ -129,6 +132,7 @@ const CollectionEntry = () => {
       bottom: 0
     }}>
       <Button 
+        onClick={() => {goToProperty()}}
         text="View"
         icon={<BiRightArrowAlt />}
         iconLocation="right"

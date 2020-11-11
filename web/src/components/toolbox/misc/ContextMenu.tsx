@@ -20,7 +20,13 @@ const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu
 
     let iconLeft: boolean = !iconLocation || iconLocation == 'left'
 
-    return menuItems.map((item: IMenuItem, index: number) => (<motion.div style={{opacity: opacityTransform}} key={index} className={`context-menu-item ${iconLeft? 'icon-left' : 'icon-right'}`}>
+    return menuItems.map((item: IMenuItem, index: number) => (<motion.div 
+      style={{opacity: opacityTransform}} 
+      key={index} 
+      className={`context-menu-item ${iconLeft? 'icon-left' : 'icon-right'}`}
+      onClick={() => {
+        if (item.onClick) item.onClick()
+      }}>
 
       {/* icon left */}
       {iconLeft && <div className="icon-area">{item.icon}</div>}
