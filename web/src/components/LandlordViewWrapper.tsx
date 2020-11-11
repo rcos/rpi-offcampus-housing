@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import Centered from './toolbox/layout/Centered'
 
-import Navbar from './AuthNavbar'
 import PopupBubble from './toolbox/misc/PopupBubble'
+import LandlordNavbar from './LandlordAuthNavbar'
 
-import { BiSearch, BiCollection, BiHomeAlt } from "react-icons/bi";
+import { BsFillGridFill } from "react-icons/bs";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive'
 
-const ViewWrapper = ({children}: {children: any}) => {
+const LandlordViewWrapper = ({children}: {children: any}) => {
 
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
@@ -43,27 +43,17 @@ const ViewWrapper = ({children}: {children: any}) => {
   }
 
   const pageLinks = {
-    home: {
-      target: '/home',
-      icon: <BiHomeAlt />,
-      name: "Home"
-    },
-    search: {
-      target: '/search',
-      icon: <BiSearch />,
-      name: 'Search'
-    },
-    collection: {
-      target: '/collection',
-      icon: <BiCollection />,
-      name: 'Collection'
+    dashboard: {
+      target: '/landlord/dashboard',
+      icon: <BsFillGridFill />,
+      name: "Dashboard"
     }
   }
 
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar />
+        <LandlordNavbar />
       </div>
       <div className="app-view-area" style={{
         // width: `${viewWidth}px`,
@@ -107,4 +97,4 @@ const ViewWrapper = ({children}: {children: any}) => {
   </Centered>)
 }
 
-export default ViewWrapper
+export default LandlordViewWrapper

@@ -5,6 +5,7 @@ $limewhite: #ebf5f1;
 $purple: #957FEF;
 $cyan: #99E1D9;
 $cyanDark: #79b5ae;
+$lightgrey: #E4E4E4;
 
 // transition animation
 .page-enter {
@@ -1106,6 +1107,27 @@ body {
 
 }
 
+.section-header-2 {
+
+  height: 40px;
+  line-height: 40px;
+  font-weight: 600;
+  
+
+  .icon-area {
+    width: 20px;
+    height: 40px;
+    margin-right: 5px;
+    transform: translateY(2px);
+    min-width: 20px;
+  }
+
+  .title-area {
+    font-size: 0.85rem;
+  }
+
+}
+
 .pagination {
   position: absolute;
   bottom: 0;
@@ -1330,5 +1352,75 @@ body {
         font-size: 0.8rem;
       }
     }
+  }
+}
+
+.landlord-property-entry {
+  margin-bottom: 15px;
+  display: flex;
+
+  .image-area {
+    min-width: 150px;
+    max-width: 150px;
+
+    .img-holder {
+      width: 150px;
+      height: 150px;
+      border-radius: 5px;
+      background-color: $pink;
+    }
+  }
+
+  .desc-area {
+    flex-grow: 1;
+    margin-left: 15px;
+  }
+
+  .action-area {
+    margin-right: 10px;
+    div {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.kv-pair {
+  margin-top: 8px;
+  .key {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 10px;
+  }
+
+  .value {
+    display: inline-block;
+    font-size: 0.8rem;
+  }
+}
+
+.landlord-main-dashboard-area {
+  position: relative;
+
+  .property-list {
+    position: relative;
+  }
+
+  .pagination {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    background-color: white;
+  }
+}
+
+.landlord-property-overview {
+  margin-left: 20px;
+
+  .header {
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid red;
   }
 }
