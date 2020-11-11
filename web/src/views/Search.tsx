@@ -4,12 +4,12 @@ import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
 
+import Pagination from '../components/toolbox/layout/Pagination'
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import SearchResult, {SearchResultLoading} from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 // API
 import SearchAPI from '../API/SearchAPI'
@@ -130,12 +130,9 @@ const SearchView = () => {
     updatePageUrl()
   }, [searchPage, roomCounts, priceBound, roomCountIndex])
 
-  const handlePageChange = (page_direction: number): void => {
+  const handlePageChange = (page_number: number): void => {
     // load the next/previous page based on what page_direction is set to
-    let next_page = searchPage
-    if (page_direction === 0) next_page = Math.max(0, next_page - 1)
-    if (page_direction === 1) next_page += 1 // todo clamp to max
-    setSearchPage(next_page)
+    setSearchPage(page_number)
   }
 
   const goToPage = (page_index: number): void => {
@@ -452,23 +449,9 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
 
     {/* Results Count */}
     <div className="results-count-row">
-      <div className="left-and-right pointer activable active"
-        style={{
-          height: '35px',
-          lineHeight: '35px',
-          fontWeight: 600
-        }}
-      >
-        <div style={{width: '20px',
-        height: '35px',
-        marginRight: '5px',
-        transform: `translateY(2px)`,
-        minWidth: '20px'}}><BiSearch /></div>
-        <div style={{
-          fontSize: '0.85rem'
-        }}>
-          20 Results
-        </div>
+      <div className="left-and-right pointer activable active section-header">
+        <div className="icon-area"><BiSearch /></div>
+        <div className="title-area">20 Results</div>
       </div>
     </div>
 
@@ -486,45 +469,16 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     </div>
 
     {/* Pagination */}
-    <div className="search-pagination">
-      <div className={`left-arrow-area ${isActive({prev: true}) ? 'active' : 'inactive'} `} onClick={() => {
-        handlePageChange(0)
-        if (searchResultContainerRef.current) {
-          scrollTo(searchResultContainerRef.current, 0, 150)
-        }
-      }}>
-        <div className="icon-area left"><IoIosArrowBack /></div>
-        <div>Prev</div>
-      </div>
-      <div className="page-indices">
-        {Array.from(new Array(5), (_, i: number) => {
-          return (<div 
-            key={i}
-            onClick={() => {
-              goToPage(i);
-              if (searchResultContainerRef.current) {
-                scrollTo(searchResultContainerRef.current, 0, 150)
-              }
-            }}
-            className={`page-index ${i === page ? 'active' : ''}`}>{i + 1}</div>);
-        })}
-        {/* <div className="page-index active">1</div>
-        <div className="page-index">2</div>
-        <div className="page-index">3</div>
-        <div className="page-index">4</div>
-        <div className="page-index">5</div> */}
-      </div>
-      <div className={`right-arrow-area ${isActive({next: true}) ? 'active' : 'inactive'}`} onClick={() => {
-        handlePageChange(1)
-        // scroll to top of search view
-        if (searchResultContainerRef.current) {
-          scrollTo(searchResultContainerRef.current, 0, 150)
-        }
-      }}>
-        <div>Next</div>
-        <div className="icon-area right"><IoIosArrowForward /></div>
-      </div>
-    </div>
+    <Pagination 
+      page_range={{min: 0, max: 4}}
+      page={page}
+      pageChange={(page_num: number) => {
+        goToPage(page_num);
+          if (searchResultContainerRef.current) {
+            scrollTo(searchResultContainerRef.current, 0, 150)
+          }
+      }}
+    />
   </div>)
 }
 

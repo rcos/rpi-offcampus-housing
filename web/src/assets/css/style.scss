@@ -502,93 +502,6 @@ body {
 .search-results-area {
   position: relative;
 
-  .search-pagination {
-    position: absolute;
-    bottom: 0;
-    height: 30px;
-    width: 100%;
-    display: flex;
-
-    .left-arrow-area, .right-arrow-area {
-      height: 30px;
-      line-height: 32px;
-      font-size: 1rem;
-      min-width: 30px;
-      box-sizing: border-box;
-      text-align: center;
-      cursor: pointer;
-      transform: scale(1);
-      transition: transform 0.25s, box-shadow 0.25s;
-      color: $black;
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
-      background-color: white;
-      display: flex;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      font-weight: 600;
-
-      .icon-area {
-        line-height: 36px;
-
-        &.left {
-          margin-right: 6px;
-        }
-        &.right {
-          margin-left: 6px;
-        }
-      }
-
-      &:active {
-        transform: scale(1);
-        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
-      }
-
-      &.active {
-        opacity: 1;
-        &:active {
-          transform: scale(0.9);
-        }
-      }
-
-      &.inactive {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .page-indices {
-      flex-grow: 1;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-
-      .page-index {
-        font-family: Arial, Helvetica, sans-serif;
-        transform: scale(1);
-        transform-origin: bottom;
-        height: 20px;
-        line-height: 20px;
-        margin: 0 10px;
-        margin-top: 5px;
-        box-sizing: border-box;
-        cursor: pointer;
-        font-size: 0.8rem;
-        border-radius: 20px;
-        transition: transform 0.25s;
-
-        &.active {
-          font-weight: 600;
-          background-color: rgba(0, 0, 0, 0.1);
-          padding: 0 15px;
-        }
-
-        &:active {
-          transform: scale(0.9);
-        }
-      }
-    }
-  }
-
   .search-results-container {
     overflow-y: scroll;
     position: absolute;
@@ -1168,4 +1081,116 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.section-header {
+
+  height: 35px;
+  line-height: 36px;
+  font-weight: 600;
+  
+
+  .icon-area {
+    width: 20px;
+    height: 35px;
+    margin-right: 5px;
+    transform: translateY(2px);
+    min-width: 20px;
+  }
+
+  .title-area {
+    font-size: 0.85rem;
+  }
+
+}
+
+.collection-container {
+  border: 1px solid red;
+}
+
+.pagination {
+  position: absolute;
+  bottom: 0;
+  height: 30px;
+  width: 100%;
+  display: flex;
+
+  .left-arrow-area, .right-arrow-area {
+    height: 30px;
+    line-height: 32px;
+    font-size: 1rem;
+    min-width: 30px;
+    box-sizing: border-box;
+    text-align: center;
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 0.25s, box-shadow 0.25s;
+    color: $black;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+    background-color: white;
+    display: flex;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    .icon-area {
+      line-height: 36px;
+
+      &.left {
+        margin-right: 6px;
+      }
+      &.right {
+        margin-left: 6px;
+      }
+    }
+
+    &:active {
+      transform: scale(1);
+      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    &.active {
+      opacity: 1;
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+
+    &.inactive {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .page-indices {
+    flex-grow: 1;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+
+    .page-index {
+      font-family: Arial, Helvetica, sans-serif;
+      transform: scale(1);
+      transform-origin: bottom;
+      height: 20px;
+      line-height: 20px;
+      margin: 0 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      cursor: pointer;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      transition: transform 0.25s;
+
+      &.active {
+        font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 0 15px;
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
 }
