@@ -27,6 +27,38 @@ const Centered = ({width, height, children, verticalBuffer, horizontalBuffer}: I
   const [windowHeight, setWindowHeight] = useState<number | string>(0)
 
   useEffect(() => {
+    let verticalResizeFn: Function = (e: any) => {}
+    let horizontalResizeFn: Function = (e: any) => {}
+
+    if (horizontalBuffer) {
+      horizontalResizeFn = (e: any) => {
+        let w = e.target.innerWidth
+        setWindowWidth(Math.max(w - horizontalBuffer, 0))
+      }
+      setWindowWidth(Math.max(window.innerWidth - horizontalBuffer, 0))
+    }
+
+    if (verticalBuffer) {
+      verticalResizeFn = (e: any) => {
+        let h = e.target.innerHeight
+        setWindowHeight(Math.max(h - verticalBuffer, 0))
+      }
+      setWindowHeight(Math.max(window.innerHeight - verticalBuffer, 0))
+    }
+
+    const resizeFn = (e: any) => {
+      verticalResizeFn(e)
+      horizontalResizeFn(e)
+    }
+    window.addEventListener('resize', resizeFn)
+
+    // unmount
+    return () => {
+      window.removeEventListener('resize', resizeFn)
+    }
+  }, [horizontalBuffer, verticalBuffer])
+
+  useEffect(() => {
 
     let verticalResizeFn: Function = (e: any) => {}
     let horizontalResizeFn: Function = (e: any) => {}

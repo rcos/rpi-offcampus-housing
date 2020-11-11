@@ -6,11 +6,13 @@ import PopupBubble from './toolbox/misc/PopupBubble'
 
 import { BiSearch, BiCollection, BiHomeAlt } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
+import {useMediaQuery} from 'react-responsive'
 
 const ViewWrapper = ({children}: {children: any}) => {
 
+  const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
-  const [viewWidth, setViewWidth] = useState<number>(1400)
+  // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
 
   useEffect(() => {
@@ -28,11 +30,11 @@ const ViewWrapper = ({children}: {children: any}) => {
   }, [])
 
   const updateViewWidth = (new_width: number) => {
-    if (new_width >= 1400) setViewWidth(1400)
-    else if (new_width > 1200 && new_width < 1400) setViewWidth(1200)
-    else if (new_width < 1200) setViewWidth(new_width - 100)
+    // if (new_width >= 1400) setViewWidth(1400)
+    // else if (new_width > 1200 && new_width < 1400) setViewWidth(1200)
+    // else if (new_width < 1200) setViewWidth(new_width - 100)
 
-    if (new_width > 1500) {
+    if (new_width > 1000) {
       setNavbarMinMode(true)
     }
     else {
@@ -58,14 +60,14 @@ const ViewWrapper = ({children}: {children: any}) => {
     }
   }
 
-  return (<Centered height="100%" width={viewWidth}>
+  return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
         <Navbar />
       </div>
       <div className="app-view-area" style={{
-        width: `${viewWidth}px`,
-        maxWidth: `${viewWidth}px`
+        // width: `${viewWidth}px`,
+        // maxWidth: `${viewWidth}px`
       }}>
         <div className="user-navbar">
 
