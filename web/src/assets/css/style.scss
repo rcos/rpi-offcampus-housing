@@ -1273,3 +1273,62 @@ body {
     }
   }
 }
+
+.context-menu-container {
+  position: relative;
+
+  .context-menu {
+    position: absolute;
+    z-index: 20;
+    // right: 0;
+    // top: calc(100% + 10px);
+    width: 170px;
+    background-color: #E4E4E4;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+
+    .context-menu-item {
+      display: flex;
+      height: 30px;
+      line-height: 30px;
+      background-color: #E4E4E4;
+      transition: background 0.2s;
+      cursor: pointer;
+
+      &.icon-left {
+
+      }
+
+      &.icon-right {
+        text-align: right;
+        justify-content: flex-end;
+      }
+
+      &:hover {
+        background-color: #d6d6d6;
+      }
+      
+      .text-area {
+        text-transform: uppercase;
+        font-size: 0.65rem;
+        letter-spacing: 1.2px;
+        font-weight: 600;
+
+        &.left {
+          margin-left: 10px;
+        }
+        &.right {
+          margin-right: 10px;
+        }
+      }
+
+      .icon-area {
+        background-color: rgba(0, 0, 0, 0.1);
+        width: 30px;
+        text-align: center;
+        line-height: 35px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

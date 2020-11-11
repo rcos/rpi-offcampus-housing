@@ -6,6 +6,7 @@ import Pagination from '../components/toolbox/layout/Pagination'
 import Button from '../components/toolbox/form/Button'
 import {BiRightArrowAlt} from 'react-icons/bi'
 import {BsThreeDotsVertical} from 'react-icons/bs'
+import ContextMenu from '../components/toolbox/misc/ContextMenu'
 
 const CollectionView = () => {
 
@@ -108,7 +109,17 @@ const CollectionEntry = () => {
       position: 'absolute',
       top: 0, right: '10px'
     }}>
-      <div className="icon-button"><BsThreeDotsVertical /></div>
+      <ContextMenu
+      iconLocation="right"
+      position="top right"
+        menuItems={[
+          {label: 'Option One', icon: <BsThreeDotsVertical />},
+          {label: 'Option Two', icon: <BsThreeDotsVertical />},
+          {label: 'Option Three', icon: <BsThreeDotsVertical />}
+        ]}
+      >
+        <div className="icon-button" style={{position: 'relative'}}><BsThreeDotsVertical /></div>
+      </ContextMenu>
     </div>
 
     {/* Bottom Right Buttons */}
