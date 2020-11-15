@@ -32,42 +32,42 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Passport CAS Auth
-import passport from "passport";
-import session from "express-session";
-import CasAuthRouter from "./Authentication/casauth";
-import LocalAuthRouter from './Authentication/localauth';
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
-app.use("/auth", CasAuthRouter);
-app.use("/auth", LocalAuthRouter);
+// import passport from "passport";
+// import session from "express-session";
+// import CasAuthRouter from "./Authentication/casauth";
+// import LocalAuthRouter from './Authentication/localauth';
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET as string,
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use("/auth", CasAuthRouter);
+// app.use("/auth", LocalAuthRouter);
 
 // API routes
-import StudentGET from "./API/Student/student.get";
-import StudentPUT from "./API/Student/student.put";
-import LandlordGET from "./API/Landlord/landlord.get";
-import LandlordPUT from "./API/Landlord/landlord.put";
-import ReviewGET from "./API/Review/review.get";
-import ReviewPUT from "./API/Review/review.put";
-import PropertyGET from "./API/Property/property.get";
-import PropertyPUT from "./API/Property/property.put";
-import SearchGET from "./API/Search/search.get";
+// import StudentGET from "./API/Student/student.get";
+// import StudentPUT from "./API/Student/student.put";
+// import LandlordGET from "./API/Landlord/landlord.get";
+// import LandlordPUT from "./API/Landlord/landlord.put";
+// import ReviewGET from "./API/Review/review.get";
+// import ReviewPUT from "./API/Review/review.put";
+// import PropertyGET from "./API/Property/property.get";
+// import PropertyPUT from "./API/Property/property.put";
+// import SearchGET from "./API/Search/search.get";
 
-app.use("/api/students", StudentGET);
-app.use("/api/students", StudentPUT);
-app.use("/api/landlords", LandlordGET);
-app.use("/api/landlords", LandlordPUT);
-app.use("/api/reviews", ReviewGET);
-app.use("/api/reviews", ReviewPUT);
-app.use("/api/properties", PropertyGET);
-app.use("/api/properties", PropertyPUT);
-app.use("/api/search", SearchGET);
+// app.use("/api/students", StudentGET);
+// app.use("/api/students", StudentPUT);
+// app.use("/api/landlords", LandlordGET);
+// app.use("/api/landlords", LandlordPUT);
+// app.use("/api/reviews", ReviewGET);
+// app.use("/api/reviews", ReviewPUT);
+// app.use("/api/properties", PropertyGET);
+// app.use("/api/properties", PropertyPUT);
+// app.use("/api/search", SearchGET);
 
 const connectMongo = () =>
   // connect to MongoDB via mongoose
@@ -91,20 +91,39 @@ const connectMongo = () =>
     )
   );
 
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+import "reflect-metadata"
+import { ApolloServer } from "apollo-server-express"
+import { buildSchema } from "type-graphql";
+import * as http from "http";
+import {StudentResolver} from "./GQL/resolvers/StudentResolver"
 
-  if (process.env.USING_MOCHA !== "true") {
-    connectMongo()
-      .then(() => {
-        console.log(`✔ Successfully connect to MongoDB instance.`);
-      })
-      .catch((err) => {
-        console.error(`❌ Error connecting to mongoose.`);
-        console.error(err);
-        process.exit(1);
-      });
-  }
-});
+const StartServer = async (): Promise<http.Server> => {
+
+  const schema = await buildSchema ({
+    resolvers: [StudentResolver],
+    emitSchemaFile: true,
+    validate: true
+  })
+  const server = new ApolloServer({ schema })
+  server.applyMiddleware({ app })
+  
+  return app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  
+    if (process.env.USING_MOCHA !== "true") {
+      connectMongo()
+        .then(() => {
+          console.log(`✔ Successfully connect to MongoDB instance.`);
+        })
+        .catch((err) => {
+          console.error(`❌ Error connecting to mongoose.`);
+          console.error(err);
+          process.exit(1);
+        });
+    }
+  });
+}
+
+const server = StartServer ()
 
 export { app, connectMongo, server, MONGO_URI };
