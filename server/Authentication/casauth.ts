@@ -1,127 +1,141 @@
-import passport from 'passport'
-import chalk from 'chalk'
+import passport from "passport";
+import chalk from "chalk";
 
-import Student, {IStudentDoc} from '../schemas/student.schema'
-import Institution, {IInstitutionDoc} from '../schemas/institution.schema'
-import Landlord from '../schemas/landlord.schema'
+import Student, { IStudentDoc } from "../schemas/student.schema";
+import {
+  InstitutionSchema as Institution,
+  InstitutionDocument as IInstitutionDoc,
+} from "../schemas/institution.schema";
+import Landlord from "../schemas/landlord.schema";
 
-passport.serializeUser(function(user: any, done: Function) {
+passport.serializeUser(function (user: any, done: Function) {
   done(null, user);
 });
-passport.deserializeUser(function(user: any, done: Function) {
-
-  console.log(`Deserialize`)
-  console.log(user)
+passport.deserializeUser(function (user: any, done: Function) {
+  console.log(`Deserialize`);
+  console.log(user);
   // try to find the user in student
   Student.findById(user._id, (err: any, student_doc: IStudentDoc) => {
-    if (!err && student_doc) done(null, {...student_doc.toObject(), type: 'student'})
-    else if (err) done(err, null)
-    
+    if (!err && student_doc)
+      done(null, { ...student_doc.toObject(), type: "student" });
+    else if (err) done(err, null);
     // student doesnt exsit
     else {
       Landlord.findById(user._id, (err: any, landlord_doc) => {
-        if (!err && landlord_doc) done (null, {...landlord_doc.toObject(), type: 'landlord'})
-        else if (err) done(err, null)
-        else done(null, false)
-      })
+        if (!err && landlord_doc)
+          done(null, { ...landlord_doc.toObject(), type: "landlord" });
+        else if (err) done(err, null);
+        else done(null, false);
+      });
     }
-  })
+  });
 
   // TODO try to find the user in landlord
 });
 //IF PROD
 passport.use(
-  new (require('passport-cas').Strategy)
-({
-  version: 'CAS3.0',
-  ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
-  serverBaseURL: 'http://localhost:9010'
-}, 
+  new (require("passport-cas").Strategy)(
+    {
+      version: "CAS3.0",
+      ssoBaseURL: "https://cas-auth.rpi.edu/cas",
+      serverBaseURL: "http://localhost:9010",
+    },
 
-function(profile: any, done: Function) {
+    function (profile: any, done: Function) {
+      console.log(chalk.cyan("👉 In Passport Authenticate"));
+      let cas_id = profile.user;
+      console.log(`CAS ID: ${cas_id}`);
 
-  console.log(chalk.cyan('👉 In Passport Authenticate'))
-  let cas_id = profile.user
-  console.log(`CAS ID: ${cas_id}`)
+      // if the user exists, log the user in
+      // otherwise, sign them up
+      Student.findOne(
+        {
+          "auth_info.cas_id": cas_id,
+        },
+        (err: any, student_doc: IStudentDoc) => {
+          if (err) {
+            // send an error if a problem occurred
+            console.log(
+              chalk.bgRed(
+                `Error looking for student where auth_info.cas_id = ${cas_id}`
+              )
+            );
+            done(err);
+          } else {
+            let instution_name = "Rensselaer Polytechnic Institute";
+            Institution.findOne(
+              { name: instution_name },
+              async (err, institution_doc: IInstitutionDoc) => {
+                if (err) {
+                  console.log(
+                    chalk.bgRed(
+                      `Error looking for institution where name = ${instution_name}`
+                    )
+                  );
+                  done(err);
+                } else if (!institution_doc) {
+                  console.log(
+                    chalk.bgRed(
+                      `No institution found with name = ${instution_name}`
+                    )
+                  );
+                  done("Invalid institution");
+                } else {
+                  if (!student_doc) {
+                    // register the user if they do not exist
+                    console.log(
+                      chalk.blue(
+                        `User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`
+                      )
+                    );
 
-  // if the user exists, log the user in
-  // otherwise, sign them up
-  Student.findOne({
-    'auth_info.cas_id': cas_id
-  }, (err: any, student_doc: IStudentDoc) => {
-    if (err) {
+                    let new_student: IStudentDoc = new Student({
+                      auth_info: {
+                        cas_id,
+                        institution_id: institution_doc._id,
+                      },
+                    });
 
-      // send an error if a problem occurred
-      console.log(chalk.bgRed(`Error looking for student where auth_info.cas_id = ${cas_id}`))
-      done(err)
-    }
-    else {
-      let instution_name = 'Rensselaer Polytechnic Institute'
-      Institution.findOne({name: instution_name}, async (err, institution_doc: IInstitutionDoc) => {
-        if (err) {
-          console.log(chalk.bgRed(`Error looking for institution where name = ${instution_name}`))
-          done(err)
-        }
-        else if (!institution_doc) {
-          console.log(chalk.bgRed(`No institution found with name = ${instution_name}`))
-          done("Invalid institution")
-        }
-        else {
-
-          if (!student_doc) {
-
-            // register the user if they do not exist
-            console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
-      
-            let new_student: IStudentDoc = new Student({
-              auth_info: { cas_id, institution_id: institution_doc._id }
-            })
-      
-            await new_student.save()
-            done(null, new_student.toObject(), { new: true })
-      
+                    await new_student.save();
+                    done(null, new_student.toObject(), { new: true });
+                  } else {
+                    done(null, student_doc.toObject(), { new: false });
+                  }
+                }
+              }
+            );
           }
-          else {
-            
-            done(null, student_doc.toObject(), { new: false })
-          }
-
         }
-      })
+      );
     }
-  })
-}));
+  )
+);
 
 //need to create api route for CAS login
-import express from 'express'
-const authRouter = express.Router()
+import express from "express";
+const authRouter = express.Router();
 authRouter.get("/rpi/cas-auth", (req, res, next) => {
-  console.log(chalk.bgCyan(`👉 CAS Auth`))
+  console.log(chalk.bgCyan(`👉 CAS Auth`));
 
-  res.header('Access-Control-Allow-Credentials', "true");
-  passport.authenticate('cas', (err, user, info) => {
-
+  res.header("Access-Control-Allow-Credentials", "true");
+  passport.authenticate("cas", (err, user, info) => {
     if (err) return next(err);
     else {
       req.logIn(user, (login_err) => {
-
         if (login_err) return next(login_err);
-        else if (info.new) res.redirect('http://localhost:3000/student/register/complete')
-        else res.redirect('http://localhost:3000/')
-
-      })
+        else if (info.new)
+          res.redirect("http://localhost:3000/student/register/complete");
+        else res.redirect("http://localhost:3000/");
+      });
     }
-  })(req, res, next)
-
+  })(req, res, next);
 });
 
 authRouter.get("/user", (req, res) => {
   res.json({
     user: req.user,
-    authenticated: req.isAuthenticated()
-  })
-})
+    authenticated: req.isAuthenticated(),
+  });
+});
 
-
-
-export default authRouter
+export default authRouter;

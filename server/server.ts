@@ -12,13 +12,23 @@ if (!process.env.NODE_ENV) {
 }
 dotenv.config({ path: `../.env.${process.env.NODE_ENV!.replace(" ", "")}` });
 
-import {frontendPath} from './config'
+import { frontendPath } from "./config";
 
 const PORT = process.env.SERVER_PORT;
 
 const MONGO_PREFIX = process.env.MONGO_DB_PREFIX ?? "mongodb+srv";
 const MONGO_HOST = process.env.MONGO_DB_HOST ?? "cluster0.vsneo.mongodb.net";
 const MONGO_URI = `${MONGO_PREFIX}://${process.env.MONGO_DB_CLUSTER_USERNAME}:${process.env.MONGO_DB_PASSWORD}@${MONGO_HOST}/housing-database?retryWrites=true&w=majority&authSource=admin`;
+
+// migrate to graphql
+import { initApolloServer } from "./graphql/server";
+initApolloServer()
+  .then((server) => {
+    server.applyMiddleware({ app });
+  })
+  .catch((err) => {
+    console.error("Failed to init apollo server: " + err);
+  });
 
 // setup middleware
 import bodyParser from "body-parser";
@@ -35,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 import passport from "passport";
 import session from "express-session";
 import CasAuthRouter from "./Authentication/casauth";
-import LocalAuthRouter from './Authentication/localauth';
+import LocalAuthRouter from "./Authentication/localauth";
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string,

@@ -1,0 +1,8 @@
+query GetAllInstitutions {
+  returnAllInstitutions {
+    name
+    location {
+      address
+    }
+  }
+}

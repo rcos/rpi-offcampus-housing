@@ -1,27 +1,23 @@
-import mongoose from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
+import { Document } from "mongoose";
 
-var Schema = mongoose.Schema
+import { InstitutionInterface } from "../models/institution";
+import { LocationInterface } from "../models/location";
 
-interface IInstitutionDoc extends mongoose.Document {
-  name: String
-  location: {
-    address: string
-    city: string
-    state: string
-    zip: string
-  }
+class Institution implements InstitutionInterface {
+  @prop()
+  name!: string;
+
+  @prop()
+  location!: LocationInterface;
 }
 
-var InstitutionSchema = new Schema({
-  name: String,
-  location: {
-    address: String,
-    city: String,
-    state: String,
-    zip: String
-  }
-})
+const InstitutionModel = getModelForClass(Institution);
 
-const Institution = mongoose.model<IInstitutionDoc>("Institution", InstitutionSchema)
-export default Institution;
-export { IInstitutionDoc }
+type InstitutionDocument = InstitutionInterface & Document;
+
+export {
+  Institution,
+  InstitutionModel as InstitutionSchema,
+  InstitutionDocument,
+};
