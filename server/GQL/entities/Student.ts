@@ -1,5 +1,5 @@
 import { prop, getModelForClass } from "@typegoose/typegoose"
-import { Field, ObjectType, ID } from "type-graphql";
+import { Field, ObjectType, InputType, ID } from "type-graphql";
 import {APIResult} from "./APIResponse"
 
 @ObjectType({description: "Cas Auth Information"})
@@ -34,6 +34,22 @@ export class Student {
 
   @Field({ nullable: true })
   auth_info: CasAuthInfo;
+}
+
+@InputType()
+export class StudentInput implements Partial<Student> {
+
+  @Field({ nullable: true })
+  _id: string;
+
+  @Field({ nullable: true })
+  first_name: String;
+
+  @Field({ nullable: true })
+  last_name: String;
+  
+  @Field({ nullable: true })
+  email: String;
 }
 
 @ObjectType()

@@ -9,6 +9,10 @@ type CasAuthInfo {
   institution_id: String
 }
 
+type Mutation {
+  updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
+}
+
 type Query {
   allStudents: [Student!]!
   getStudent(_id: String!): StudentAPIResponse
@@ -28,4 +32,11 @@ type StudentAPIResponse {
   data: Student
   error: String
   success: Boolean!
+}
+
+input StudentInput {
+  _id: String
+  email: String
+  first_name: String
+  last_name: String
 }
