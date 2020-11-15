@@ -1,5 +1,15 @@
-import { prop as Property, getModelForClass } from "@typegoose/typegoose"
+import { prop, getModelForClass } from "@typegoose/typegoose"
 import { Field, ObjectType, ID } from "type-graphql";
+import {APIResult} from "./APIResponse"
+
+@ObjectType({description: "Cas Auth Information"})
+class CasAuthInfo {
+  @Field({ nullable: true })
+  cas_id: String;
+  
+  @Field({ nullable: true })
+  institution_id: String;
+}
 
 @ObjectType({description: "Student model"})
 export class Student {
@@ -7,20 +17,26 @@ export class Student {
   _id: string;
 
   @Field()
-  @Property()
+  @prop()
   first_name: String;
 
   @Field()
-  @Property()
+  @prop()
   last_name: String;
   
   @Field()
-  @Property()
+  @prop()
   email: String;
   
   @Field()
-  @Property()
+  @prop()
   phone_number: String;
+
+  @Field({ nullable: true })
+  auth_info: CasAuthInfo;
 }
+
+@ObjectType()
+export class StudentAPIResponse extends APIResult(Student) {}
 
 export const StudentModel = getModelForClass(Student)

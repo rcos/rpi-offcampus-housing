@@ -3,15 +3,29 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+"""Cas Auth Information"""
+type CasAuthInfo {
+  cas_id: String
+  institution_id: String
+}
+
 type Query {
   allStudents: [Student!]!
+  getStudent(_id: String!): StudentAPIResponse
 }
 
 """Student model"""
 type Student {
   _id: ID!
+  auth_info: CasAuthInfo
   email: String!
   first_name: String!
   last_name: String!
   phone_number: String!
+}
+
+type StudentAPIResponse {
+  data: Student
+  error: String
+  success: Boolean!
 }
