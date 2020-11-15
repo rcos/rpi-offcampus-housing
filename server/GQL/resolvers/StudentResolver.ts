@@ -1,4 +1,4 @@
-import {Resolver, Mutation, Arg, Query, ObjectType, Field, ClassType} from 'type-graphql'
+import {Resolver, Mutation, Arg, Query} from 'type-graphql'
 import {Student, StudentAPIResponse, StudentInput, StudentModel} from '../entities/Student'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
@@ -8,11 +8,6 @@ const ObjectId = mongoose.Types.ObjectId
 @Resolver()
 export class StudentResolver {
 
-  @Query(() => [Student])
-  async allStudents () {
-    return await StudentModel.find ()
-  }
-
   /**
    * getStudent (_id: mongoose.Types.ObjectId)
    * @desc Look for and return the student with the given id. If no student with that 
@@ -20,7 +15,7 @@ export class StudentResolver {
    * 
    * @param _id: mongoose.Types.ObjectId => The id of the student to retrieve
   */
-  @Query(() => StudentAPIResponse, {nullable: true})
+  @Query(() => StudentAPIResponse, {nullable: false})
   async getStudent (@Arg("_id") _id: string): Promise<StudentAPIResponse> {
     console.log(chalk.bgBlue(`👉 getStudent(id)`))
 
