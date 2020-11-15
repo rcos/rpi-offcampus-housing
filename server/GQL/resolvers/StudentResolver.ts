@@ -47,7 +47,7 @@ export class StudentResolver {
    */
   @Mutation(() => StudentAPIResponse)
   async updateStudent(@Arg("_id") _id: string, @Arg("new_student"){first_name, last_name, email}: StudentInput): Promise<StudentAPIResponse> {
-    console.log(chalk.bgBlue(`👉 createStudent(first_name, last_name, email)`))
+    console.log(chalk.bgBlue(`👉 createStudent()`))
 
     let student_doc: DocumentType<Student> | null = await StudentModel.findById(_id)
     if (student_doc == null) {

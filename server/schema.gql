@@ -25,7 +25,17 @@ type LandlordAPIResponse {
   success: Boolean!
 }
 
+input LandlordInput {
+  _id: String
+  email: String
+  first_name: String
+  last_name: String
+  password: String
+  phone_number: String
+}
+
 type Mutation {
+  createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 

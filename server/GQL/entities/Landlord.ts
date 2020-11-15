@@ -1,5 +1,5 @@
 import {prop, getModelForClass} from "@typegoose/typegoose"
-import {Field, ObjectType, ID} from "type-graphql"
+import {Field, ObjectType, ID, InputType} from "type-graphql"
 import {APIResult} from "./APIResponse"
 
 @ObjectType({description: "Landlord model"})
@@ -25,6 +25,27 @@ export class Landlord {
 
   @Field()
   @prop()
+  password: string;
+}
+
+@InputType()
+export class LandlordInput implements Partial<Landlord> {
+  @Field({nullable: true})
+  _id: string;
+
+  @Field({nullable: true})
+  first_name: string;
+  
+  @Field({nullable: true})
+  last_name: string;
+  
+  @Field({nullable: true})
+  email: string;
+  
+  @Field({nullable: true})
+  phone_number: string;
+  
+  @Field({nullable: true})
   password: string;
 }
 
