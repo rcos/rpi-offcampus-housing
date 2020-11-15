@@ -39,8 +39,30 @@ type Mutation {
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 
+"""Property model"""
+type Property {
+  _id: ID!
+  landlord: String!
+  landlord_doc: Landlord
+  location: String!
+  sq_ft: Float!
+}
+
+type PropertyAPIResponse {
+  data: Property
+  error: String
+  success: Boolean!
+}
+
+input PropertyReviewInput {
+  count: Float
+  offset: Float
+  withReviews: Boolean!
+}
+
 type Query {
   getLandlord(_id: String!): LandlordAPIResponse!
+  getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
 }
 

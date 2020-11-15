@@ -95,12 +95,12 @@ import "reflect-metadata"
 import { ApolloServer } from "apollo-server-express"
 import { buildSchema } from "type-graphql";
 import * as http from "http";
-import {StudentResolver, LandlordResolver} from "./GQL/resolvers"
+import {StudentResolver, LandlordResolver, PropertyResolver} from "./GQL/resolvers"
 
 const StartServer = async (): Promise<http.Server> => {
 
   const schema = await buildSchema ({
-    resolvers: [StudentResolver, LandlordResolver],
+    resolvers: [StudentResolver, LandlordResolver, PropertyResolver],
     emitSchemaFile: true,
     validate: true
   })

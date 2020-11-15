@@ -1,6 +1,6 @@
 import { prop, getModelForClass } from "@typegoose/typegoose"
 import { Field, ObjectType, InputType, ID } from "type-graphql";
-import {APIResult} from "./APIResponse"
+import {APIResult} from "."
 
 @ObjectType({description: "Cas Auth Information"})
 class CasAuthInfo {

@@ -1,4 +1,5 @@
 import {ClassType, ObjectType, Field} from "type-graphql"
+import {ObjectId} from "mongodb"
 
 export function APIResult<T>(TItemClass: ClassType<T>) {
 
@@ -17,3 +18,5 @@ export function APIResult<T>(TItemClass: ClassType<T>) {
   }
   return APIResponseClass
 }
+
+export type Ref<T> = T | ObjectId

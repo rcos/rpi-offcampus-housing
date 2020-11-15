@@ -1,6 +1,6 @@
 import {prop, getModelForClass} from "@typegoose/typegoose"
 import {Field, ObjectType, ID, InputType} from "type-graphql"
-import {APIResult} from "./APIResponse"
+import {APIResult} from "."
 
 @ObjectType({description: "Landlord model"})
 export class Landlord {
