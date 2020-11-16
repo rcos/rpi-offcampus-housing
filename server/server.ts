@@ -48,6 +48,9 @@ app.use(passport.session());
 app.use("/auth", CasAuthRouter);
 app.use("/auth", LocalAuthRouter);
 
+import {awsRouter} from './vendors/aws_s3'
+app.use('/vendors/aws_s3', awsRouter)
+
 // API routes
 // import StudentGET from "./API/Student/student.get";
 // import StudentPUT from "./API/Student/student.put";
