@@ -32,21 +32,21 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Passport CAS Auth
-// import passport from "passport";
-// import session from "express-session";
-// import CasAuthRouter from "./Authentication/casauth";
-// import LocalAuthRouter from './Authentication/localauth';
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET as string,
-//     resave: false,
-//     saveUninitialized: false,
-//   })
-// );
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use("/auth", CasAuthRouter);
-// app.use("/auth", LocalAuthRouter);
+import passport from "passport";
+import session from "express-session";
+import CasAuthRouter from "./Authentication/casauth";
+import LocalAuthRouter from './Authentication/localauth';
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/auth", CasAuthRouter);
+app.use("/auth", LocalAuthRouter);
 
 // API routes
 // import StudentGET from "./API/Student/student.get";
