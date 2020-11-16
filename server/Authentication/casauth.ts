@@ -74,6 +74,7 @@ function(profile: any, done: Function) {
             console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
       
             let new_student: DocumentType<Student> = new StudentModel({
+              saved_collection: [],
               auth_info: { cas_id, institution_id: institution_doc._id }
             })
       

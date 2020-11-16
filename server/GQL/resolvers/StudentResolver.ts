@@ -1,5 +1,12 @@
 import {Resolver, Mutation, Arg, Query} from 'type-graphql'
-import {Student, StudentAPIResponse, StudentInput, StudentModel} from '../entities/Student'
+import {Student, 
+  StudentAPIResponse, 
+  StudentInput, 
+  PropertyCollectionEntriesAPIResponse, 
+  CollectionFetchInput, 
+  StudentModel, 
+  PropertyCollectionEntries} from '../entities/Student'
+import {Property, PropertyModel} from '../entities/Property'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
@@ -32,6 +39,53 @@ export class StudentResolver {
       console.log(chalk.bgGreen(`✔ Successfully found student with id ${_id}`))
       return { success: true, data: await StudentModel.findById(_id) }
     }
+  }
+
+  /**
+   * getStudentSavedCollection(_id, {offset, count}: CollectionFetchInput)
+   * @desc This function returns the user's collection of properties that they have saved.
+   * 
+   * @param _id The id of the student to get the collection for
+   * @param collectionOptions
+   *          offset: number => The amount to offset the fetch by
+   *          count: number => The max amount of documents to return
+   */
+  @Query(() => PropertyCollectionEntriesAPIResponse)
+  async getStudentSavedCollection(@Arg("_id") _id: string, 
+        @Arg("collectionOptions"){offset, count}: CollectionFetchInput): Promise<PropertyCollectionEntriesAPIResponse> {
+    console.log(chalk.bgBlue(`👉 getSavedCollection(_id)`))
+
+    let student_doc: DocumentType<Student> | null = await StudentModel.findById(_id)
+    if (student_doc == null) {
+      console.log(chalk.bgRed(`❌ Error: Failed to fetch collection for nonexisting user of id ${_id}`))
+      return {success: false, error: "Failed to fetch collection for nonexisting user."}
+    }
+
+    let collection_ids = student_doc.saved_collection.splice(offset, offset + count)
+    let property_promises: Promise<DocumentType<Property> | null>[] = collection_ids.map((property_id) => (new Promise( (resolve, reject) => {
+
+      // look for the rpoperty and resolve it if it is found
+      PropertyModel.findById(property_id, (err, property_doc: DocumentType<Property>) => {
+
+        if (err || property_doc == null) resolve(null)
+        else resolve(property_doc)
+
+      })
+    })))
+
+    let resolved_properties_: DocumentType<Property>[] = []
+    property_promises.forEach(async (property_promise: Promise<DocumentType<Property> | null>) => {
+      let result_: DocumentType<Property> | null = await property_promise
+      if (result_ != null) resolved_properties_.push(result_ as DocumentType<Property>)
+    })
+
+    let entries = new PropertyCollectionEntries()
+    entries.collection_entries = resolved_properties_
+    return {
+      success: true,
+      data: entries
+    }
+
   }
 
   /**

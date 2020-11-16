@@ -9,6 +9,11 @@ type CasAuthInfo {
   institution_id: String
 }
 
+input CollectionFetchInput {
+  count: Float!
+  offset: Float!
+}
+
 """Landlord model"""
 type Landlord {
   _id: ID!
@@ -54,6 +59,17 @@ type PropertyAPIResponse {
   success: Boolean!
 }
 
+"""An array of collection entries"""
+type PropertyCollectionEntries {
+  collection_entries: [Property!]!
+}
+
+type PropertyCollectionEntriesAPIResponse {
+  data: PropertyCollectionEntries
+  error: String
+  success: Boolean!
+}
+
 input PropertyReviewInput {
   count: Float
   offset: Float
@@ -64,6 +80,7 @@ type Query {
   getLandlord(_id: String!): LandlordAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
+  getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
 }
 
 """Student model"""
@@ -74,6 +91,7 @@ type Student {
   first_name: String!
   last_name: String!
   phone_number: String!
+  saved_collection: [String!]
 }
 
 type StudentAPIResponse {
