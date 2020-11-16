@@ -45,7 +45,7 @@ export class Student {
 
   @Field(type => [String], {nullable: true})
   @prop({type: [String]})
-  saved_collection: String[];
+  saved_collection: string[];
 }
 
 @InputType()
@@ -66,7 +66,6 @@ export class StudentInput implements Partial<Student> {
 
 @InputType()
 export class CollectionFetchInput {
-
 
   @Field()
   offset: number;

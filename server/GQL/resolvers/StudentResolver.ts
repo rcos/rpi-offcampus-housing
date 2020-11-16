@@ -52,7 +52,8 @@ export class StudentResolver {
    */
   @Query(() => PropertyCollectionEntriesAPIResponse)
   async getStudentSavedCollection(@Arg("_id") _id: string, 
-        @Arg("collectionOptions"){offset, count}: CollectionFetchInput): Promise<PropertyCollectionEntriesAPIResponse> {
+        @Arg("collectionOptions"){offset, count}: CollectionFetchInput): Promise<PropertyCollectionEntriesAPIResponse> 
+  {
     console.log(chalk.bgBlue(`👉 getSavedCollection(_id)`))
 
     let student_doc: DocumentType<Student> | null = await StudentModel.findById(_id)
@@ -61,30 +62,89 @@ export class StudentResolver {
       return {success: false, error: "Failed to fetch collection for nonexisting user."}
     }
 
-    let collection_ids = student_doc.saved_collection.splice(offset, offset + count)
-    let property_promises: Promise<DocumentType<Property> | null>[] = collection_ids.map((property_id) => (new Promise( (resolve, reject) => {
+    console.log(`\t${chalk.cyan('offset:')} ${offset}`)
+    console.log(`\t${chalk.cyan('count:')} ${count}`)
+    console.log(student_doc.saved_collection)
+    let collection_ids = student_doc.saved_collection.slice(offset, offset + count)
+    console.log(collection_ids)
+    let property_promises: Promise<DocumentType<Property> | null>[] = collection_ids.map((property_id: string) => (new Promise( (resolve, reject) => {
 
       // look for the rpoperty and resolve it if it is found
       PropertyModel.findById(property_id, (err, property_doc: DocumentType<Property>) => {
 
-        if (err || property_doc == null) resolve(null)
-        else resolve(property_doc)
+        if (err || property_doc == null) {
+          resolve(null)
+        }
+        else {
+          resolve(property_doc)
+        }
 
       })
     })))
 
     let resolved_properties_: DocumentType<Property>[] = []
-    property_promises.forEach(async (property_promise: Promise<DocumentType<Property> | null>) => {
+    for (let i = 0; i < property_promises.length; ++i) {
+      let property_promise: Promise<DocumentType<Property> | null> = property_promises[i]
       let result_: DocumentType<Property> | null = await property_promise
-      if (result_ != null) resolved_properties_.push(result_ as DocumentType<Property>)
-    })
+      if (result_ != null) {
+        resolved_properties_.push(result_ as DocumentType<Property>)
+      }
+    }
 
+    console.log(chalk.bgGreen(`✔ Successfully retrieved ${resolved_properties_.length} properties in student ${student_doc.first_name} ${student_doc.last_name}'s collection`))
     let entries = new PropertyCollectionEntries()
     entries.collection_entries = resolved_properties_
     return {
       success: true,
       data: entries
     }
+
+  }
+
+  /**
+   * addPropertyToStudentCollection(student_id: string, property_id: string)
+   * @desc Add a property with the specified property_id to the student's collection.
+   * 
+   * @param student_id: string => The student's id of the collection to add the property to
+   * @param property_id: string => The id of the property to add to the student's collection
+   */
+  @Mutation(() => PropertyCollectionEntriesAPIResponse)
+  async addPropertyToStudentCollection(@Arg("student_id") student_id: string, 
+    @Arg("property_id") property_id: string): Promise<PropertyCollectionEntriesAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 addPropertyToStudentCollection(student_id, property_id)`))
+    console.log(`\t${chalk.cyan(`student_id:`)} ${student_id}`)
+    console.log(`\t${chalk.cyan(`property_id:`)} ${property_id}`)
+
+    let property_doc: DocumentType<Property> | null = await PropertyModel.findById(property_id)
+    if (property_doc == null) {
+      console.log(chalk.bgRed(`❌ Error: No property found with id ${property_id}`))
+      return {success: false, error: "No property found with given id"}
+    }
+    
+    let student_doc: DocumentType<Student> | null = await StudentModel.findById(student_id)
+    if (student_doc == null) {
+      console.log(chalk.bgRed(`❌ Error: No student found with id ${student_id}`))
+      return {success: false, error: "No student found with given id"}
+    }
+
+    // check if the student already has the property saved.
+    let already_in_collection: boolean = false
+    for (let i = 0; !already_in_collection && i < student_doc.saved_collection.length; ++i) {
+      if (property_id == student_doc.saved_collection[i]) already_in_collection = true;
+    }
+    if (already_in_collection) {
+      console.log(chalk.bgRed(`❌ Error: Student already has this property saved in their collection.`))
+      return {success: false, error: `Property already saved in user's collection`}
+    }
+
+    // update their collection...
+    student_doc.saved_collection.push(property_id)
+    student_doc.save()
+
+    console.log(chalk.bgGreen(`✔ Successfully added property to student's collection!`))
+    return {success: true}
 
   }
 
