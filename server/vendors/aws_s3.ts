@@ -8,6 +8,7 @@ import aws from 'aws-sdk';
 import express from 'express';
 import mutler from 'multer'
 import chalk from 'chalk'
+import _ from 'lodash'
 const upload = mutler()
 
 let user_creds = new aws.Credentials({
@@ -38,6 +39,7 @@ const randKey = ({length}: {length: number}): string => {
 awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, res: express.Response) => {
 
   console.log(chalk.bgBlue(`👉 AWS S3 File Upload`))
+  if (_.has(req.body, 'description')) console.log(`${chalk.cyan(`@desc`)} ${req.body.description}`)
   let files = req.files
 
   if (!files) {
