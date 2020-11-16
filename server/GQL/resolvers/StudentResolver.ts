@@ -64,9 +64,7 @@ export class StudentResolver {
 
     console.log(`\t${chalk.cyan('offset:')} ${offset}`)
     console.log(`\t${chalk.cyan('count:')} ${count}`)
-    console.log(student_doc.saved_collection)
     let collection_ids = student_doc.saved_collection.slice(offset, offset + count)
-    console.log(collection_ids)
     let property_promises: Promise<DocumentType<Property> | null>[] = collection_ids.map((property_id: string) => (new Promise( (resolve, reject) => {
 
       // look for the rpoperty and resolve it if it is found
@@ -132,7 +130,7 @@ export class StudentResolver {
     // check if the student already has the property saved.
     let already_in_collection: boolean = false
     for (let i = 0; !already_in_collection && i < student_doc.saved_collection.length; ++i) {
-      if (property_id == student_doc.saved_collection[i]) already_in_collection = true;
+      if (student_doc.saved_collection[i] == property_id) already_in_collection = true;
     }
     if (already_in_collection) {
       console.log(chalk.bgRed(`❌ Error: Student already has this property saved in their collection.`))
@@ -140,7 +138,7 @@ export class StudentResolver {
     }
 
     // update their collection...
-    student_doc.saved_collection.push(property_id)
+    student_doc.saved_collection.push( property_id )
     student_doc.save()
 
     console.log(chalk.bgGreen(`✔ Successfully added property to student's collection!`))

@@ -2,6 +2,8 @@ import { prop, getModelForClass } from "@typegoose/typegoose"
 import { Field, ObjectType, InputType, ID } from "type-graphql";
 import {APIResult} from "."
 import {Property} from './Property'
+import {ObjectId} from 'mongodb'
+import mongoose from 'mongoose'
 
 @ObjectType({description: "Cas Auth Information"})
 class CasAuthInfo {
