@@ -1,5 +1,11 @@
 import {Resolver, Mutation, Arg, Query} from 'type-graphql'
-import {Property, PropertyAPIResponse, PropertyModel, PropertyReviewInput} from '../entities/Property'
+import {Property, 
+  PropertyAPIResponse, 
+  PropertyModel, 
+  PropertyReviewInput,
+  PropertySearchInput,
+  PropertyList,
+  PropertyListAPIResponse} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
@@ -57,6 +63,22 @@ export class PropertyResolver {
       ...property_.toObject(),
       landlord_doc: landlord_doc == null ? undefined : landlord_doc as Landlord
     }}
+
+  }
+
+  @Query(() => PropertyListAPIResponse)
+  async searchProperties(
+    @Arg("searchOptions") {offset, count}:PropertySearchInput
+  ): Promise<PropertyListAPIResponse>
+  {
+
+    let properties_ = await PropertyModel.find().skip(offset).limit(count).exec()
+    return {
+      success: true,
+      data: {
+        properties: properties_
+      }
+    }
 
   }
 }

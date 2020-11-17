@@ -12,7 +12,6 @@ import SearchResult, {SearchResultLoading} from '../components/SearchResult'
 import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
 
 // API
-import SearchAPI from '../API/SearchAPI'
 import {useSearchPropertiesLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 
 const clamp = (a: number, b: number, c: number) => Math.min(Math.max(a, b), c);

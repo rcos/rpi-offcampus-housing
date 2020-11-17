@@ -1,5 +1,5 @@
 import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
-import {Field, ObjectType, ID, InputType} from "type-graphql"
+import {Field, ObjectType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
 import {ObjectId} from "mongodb"
 
@@ -40,17 +40,41 @@ export class Property {
 @InputType()
 export class PropertyReviewInput {
 
-  @Field({nullable: false})
+  @Field(type => Boolean,{nullable: false})
+  @prop({type: Boolean})
   withReviews: boolean;
 
-  @Field({nullable: true})
+  @Field(type => Int, {nullable: true})
+  @prop({type: Int})
   offset: number;
 
-  @Field({nullable: true})
+  @Field(type => Int, {nullable: true})
+  @prop({type: Int})
   count: number;
+}
+
+@InputType()
+export class PropertySearchInput {
+
+  @Field(type => Int, {nullable: true})
+  @prop({type: Int})
+  offset: number;
+
+  @Field(type => Int, {nullable: true})
+  @prop({type: Int})
+  count: number;
+}
+
+@ObjectType({description: "Collection of properties"})
+export class PropertyList {
+  @Field(type => [Property])
+  @prop({type: [Property]})
+  properties: Property[]
 }
 
 @ObjectType()
 export  class PropertyAPIResponse extends APIResult(Property) {}
+@ObjectType()
+export  class PropertyListAPIResponse extends APIResult(PropertyList) {}
 
 export const PropertyModel = getModelForClass(Property)
