@@ -6,6 +6,7 @@ query Student($id: String!) {
 
 fragment StudentAPIResponseFields on StudentAPIResponse {
   data {
+    _id
     first_name
     last_name
     email

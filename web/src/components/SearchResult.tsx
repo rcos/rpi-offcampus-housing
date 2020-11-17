@@ -85,13 +85,6 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
               <div>4 miles Away</div>
               {featured && <div className="featured-button">featured</div>}
             </div>
-
-            {/* Landlord Information */}
-            <div className="padded-2 upper" style={{fontSize: `0.8rem`, display: `flex`, alignItems: `center`}}>
-              <div style={{textTransform: 'uppercase', fontSize: `0.75rem`, fontWeight: 600}}>
-                Owned By</div>
-              <div style={{marginLeft: `5px`}}>John Meyer</div>
-            </div>
           </div>
 
           <div style={{marginBottom: `10px`, display: 'flex'}}>

@@ -1,0 +1,18 @@
+query SearchProperties($offset: Int!, $count: Int!) {
+  searchProperties(searchOptions:{offset:$offset,count:$count}) {
+    ...PropertyListAPIResponseFields
+  }
+}
+
+fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
+  success
+  error
+  data {
+    properties {
+      location
+      sq_ft
+      landlord
+      _id
+    }
+  }
+}

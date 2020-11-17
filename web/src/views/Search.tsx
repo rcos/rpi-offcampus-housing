@@ -13,6 +13,7 @@ import {BiFilterAlt, BiSort, BiSearch} from 'react-icons/bi'
 
 // API
 import SearchAPI from '../API/SearchAPI'
+import {useSearchPropertiesLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 
 const clamp = (a: number, b: number, c: number) => Math.min(Math.max(a, b), c);
 
@@ -31,6 +32,7 @@ const SearchView = () => {
   // search parameters settings
   const priceRange = SearchParameters.priceRange
   const roomCounts = SearchParameters.roomCounts
+  const [SearchForProperties, {data: searchPropertiesData}] = useSearchPropertiesLazyQuery()
 
   // State Variables
   const [loading, setLoading] = useState<boolean>(true)
@@ -93,7 +95,12 @@ const SearchView = () => {
   useEffect(() => {
     console.log(`Search Page: ${searchPage}`)
 
+    SearchForProperties({variables: {
+      offset: searchPage * 8,
+      count: 8
+    }})
     // get the results for the next page
+    /*
     SearchAPI.properties(8, searchPage * 8)
     .then(result => {
       if (!result.data.success) {
@@ -115,8 +122,16 @@ const SearchView = () => {
       console.log(`Error searching for properties...`)
       console.log(err)
     })
+    */
 
   }, [searchPage])
+
+  useEffect(() => {
+
+    setSearchResults(searchPropertiesData?.searchProperties.data?.properties)
+    setLoading(false)
+
+  }, [searchPropertiesData])
 
 
   useEffect(() => {
@@ -469,7 +484,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     </div>
 
     {/* Pagination */}
-    <Pagination 
+    {!loading && <Pagination 
       page_range={{min: 0, max: 4}}
       page={page}
       pageChange={(page_num: number) => {
@@ -478,7 +493,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
             scrollTo(searchResultContainerRef.current, 0, 150)
           }
       }}
-    />
+    />}
   </div>)
 }
 

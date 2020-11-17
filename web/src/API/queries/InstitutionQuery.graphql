@@ -14,6 +14,7 @@ fragment InstitutionAPIResponseFields on InstitutionAPIResponse {
   success
   error
   data {
+    _id
     name
     s3_thumb_key
     location {
@@ -30,6 +31,7 @@ fragment InstitutionListAPIResponseFields on InstitutionListAPIResponse {
   error
   data {
     institutions {
+      _id
       name
       s3_thumb_key
       location {
