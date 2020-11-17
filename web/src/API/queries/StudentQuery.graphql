@@ -1,0 +1,19 @@
+query Student($id: String!) {
+  getStudent(_id: $id) {
+    ...StudentAPIResponseFields
+  }
+}
+
+fragment StudentAPIResponseFields on StudentAPIResponse {
+  data {
+    first_name
+    last_name
+    email
+    auth_info {
+      cas_id
+      institution_id
+    }
+  }
+  success
+  error
+}

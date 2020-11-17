@@ -29,3 +29,5 @@ yarn-debug.log*
 yarn-error.log*
 
 status_reports/*
+
+web/src/API/queries/types/*
