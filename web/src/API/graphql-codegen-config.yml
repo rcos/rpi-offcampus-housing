@@ -1,0 +1,7 @@
+overwrite: true
+schema: "http://localhost:9005/graphql"
+documents: "src/API/queries/*.graphql"
+generates:
+  ./src/API/graphqlFragmentTypes.json:
+    plugins:
+      - "fragment-matcher"

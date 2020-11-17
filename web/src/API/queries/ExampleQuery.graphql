@@ -1,0 +1,13 @@
+query TestQuery($id: String!) {
+  getStudent(_id: $id) {
+    data {
+      auth_info {
+        cas_id
+        institution_id
+      }
+      email
+      first_name
+      last_name
+    }
+  }
+}
