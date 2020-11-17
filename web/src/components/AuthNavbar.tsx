@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 
+import {imageURI} from '../API/S3API'
 import LeftAndRight from './toolbox/layout/LeftAndRight'
 import Logo from './Logo'
 
@@ -23,13 +24,18 @@ const Navbar = () => {
 
   const getName = (): string => {
 
-    if (!_.has(user, 'user')) return `undefined`
+    if (!_.has(user, 'user')) return ``
     return `${user.user.first_name} ${user.user.last_name}`
   }
 
   const getInstitution = (): string => {
-    if (institution == null || !_.has(institution, 'name')) return 'unknown'
+    if (institution == null || !_.has(institution, 'name')) return ''
     return institution.name
+  }
+
+  const getSchoolThumbSource = (): string => {
+    if (institution == null) return '';
+    return imageURI(institution.s3_thumb_key)
   }
 
   return (<React.Fragment>
@@ -39,7 +45,13 @@ const Navbar = () => {
       right={<div className="nav-right-holder">
         <div><span style={{fontWeight: 'bold'}}>
   {getName ()}</span> @ <span className="dashed-underline">{getInstitution()}</span></div>
-        <div className="school-logo-area"></div>
+        <div className="school-logo-area">
+          <img
+            src={getSchoolThumbSource()}
+            width="100%"
+            height="100%"
+          />
+        </div>
       </div>}
     />
     <div style={{marginTop: '20px'}}></div>
