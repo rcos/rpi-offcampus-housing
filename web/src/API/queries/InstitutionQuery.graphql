@@ -1,0 +1,22 @@
+query GetInstitutions($partial_name: String!) {
+  getMatchingInstitutions(partial_name:$partial_name) {
+    ...InstitutionListAPIResponseFields
+  }
+}
+
+fragment InstitutionListAPIResponseFields on InstitutionListAPIResponse {
+  success
+  error
+  data {
+    institutions {
+      name
+      s3_thumb_key
+      location {
+        address
+        city
+        state
+        zip
+      }
+    }
+  }
+}
