@@ -22,6 +22,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/react-transition-group": "^4.4.0",
     "@types/redux": "^3.6.0",
+    "apollo": "^2.31.1",
     "axios": "^0.20.0",
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",
@@ -29,6 +30,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "framer-motion": "^2.7.1",
+    "graphql": "^15.4.0",
     "lodash": "^4.17.20",
     "node-sass": "^4.14.1",
     "query-string": "^6.13.5",
@@ -50,7 +52,8 @@
     "start": "dotenv -e ../.env.development react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "graphql-codegen --config src/API/graphql-codegen-config.yml && npx apollo codegen:generate types --endpoint=http://localhost:9005/graphql --target=typescript --includes=src/API/**/*.graphql --tagName=gql --addTypename --globalTypesFile=src/API/graphqlGlobalTypes.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -68,6 +71,8 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.19.1",
+    "@graphql-codegen/fragment-matcher": "^2.0.0",
     "dotenv-cli": "^4.0.0"
   }
 }
