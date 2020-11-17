@@ -1,13 +1,19 @@
-query TestQuery($id: String!) {
+query Student($id: String!) {
   getStudent(_id: $id) {
-    data {
-      auth_info {
-        cas_id
-        institution_id
-      }
-      email
-      first_name
-      last_name
+    ...StudentAPIResponseFields
+  }
+}
+
+fragment StudentAPIResponseFields on StudentAPIResponse {
+  data {
+    first_name
+    last_name
+    email
+    auth_info {
+      cas_id
+      institution_id
     }
   }
+  success
+  error
 }

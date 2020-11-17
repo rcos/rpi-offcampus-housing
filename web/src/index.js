@@ -9,7 +9,7 @@ import {
 } from "react-router-dom"
 import AuthRoute from './modules/auth/AuthRoute'
 import AccessLevels from './modules/auth/accessLevels.json'
-import { config } from './config'
+import { config, backendPath } from './config'
 
 // stylesheets
 import './assets/css/style.scss'
@@ -31,12 +31,15 @@ import StudentLoginView from './views/StudentLoginView'
 import StudentRegisterComplete from './views/StudentRegisterCompleteView'
 import LandlordDashboard from './views/LandlordDashboard'
 import CollectionView from './views/Collection'
-
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 
 // Redux setup
 import store from './redux/store'
 import {Provider} from 'react-redux'
+
+// Apollo GraphQL Providers
+import ApolloClient from 'apollo-boost'
+import {ApolloProvider} from '@apollo/client'
 
 // setup routes
 const Routes = () => {
@@ -93,10 +96,17 @@ const Routes = () => {
 }
 
 config ()
+
+const _client = new ApolloClient({
+  uri: backendPath('/graphql')
+})
+
 ReactDOM.render(
-  <Provider store={store}>
-    <Routes />
-  </Provider>,
+  <ApolloProvider client={_client}>
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+  </ApolloProvider>,
   document.getElementById('root')
 );
 

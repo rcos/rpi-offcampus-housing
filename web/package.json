@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.2.6",
+    "@graphql-codegen/typescript": "^1.17.11",
+    "@graphql-codegen/typescript-operations": "^1.17.9",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -23,6 +26,7 @@
     "@types/react-transition-group": "^4.4.0",
     "@types/redux": "^3.6.0",
     "apollo": "^2.31.1",
+    "apollo-boost": "^0.4.9",
     "axios": "^0.20.0",
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",
@@ -35,6 +39,7 @@
     "node-sass": "^4.14.1",
     "query-string": "^6.13.5",
     "react": "^16.13.1",
+    "react-apollo": "^3.1.5",
     "react-chartjs-2": "^2.10.0",
     "react-dom": "^16.13.1",
     "react-icons": "^3.11.0",
@@ -53,7 +58,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config src/API/graphql-codegen-config.yml && npx apollo codegen:generate types --endpoint=http://localhost:9005/graphql --target=typescript --includes=src/API/**/*.graphql --tagName=gql --addTypename --globalTypesFile=src/API/graphqlGlobalTypes.ts"
+    "generate": "graphql-codegen --config src/API/graphql-codegen-config.yml && npx apollo codegen:generate types --endpoint=http://localhost:9010/graphql --target=typescript --includes=src/API/**/*.graphql --tagName=gql --addTypename --globalTypesFile=src/API/graphqlGlobalTypes.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -73,6 +78,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.19.1",
     "@graphql-codegen/fragment-matcher": "^2.0.0",
+    "@graphql-codegen/typescript-react-apollo": "^2.1.1",
     "dotenv-cli": "^4.0.0"
   }
 }
