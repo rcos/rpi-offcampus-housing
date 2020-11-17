@@ -27,16 +27,30 @@ export class Institution {
   @Field(() => ID)
   _id: string;
 
-  @Field()
-  @prop()
+  @Field(type => String)
+  @prop({type: String})
   name: string;
 
-  @Field()
-  @prop()
+  @Field(type => InstitutionLocationInfo)
+  @prop({type: InstitutionLocationInfo})
   location: InstitutionLocationInfo;
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  s3_thumb_key: string;
+}
+
+@ObjectType({description: "A collection of Institutions"})
+export class InstitutionList {
+
+  @Field(type => [Institution])
+  @prop({type: [Institution]})
+  institutions: Institution[]
 }
 
 @ObjectType()
 export class InstitutionAPIResponse extends APIResult(Institution) {}
+@ObjectType()
+export class InstitutionListAPIResponse extends APIResult(InstitutionList) {}
 
 export const InstitutionModel = getModelForClass(Institution)
