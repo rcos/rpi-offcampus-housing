@@ -4,6 +4,27 @@ query GetInstitutions($partial_name: String!) {
   }
 }
 
+query GetInstitution($id: String!) {
+  getInstitution(_id:$id) {
+    ...InstitutionAPIResponseFields
+  }
+}
+
+fragment InstitutionAPIResponseFields on InstitutionAPIResponse {
+  success
+  error
+  data {
+    name
+    s3_thumb_key
+    location {
+      address
+      city
+      state
+      zip
+    }
+  }
+}
+
 fragment InstitutionListAPIResponseFields on InstitutionListAPIResponse {
   success
   error

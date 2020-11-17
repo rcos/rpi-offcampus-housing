@@ -22,6 +22,12 @@ type Institution {
   s3_thumb_key: String
 }
 
+type InstitutionAPIResponse {
+  data: Institution
+  error: String
+  success: Boolean!
+}
+
 """A collection of Institutions"""
 type InstitutionList {
   institutions: [Institution!]!
@@ -105,6 +111,7 @@ input PropertyReviewInput {
 }
 
 type Query {
+  getInstitution(_id: String!): InstitutionAPIResponse!
   getLandlord(_id: String!): LandlordAPIResponse!
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!

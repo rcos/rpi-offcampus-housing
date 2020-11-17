@@ -11,6 +11,7 @@ const Navbar = () => {
 
   const history = useHistory()
   const user = useSelector((state: any) => state.user)
+  const institution = useSelector((state: any) => state.institution)
 
   useEffect(() => {
     if (user != null) {
@@ -26,13 +27,18 @@ const Navbar = () => {
     return `${user.user.first_name} ${user.user.last_name}`
   }
 
+  const getInstitution = (): string => {
+    if (institution == null || !_.has(institution, 'name')) return 'unknown'
+    return institution.name
+  }
+
   return (<React.Fragment>
     <div style={{marginTop: '20px'}}></div>
     <LeftAndRight 
       left={<div><Logo /></div>}
       right={<div className="nav-right-holder">
         <div><span style={{fontWeight: 'bold'}}>
-        {getName ()}</span> @ <span className="dashed-underline">Rensselaer Polytechnic Institute</span></div>
+  {getName ()}</span> @ <span className="dashed-underline">{getInstitution()}</span></div>
         <div className="school-logo-area"></div>
       </div>}
     />

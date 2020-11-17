@@ -1,4 +1,4 @@
-const userReducer = ( state: null, action: any) => {
+const userReducer = (state = null, action: any) => {
 
   switch(action.type) {
     case 'GET_USER':
@@ -13,14 +13,15 @@ const userReducer = ( state: null, action: any) => {
 
 }
 
-const institutionReducer = (state: null, action: any) => {
+const institutionReducer = (state = null, action: any) => {
   switch(action.type) {
-    case 'GET_INSTITUTION':
-      return null
-    case 'RECIEVED_INSTITUTION':
+    case 'SET_INSTITUTION':
+      console.log(`SET_INSTITUTION RESUCER`)
       return action.institution
+    default:
+      console.log(`UNDEFIEND RESUCER`)
+      return state
   }
-  return null
 }
 
 export { userReducer, institutionReducer }
