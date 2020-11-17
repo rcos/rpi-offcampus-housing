@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {Route, Redirect} from 'react-router'
 import AccessLevels from './accessLevels.json'
 // import AuthAPI from '../../API/AuthAPI'
+import Cookies from 'universal-cookie'
 
 import _ from 'lodash'
 
@@ -17,6 +18,8 @@ interface IAuthStatus {
 }
 
 const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
+
+  const cookie = new Cookies()
 
   const getUserType = (user_type: any): number => {
     // auth.user != undefined && _.has(auth.user, 'type') && (auth.user as any).type == "landlord"
@@ -71,6 +74,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   useEffect(() => {
     // only fetch the institution if we don't already have one saved
     if (institution == null && institutionId != null) {
+      cookie.set('inst', institutionId, {path: '/'})
       getInstitution()
     }
   }, [institutionId])

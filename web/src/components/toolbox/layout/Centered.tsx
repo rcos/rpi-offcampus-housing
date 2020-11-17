@@ -98,7 +98,7 @@ const Centered = ({width, height, children, verticalBuffer, horizontalBuffer}: I
     return () => {
       window.removeEventListener('resize', resizeFn)
     }
-  }, [])
+  }, [width, height])
 
   return (<div className="layout-centered">
     <div className="horiz-center" style={{width: isPercent(windowWidth as string) ? windowWidth: `${windowWidth}px`}}>
