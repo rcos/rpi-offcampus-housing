@@ -25,6 +25,16 @@ export class Property {
   @Field()
   @prop()
   sq_ft: number;
+
+  /**
+   * Properties that have been submitted by landlords to add
+   * to their account will have a submission_id. These properties
+   * need to be vetted manually before adding it to the landlord's
+   * properties.
+   */
+  @Field({nullable: true})
+  @prop()
+  submission_id?: string;
 }
 
 @InputType()

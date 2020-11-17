@@ -34,6 +34,10 @@ export class Institution {
   @Field()
   @prop()
   location: InstitutionLocationInfo;
+
+  @Field()
+  @prop()
+  s3_thumb_key: string;
 }
 
 @ObjectType()

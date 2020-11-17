@@ -52,6 +52,7 @@ type Property {
   landlord_doc: Landlord
   location: String!
   sq_ft: Float!
+  submission_id: String
 }
 
 type PropertyAPIResponse {
