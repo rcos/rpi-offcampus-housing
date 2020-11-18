@@ -6,7 +6,8 @@ import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import {fetchUser} from '../redux/actions/user'
 import {useMediaQuery} from 'react-responsive'
 
-import StudentAPI from '../API/StudentAPI'
+// import StudentAPI from '../API/StudentAPI'
+import {useUpdateStudentMutation} from '../API/queries/types/graphqlFragmentTypes'
 
 import _ from 'lodash'
 import {useSelector, useDispatch} from 'react-redux'
@@ -90,6 +91,8 @@ const StudentRegisterCompleteView = () => {
     return true;
   }
 
+  const [updateStudentInfo, { data: updatedStudentInfo }] = useUpdateStudentMutation()
+
   const completeRegistration = () => {
 
     // check if the emails are equivalent
@@ -109,6 +112,16 @@ const StudentRegisterCompleteView = () => {
       return;
     }
 
+    updateStudentInfo({
+      variables: {
+        id: user.user._id,
+        first_name: regData.first_name,
+        last_name: regData.last_name,
+        email: regData.email
+      }
+    })
+
+    /*
     StudentAPI.updateInfo(
       user.user._id,
       regData.first_name,
@@ -134,7 +147,22 @@ const StudentRegisterCompleteView = () => {
         })
       }
     })
+    */
   }
+
+  useEffect(() => {
+    if (updatedStudentInfo) {
+      if (updatedStudentInfo.updateStudent.success) {
+        dispatch(fetchUser(user, { update: true }))
+      }
+      else {
+        setFormError({
+          hasError: true,
+          message: "Problem occurred on the server. Please try again at a later time."
+        })
+      }
+    }
+  }, [updatedStudentInfo])
 
   return (<Centered width={isMobile ? 300 : 400} height={500}>
     <div>

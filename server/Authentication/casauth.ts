@@ -69,16 +69,19 @@ function(profile: any, done: Function) {
         else {
 
           if (!student_doc) {
-
             // register the user if they do not exist
             console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
       
-            let new_student: DocumentType<Student> = new StudentModel({
-              saved_collection: [],
-              auth_info: { cas_id, institution_id: institution_doc._id }
-            })
-      
-            await new_student.save()
+            let new_student: DocumentType<Student> = new StudentModel({})
+            new_student.saved_collection = []
+            new_student.auth_info = {
+              cas_id: cas_id,
+              institution_id: institution_doc._id
+            }
+
+            console.log(new_student)
+            let added_student = await new_student.save()
+            console.log(added_student)
             done(null, new_student.toObject(), { new: true })
       
           }

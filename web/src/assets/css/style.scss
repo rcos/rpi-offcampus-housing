@@ -575,6 +575,10 @@ body {
     position: absolute;
     right: 10px;
     top: 10px;
+
+    &.added {
+      background-color: $pink;
+    }
   }
 
   .result-grid {

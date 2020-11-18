@@ -1,5 +1,5 @@
 import { prop, getModelForClass } from "@typegoose/typegoose"
-import { Field, ObjectType, InputType, ID } from "type-graphql";
+import { Field, ObjectType, InputType, ID, Int } from "type-graphql";
 import {APIResult} from "."
 import {Property} from './Property'
 import {ObjectId} from 'mongodb'
@@ -7,10 +7,12 @@ import mongoose from 'mongoose'
 
 @ObjectType({description: "Cas Auth Information"})
 class CasAuthInfo {
-  @Field({ nullable: true })
+  @Field(type => String, { nullable: true })
+  @prop({type: String})
   cas_id: String;
   
-  @Field({ nullable: true })
+  @Field(type => String, { nullable: true })
+  @prop({type: String})
   institution_id: String;
 }
 
@@ -42,7 +44,8 @@ export class Student {
   @prop()
   phone_number: String;
 
-  @Field({ nullable: true })
+  @Field(type => CasAuthInfo, { nullable: true })
+  @prop({ type: CasAuthInfo })
   auth_info: CasAuthInfo;
 
   @Field(type => [String], {nullable: true})
@@ -69,10 +72,12 @@ export class StudentInput implements Partial<Student> {
 @InputType()
 export class CollectionFetchInput {
 
-  @Field()
+  @Field(type => Int)
+  @prop({type: Int})
   offset: number;
 
-  @Field()
+  @Field(type => Int)
+  @prop({type: Int})
   count: number;
 }
 

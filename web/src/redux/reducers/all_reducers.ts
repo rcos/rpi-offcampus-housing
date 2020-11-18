@@ -1,5 +1,6 @@
 // reducers
 import {userReducer, institutionReducer} from './user'
+import {StudentInfo} from '../actions/user'
 
 // reducer combiner
 import {combineReducers} from 'redux'
@@ -10,5 +11,8 @@ const allReducers = combineReducers({
   institution: institutionReducer
 })
 
-
+export type ReduxState = {
+  user: StudentInfo | null
+  institution: any
+}
 export default allReducers

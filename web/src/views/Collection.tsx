@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 import ViewWrapper from '../components/ViewWrapper'
 import {BiCollection} from 'react-icons/bi'
@@ -13,6 +13,7 @@ const CollectionView = () => {
   // Container ref: the ref references the collection view, excluding the header
   const headerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [collectionData, setCollectionData] = useState<any>(null)
 
   useEffect(() => {
     const setContainerHeight = (h: number): void => {
@@ -56,21 +57,33 @@ const CollectionView = () => {
       {/* Collection Entries Container */}
       <div className="collection-container" ref={containerRef}>
 
-        <div className="collection-grid">
-          {Array.from(new Array(15), (x, i) => {
-            return <CollectionEntry key={i} />
-          })}
-        </div>
+        {collectionData == null &&
+          <div className="collection-grid">
+            {Array.from(new Array(12), (x, i) => {
+              return <CollectionEntryLoading key={i} />
+            })}
+          </div>
+        }
+
+        {collectionData != null &&
+          <div className="collection-grid">
+            {Array.from(new Array(15), (x, i) => {
+              return <CollectionEntry key={i} />
+            })}
+          </div>
+        }
       </div>
 
       {/* Pagination Area */}
-      <div className="pageination-holder">
-          <Pagination 
-            page={0}
-            pageChange={() => {}}
-            page_range={{min: 0, max: 5}}
-          />
-        </div>
+      {collectionData != null &&
+        <div className="pageination-holder">
+        <Pagination 
+          page={0}
+          pageChange={() => {}}
+          page_range={{min: 0, max: 5}}
+        />
+      </div>
+      }
     </div>
   </ViewWrapper>)
 }
@@ -138,6 +151,31 @@ const CollectionEntry = () => {
         iconLocation="right"
         background="#99E1D9"
       />
+    </div>
+  </div>)
+}
+
+const CollectionEntryLoading = () => {
+
+  return (<div className="collection-entry">
+    <div className="image-holder">
+      <div className="primary-image"><div className="image-loading" /></div>
+      <div className="secondary-images">
+        <div className="img-holder"><div className="image-loading" /></div>
+        <div className="img-holder"><div className="image-loading" /></div>
+      </div>
+    </div>
+    <div className="property-desc">
+      
+      {/* Property Header */}
+      <div>
+        <span style={{fontWeight: 600, fontSize: '0.9rem'}}><div className="block-loading" style={{width: `200px`}}/></span>
+      </div>
+
+      {/* Info goes here */}
+      <div className="block-loading" style={{width: `100px`, marginTop: '10px'}}/>
+      
+      <div className="block-loading" style={{width: `100px`,  marginTop: '5px'}}/>
     </div>
   </div>)
 }

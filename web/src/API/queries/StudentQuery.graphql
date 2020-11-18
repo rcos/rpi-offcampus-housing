@@ -4,6 +4,14 @@ query Student($id: String!) {
   }
 }
 
+mutation UpdateStudent($id: String!, $first_name: String!,
+$last_name: String!, $email: String!) {
+  updateStudent(_id:$id, new_student:{first_name: $first_name, last_name: $last_name,
+  email: $email}) {
+    ...StudentAPIResponseFields
+}
+}
+
 fragment StudentAPIResponseFields on StudentAPIResponse {
   data {
     _id

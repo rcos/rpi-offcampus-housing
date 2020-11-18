@@ -10,8 +10,8 @@ type CasAuthInfo {
 }
 
 input CollectionFetchInput {
-  count: Float!
-  offset: Float!
+  count: Int!
+  offset: Int!
 }
 
 """Institution Model"""

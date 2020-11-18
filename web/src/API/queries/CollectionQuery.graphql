@@ -1,0 +1,24 @@
+query Collection($id: String!, $offset: Int!, $count: Int!) {
+  getStudentSavedCollection(_id: $id, collectionOptions:{offset: $offset, count: $count}) {
+    ...PropertyCollectionEntriesAPIResponseFields
+  }
+}
+
+mutation AddCollection($student_id: String!, $property_id: String!) {
+  addPropertyToStudentCollection(student_id:$student_id,property_id:$property_id) {
+    ...PropertyCollectionEntriesAPIResponseFields
+  }
+}
+
+fragment PropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntriesAPIResponse {
+  success
+  error
+  data {
+    collection_entries {
+      _id
+      landlord
+      location
+      sq_ft
+    }
+  }
+}

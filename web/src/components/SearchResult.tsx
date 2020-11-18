@@ -1,18 +1,26 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import AlertContext from './context/AlertContext'
 import {useHistory} from 'react-router'
+import {useSelector} from 'react-redux'
+import {HiX} from 'react-icons/hi'
 
+import {useAddCollectionMutation} from '../API/queries/types/graphqlFragmentTypes'
 import {BiAddToQueue, BiRightArrowAlt} from 'react-icons/bi'
 import Button from './toolbox/form/Button'
+import {ReduxState} from '../redux/reducers/all_reducers'
 
 interface ISearchResult {
   featured?:boolean
   result: Object | null
 }
 
+
 const SearchResult = ({ featured, result }: ISearchResult) => {
 
   const history = useHistory()
+  const user = useSelector((state: ReduxState) => state.user)
+  const [addToCollection, {data: addCollectionResult}] = useAddCollectionMutation();
+  const [inCollection, setInCollection] = useState<boolean>(false)
   
   const getAddress = (): string => {
     if (!result) return "<undefined>"
@@ -20,6 +28,31 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
     let location = (result as any).location
     return location
   }
+
+  const addPropertyToCollection = (): void => {
+    if (!inCollection && user && (result as any)._id) {
+      addToCollection({
+        variables: {
+          student_id: user && user.user ? user.user._id: "",
+          property_id: (result as any)._id
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (user && user.user && user.user?.saved_collection) {
+      setInCollection( user.user.saved_collection.includes((result as any)._id) )
+    } 
+  }, [result, user])
+
+  useEffect(() => {
+
+    if (addCollectionResult != null) {
+      if (addCollectionResult.addPropertyToStudentCollection.success) setInCollection(true)
+    }
+
+  }, [addCollectionResult])
 
   return (<div className={`search-result ${featured ? 'featured' : ''}`}>
 
@@ -29,10 +62,11 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
         return (
           <div 
           onClick={() => {
-            (locale as any).successAlert({...result, type: 'collection-add'})
+            addPropertyToCollection ();
+            // (locale as any).successAlert({...result, type: 'collection-add'})
           }}
-          className="add-to-collection icon-button">
-            <BiAddToQueue />
+          className={`add-to-collection icon-button ${inCollection ? `added` : ''}`}>
+            {inCollection ? <HiX /> : <BiAddToQueue />}
           </div>
         )
       }}
