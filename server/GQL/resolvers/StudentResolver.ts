@@ -172,7 +172,7 @@ export class StudentResolver {
     student_doc.saved_collection = student_doc.saved_collection.filter(property_id_ => property_id != property_id_)
     student_doc.save()
 
-    console.log(chalk.bgGreen(`✔ Successfully added property to student's collection!`))
+    console.log(chalk.bgGreen(`✔ Successfully removed property from student's collection!`))
     return {success: true}
 
   }
