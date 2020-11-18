@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import AlertContext from './context/AlertContext'
 import {useHistory} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux'
@@ -24,6 +24,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
   const [addToCollection, {data: addCollectionResult}] = useAddCollectionMutation();
   const [removeFromCollection, {data: removeCollectionResult}] = useRemoveCollectionMutation();
   const [inCollection, setInCollection] = useState<boolean>(false)
+  const alertCtx = useContext(AlertContext)
   
   const getAddress = (): string => {
     if (!result) return "<undefined>"
@@ -73,6 +74,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
       if (addCollectionResult.addPropertyToStudentCollection.success) {
         // fetch user now
       dispatch(fetchUser(user, {update: true}))
+      if (alertCtx.successAlert) alertCtx.successAlert({...(result as any), type: 'collection-add'})
       }
     }
 
@@ -84,6 +86,7 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
       if (removeCollectionResult.removePropertyFromStudentCollection.success) {
         // fetch user now
       dispatch(fetchUser(user, {update: true}))
+      if (alertCtx.successAlert) alertCtx.successAlert({...(result as any), type: 'collection-remove'})
       }
     }
 

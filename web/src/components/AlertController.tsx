@@ -146,6 +146,20 @@ const AlertController = ({alertInfo}: AlertControllerInterface) => {
           </div>
         </div>)
       }
+      else if (data.type == 'collection-remove') {
+        contents.push(<div key={0} style={{marginBottom: '10px'}}>Successfully removed <span style={{fontWeight: 600}}>{data.location}</span> to your collection!</div>)
+        contents.push(<div  key={1} style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <div className="action-button">
+            <Button 
+              text="Go to Collection"
+              background="white"
+              iconLocation="right"
+              onClick={() => history.push('/collection')}
+              icon={<BiChevronRight />}
+            />
+          </div>
+        </div>)
+      }
     }
 
     return contents
