@@ -147,6 +147,37 @@ export class StudentResolver {
   }
 
   /**
+   * removePropertyFromStudentCollection(student_id: string, property_id: string)
+   * @desc Add a property with the specified property_id to the student's collection.
+   * 
+   * @param student_id: string => The student's id of the collection to add the property to
+   * @param property_id: string => The id of the property to add to the student's collection
+   */
+  @Mutation(() => PropertyCollectionEntriesAPIResponse)
+  async removePropertyFromStudentCollection(@Arg("student_id") student_id: string, 
+    @Arg("property_id") property_id: string): Promise<PropertyCollectionEntriesAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 removePropertyFromStudentCollection(student_id, property_id)`))
+    console.log(`\t${chalk.cyan(`student_id:`)} ${student_id}`)
+    console.log(`\t${chalk.cyan(`property_id:`)} ${property_id}`)
+    
+    let student_doc: DocumentType<Student> | null = await StudentModel.findById(student_id)
+    if (student_doc == null) {
+      console.log(chalk.bgRed(`❌ Error: No student found with id ${student_id}`))
+      return {success: false, error: "No student found with given id"}
+    }
+
+    // remove from collection
+    student_doc.saved_collection = student_doc.saved_collection.filter(property_id_ => property_id != property_id_)
+    student_doc.save()
+
+    console.log(chalk.bgGreen(`✔ Successfully added property to student's collection!`))
+    return {success: true}
+
+  }
+
+  /**
    * updateStudent ()
    * @desc Update the student information for the student with the provided id.
    *        If a parameter field is null, that field should be left unmodified.

@@ -10,6 +10,12 @@ mutation AddCollection($student_id: String!, $property_id: String!) {
   }
 }
 
+mutation RemoveCollection($student_id: String!, $property_id: String!) {
+  removePropertyFromStudentCollection(student_id:$student_id,property_id:$property_id) {
+    ...PropertyCollectionEntriesAPIResponseFields
+  }
+}
+
 fragment PropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntriesAPIResponse {
   success
   error

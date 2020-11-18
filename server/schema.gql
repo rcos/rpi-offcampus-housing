@@ -75,6 +75,7 @@ input LandlordInput {
 type Mutation {
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
+  removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 
