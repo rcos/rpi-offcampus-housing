@@ -139,10 +139,29 @@ export class StudentResolver {
 
     // update their collection...
     student_doc.saved_collection.push( property_id )
-    student_doc.save()
+    let updated_student_doc: DocumentType<Student> | null = await student_doc.save() as DocumentType<Student>
+
+    if (!updated_student_doc) {
+      console.log(chalk.bgRed(`❌ Error: Problem saving new collection for student`))
+      return {
+        success: false,
+        error: "Internal server error"
+      }
+    }
 
     console.log(chalk.bgGreen(`✔ Successfully added property to student's collection!`))
-    return {success: true}
+    let new_collection_ids = updated_student_doc.saved_collection.map((_id) => {
+      return {
+        _id: _id
+      }
+    })
+
+    return {
+      success: true,
+      data: {
+        collection_entries: new_collection_ids
+      }
+    }
 
   }
 
@@ -170,10 +189,28 @@ export class StudentResolver {
 
     // remove from collection
     student_doc.saved_collection = student_doc.saved_collection.filter(property_id_ => property_id != property_id_)
-    student_doc.save()
+    let updated_student_doc: DocumentType<Student> | null = await student_doc.save() as DocumentType<Student>
 
+    if (!updated_student_doc) {
+      console.log(chalk.bgRed(`❌ Error: Problem saving new user collections`))
+      return {
+        success: false,
+        error: "Internal server error"
+      }
+    }
+
+    let new_collection_ids = updated_student_doc.saved_collection.map((_id) => {
+      return {
+        _id: _id
+      }
+    })
     console.log(chalk.bgGreen(`✔ Successfully removed property from student's collection!`))
-    return {success: true}
+    return {
+      success: true, 
+      data: {
+        collection_entries: new_collection_ids
+      }
+    }
 
   }
 

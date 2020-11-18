@@ -26,6 +26,7 @@ const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu
       className={`context-menu-item ${iconLeft? 'icon-left' : 'icon-right'}`}
       onClick={() => {
         if (item.onClick) item.onClick()
+        setShowCtxMenu(false)
       }}>
 
       {/* icon left */}

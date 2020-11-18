@@ -21,7 +21,9 @@ const CollectionView = () => {
   const [collectionData, setCollectionData] = useState<any>(null)
   const user = useSelector((state: ReduxState) => state.user)
   const [pageNumber, setPageNumber] = useState<number>(0)
-  const [getCollection, {data: collectionDataResults}] = useCollectionLazyQuery()
+  const [getCollection, {loading: collectionLoading, data: collectionDataResults}] = useCollectionLazyQuery({
+    fetchPolicy: 'no-cache'
+  })
   const collection_entries_per_page = 12
 
   const getMaxPages = (): number => {
@@ -29,6 +31,9 @@ const CollectionView = () => {
 
     return Math.max(0, Math.floor( user!.user!.saved_collection!.length / collection_entries_per_page ));
   }
+
+  useEffect(() => {
+  }, [user])
 
   useEffect(() => {
 
@@ -71,6 +76,7 @@ const CollectionView = () => {
     let d_t = setTimeout(calcualteContainerHeight, 1000)
 
     window.addEventListener('resize', calcualteContainerHeight)
+
     // unmount clean up
     return () => {
       window.removeEventListener('resize', calcualteContainerHeight)
@@ -101,7 +107,13 @@ const CollectionView = () => {
           </div>
         }
 
-        {collectionData != null &&
+        {collectionData != null && collectionData.length == 0 &&
+          <div className="centered-empty">
+            No Properties in Colection
+          </div>
+        }
+
+        {collectionData != null && collectionData.length > 0 &&
           <div className="collection-grid">
             {collectionData.map((collection_entry: any, i: number) => {
               return <CollectionEntry key={i} data={collection_entry} />

@@ -1574,3 +1574,14 @@ body {
     border-bottom: 1px solid black;
   }
 }
+
+.centered-empty {
+  text-align: center;
+  font-weight: 600;
+  opacity: 0.6;
+  box-sizing: border-box;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+}

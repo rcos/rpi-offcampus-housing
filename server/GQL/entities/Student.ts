@@ -20,7 +20,7 @@ class CasAuthInfo {
 export class PropertyCollectionEntries{  
   @Field(type => [Property])
   @prop({ type: [Property] })
-  collection_entries: Property[];
+  collection_entries: Partial<Property>[];
 }
 
 @ObjectType({description: "Student model"})

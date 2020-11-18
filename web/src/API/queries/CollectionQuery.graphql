@@ -6,13 +6,13 @@ query Collection($id: String!, $offset: Int!, $count: Int!) {
 
 mutation AddCollection($student_id: String!, $property_id: String!) {
   addPropertyToStudentCollection(student_id:$student_id,property_id:$property_id) {
-    ...PropertyCollectionEntriesAPIResponseFields
+    ...PartialPropertyCollectionEntriesAPIResponseFields
   }
 }
 
 mutation RemoveCollection($student_id: String!, $property_id: String!) {
   removePropertyFromStudentCollection(student_id:$student_id,property_id:$property_id) {
-    ...PropertyCollectionEntriesAPIResponseFields
+    ...PartialPropertyCollectionEntriesAPIResponseFields
   }
 }
 
@@ -25,6 +25,16 @@ fragment PropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntries
       landlord
       location
       sq_ft
+    }
+  }
+}
+
+fragment PartialPropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntriesAPIResponse {
+  success
+  error
+  data {
+    collection_entries {
+      _id
     }
   }
 }
