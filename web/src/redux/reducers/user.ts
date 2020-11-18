@@ -1,6 +1,6 @@
-import {StudentInfo, UserActionType} from '../actions/user'
+import {StudentInfo, LandlordInfo, UserActionType} from '../actions/user'
 
-const userReducer = (state = null, action: UserActionType): StudentInfo | null => {
+const userReducer = (state = null, action: UserActionType): LandlordInfo | StudentInfo | null => {
 
   switch(action.type) {
     case 'GET_USER':

@@ -7,7 +7,8 @@ import {HiX} from 'react-icons/hi'
 import {useAddCollectionMutation, useRemoveCollectionMutation} from '../API/queries/types/graphqlFragmentTypes'
 import {BiAddToQueue, BiRightArrowAlt} from 'react-icons/bi'
 import Button from './toolbox/form/Button'
-import {ReduxState} from '../redux/reducers/all_reducers'
+import {ReduxState, isStudent} from '../redux/reducers/all_reducers'
+import {StudentInfo} from '../redux/actions/user'
 import {fetchUser} from '../redux/actions/user'
 
 interface ISearchResult {
@@ -59,8 +60,8 @@ const SearchResult = ({ featured, result }: ISearchResult) => {
   }
 
   const updateInCollection = () => {
-    if (user && user.user && user.user?.saved_collection) {
-      setInCollection( user.user.saved_collection.includes((result as any)._id) )
+    if (user && user.user && isStudent(user) && (user as StudentInfo).user!.saved_collection) {
+      setInCollection((user as StudentInfo).user!.saved_collection!.includes((result as any)._id) )
     } 
   }
 

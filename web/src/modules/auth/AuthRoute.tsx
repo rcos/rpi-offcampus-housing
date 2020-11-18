@@ -11,11 +11,11 @@ import {fetchUser, setInstitution} from '../../redux/actions/user'
 import {ReduxState} from '../../redux/reducers/all_reducers'
 import {useDispatch, useSelector} from 'react-redux'
 import {useGetInstitutionLazyQuery} from '../../API/queries/types/graphqlFragmentTypes'
-import {Student} from '../../API/queries/types/graphqlFragmentTypes'
+import {Student, Landlord} from '../../API/queries/types/graphqlFragmentTypes'
 
 interface IAuthStatus {
   isAuthenticated: boolean
-  user: Student | null
+  user: Student | Landlord | null
   loaded?: boolean
   type: string | null
 }
@@ -100,9 +100,12 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       type: !user || !(user!.type) ? null : user!.type
     })
 
-    if (user && user.user && user.user.auth_info && user.user.auth_info.institution_id) {
-      let institution_id: string | null = user.user.auth_info.institution_id
-      setInstitutionId(institution_id)
+    // if this is a student, check the institution id
+    if (user && user.type && user.type == "student") {
+      if (user.user && user.user.auth_info && user.user.auth_info.institution_id) {
+        let institution_id: string | null = user.user.auth_info.institution_id
+        setInstitutionId(institution_id)
+      }
     }
     
 

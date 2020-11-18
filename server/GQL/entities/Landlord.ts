@@ -26,6 +26,10 @@ export class Landlord {
   @Field()
   @prop()
   password: string;
+  
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  type?: String;
 }
 
 @InputType()

@@ -1,0 +1,23 @@
+mutation CreateLandlord(
+  $first_name: String!,
+  $last_name: String!,
+  $email: String!,
+  $password: String!) {
+  createLandlord(
+    new_landlord:{first_name:$first_name, last_name:$last_name, email:$email, password:$password}
+  ) {
+    ...LandlordAPIResponseFields
+  }
+}
+
+fragment LandlordAPIResponseFields on LandlordAPIResponse {
+  success
+  error
+  data {
+    _id
+    first_name
+    last_name
+    email
+    phone_number
+  }
+}

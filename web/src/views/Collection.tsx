@@ -27,7 +27,8 @@ const CollectionView = () => {
   const collection_entries_per_page = 12
 
   const getMaxPages = (): number => {
-    if (!user || !(user.user) || !(user.user.saved_collection) ) return 1;
+    if (user == null || user.type == null || user.type != "student") return 1;
+    if (!user || !(user.user) || ( user.type && user.type=="student" && !(user.user.saved_collection) )) return 1;
 
     return Math.max(0, Math.floor( user!.user!.saved_collection!.length / collection_entries_per_page ));
   }

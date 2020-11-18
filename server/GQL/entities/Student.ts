@@ -51,6 +51,10 @@ export class Student {
   @Field(type => [String], {nullable: true})
   @prop({type: [String]})
   saved_collection: string[];
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  type?: String;
 }
 
 @InputType()

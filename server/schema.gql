@@ -55,6 +55,7 @@ type Landlord {
   last_name: String!
   password: String!
   phone_number: String
+  type: String
 }
 
 type LandlordAPIResponse {
@@ -147,6 +148,7 @@ type Student {
   last_name: String!
   phone_number: String!
   saved_collection: [String!]
+  type: String
 }
 
 type StudentAPIResponse {
