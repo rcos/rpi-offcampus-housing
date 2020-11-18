@@ -1,9 +1,9 @@
 import passport from 'passport'
 import chalk from 'chalk'
-
-import Student, {IStudentDoc} from '../schemas/student.schema'
-import Institution, {IInstitutionDoc} from '../schemas/institution.schema'
-import Landlord from '../schemas/landlord.schema'
+import {StudentModel, Student} from '../GQL/entities/Student'
+import {Institution, InstitutionModel} from '../GQL/entities/Institution'
+import {LandlordModel} from '../GQL/entities/Landlord'
+import {DocumentType} from "@typegoose/typegoose"
 
 passport.serializeUser(function(user: any, done: Function) {
   done(null, user);
@@ -13,13 +13,13 @@ passport.deserializeUser(function(user: any, done: Function) {
   console.log(`Deserialize`)
   console.log(user)
   // try to find the user in student
-  Student.findById(user._id, (err: any, student_doc: IStudentDoc) => {
+  StudentModel.findById(user._id, (err: any, student_doc: DocumentType<Student>) => {
     if (!err && student_doc) done(null, {...student_doc.toObject(), type: 'student'})
     else if (err) done(err, null)
     
     // student doesnt exsit
     else {
-      Landlord.findById(user._id, (err: any, landlord_doc) => {
+      LandlordModel.findById(user._id, (err: any, landlord_doc) => {
         if (!err && landlord_doc) done (null, {...landlord_doc.toObject(), type: 'landlord'})
         else if (err) done(err, null)
         else done(null, false)
@@ -46,9 +46,9 @@ function(profile: any, done: Function) {
 
   // if the user exists, log the user in
   // otherwise, sign them up
-  Student.findOne({
+  StudentModel.findOne({
     'auth_info.cas_id': cas_id
-  }, (err: any, student_doc: IStudentDoc) => {
+  }, (err: any, student_doc: DocumentType<Student>) => {
     if (err) {
 
       // send an error if a problem occurred
@@ -57,7 +57,7 @@ function(profile: any, done: Function) {
     }
     else {
       let instution_name = 'Rensselaer Polytechnic Institute'
-      Institution.findOne({name: instution_name}, async (err, institution_doc: IInstitutionDoc) => {
+      InstitutionModel.findOne({name: instution_name}, async (err, institution_doc: DocumentType<Institution>) => {
         if (err) {
           console.log(chalk.bgRed(`Error looking for institution where name = ${instution_name}`))
           done(err)
@@ -69,15 +69,19 @@ function(profile: any, done: Function) {
         else {
 
           if (!student_doc) {
-
             // register the user if they do not exist
             console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
       
-            let new_student: IStudentDoc = new Student({
-              auth_info: { cas_id, institution_id: institution_doc._id }
-            })
-      
-            await new_student.save()
+            let new_student: DocumentType<Student> = new StudentModel({})
+            new_student.saved_collection = []
+            new_student.auth_info = {
+              cas_id: cas_id,
+              institution_id: institution_doc._id
+            }
+
+            console.log(new_student)
+            let added_student = await new_student.save()
+            console.log(added_student)
             done(null, new_student.toObject(), { new: true })
       
           }

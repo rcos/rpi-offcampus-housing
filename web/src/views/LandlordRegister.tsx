@@ -11,6 +11,7 @@ import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {FiLogIn} from 'react-icons/fi'
 import LandlordAPI from '../API/LandlordAPI'
 import {BiCheck} from 'react-icons/bi'
+import {useCreateLandlordMutation} from '../API/queries/types/graphqlFragmentTypes'
 
 interface IFormError {
   message: string
@@ -28,6 +29,7 @@ interface IRegisterFields {
 
 const LandlordRegister = () => {
 
+  const [createLandlord, {data: landlordCreationResponse}] = useCreateLandlordMutation()
   const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
   const history = useHistory()
   const [formError, setFormError] = useState<IFormError>({
@@ -37,6 +39,30 @@ const LandlordRegister = () => {
     first_name: '', last_name: '', email: '', confirm_email: '',
     password: '', confirm_password: ''
   })
+
+  useEffect(() => {
+
+    if (landlordCreationResponse) {
+
+      if (landlordCreationResponse.createLandlord.success) {
+        history.push('/')
+      }
+      else if (landlordCreationResponse.createLandlord.error) {
+        setFormError({
+          hasError: true,
+          message: landlordCreationResponse.createLandlord.error
+        })
+      }
+      else {
+        setFormError({
+          hasError: true,
+          message: "Error processing registration"
+        })
+      }
+
+    }
+
+  }, [landlordCreationResponse])
 
   useEffect(() => {
 
@@ -98,6 +124,17 @@ const LandlordRegister = () => {
           message: ''
         })
         
+        createLandlord({
+          variables: {
+            first_name: registerFields.first_name,
+            last_name: registerFields.last_name,
+            email: registerFields.email,
+            password: registerFields.password
+          }
+        })
+
+        
+        /*
         LandlordAPI.createLandlord(
           registerFields.first_name,
           registerFields.last_name,
@@ -126,6 +163,7 @@ const LandlordRegister = () => {
             message: "Error processing registration"
           })
         })
+        */
       }
 
     }

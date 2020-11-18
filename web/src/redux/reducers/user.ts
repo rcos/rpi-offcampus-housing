@@ -1,8 +1,10 @@
-const userReducer = ( state: null, action: any) => {
+import {StudentInfo, LandlordInfo, UserActionType} from '../actions/user'
+
+const userReducer = (state = null, action: UserActionType): LandlordInfo | StudentInfo | null => {
 
   switch(action.type) {
     case 'GET_USER':
-      return null
+      return state == null ? action.user : state;
       
     case 'RECIEVED_USER':
       return action.user
@@ -13,14 +15,13 @@ const userReducer = ( state: null, action: any) => {
 
 }
 
-const institutionReducer = (state: null, action: any) => {
+const institutionReducer = (state = null, action: any) => {
   switch(action.type) {
-    case 'GET_INSTITUTION':
-      return null
-    case 'RECIEVED_INSTITUTION':
+    case 'SET_INSTITUTION':
       return action.institution
+    default:
+      return state
   }
-  return null
 }
 
 export { userReducer, institutionReducer }

@@ -1,0 +1,35 @@
+query SearchProperties($offset: Int!, $count: Int!) {
+  searchProperties(searchOptions:{offset:$offset,count:$count}) {
+    ...PropertyListAPIResponseFields
+  }
+}
+
+query GetProperty($id:String!,$withLandlord:Boolean!,$withReviews:Boolean!,$reviewCount:Int!,$reviewOffset:Int!) {
+  getProperty(_id:$id,withLandlord:$withLandlord,reviewOptions:{withReviews:$withReviews,offset:$reviewOffset,count:$reviewCount}) {
+    ...PropertyAPIResponseFields
+  }
+ }
+
+fragment PropertyAPIResponseFields on PropertyAPIResponse {
+  success
+  error
+  data {
+    _id
+    location
+    landlord
+    sq_ft
+  }
+}
+
+fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
+  success
+  error
+  data {
+    properties {
+      location
+      sq_ft
+      landlord
+      _id
+    }
+  }
+}

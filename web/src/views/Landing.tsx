@@ -7,7 +7,7 @@ import Button from '../components/toolbox/form/Button'
 import {BiLogIn} from 'react-icons/bi'
 import Centered from '../components/toolbox/layout/Centered'
 
-const SearchView = () => {
+const LandingPage = () => {
 
   return (<div>
     
@@ -57,4 +57,4 @@ const LandingAction = () => {
   </div>)
 }
 
-export default SearchView
+export default LandingPage

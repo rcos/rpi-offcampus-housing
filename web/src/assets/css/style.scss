@@ -422,6 +422,35 @@ body {
   }
 }
 
+.input-field.suggestion {
+  
+  .suggestion-box {
+    position: absolute;
+    top: calc(100% + 10px);
+
+    background-color: $lightgrey;
+    width: 100%;
+    z-index: 10;
+    border-radius: 3px;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+
+    .entry {
+      height: 30px;
+      line-height: 30px;
+      padding: 0 10px;
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, 0);
+      transition: background 0.25s;
+      font-size: 0.8rem;
+      letter-spacing: 1.2px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
 .dashed-underline {
   border-bottom: 1px dashed $cyanDark;
   cursor: pointer;
@@ -546,6 +575,10 @@ body {
     position: absolute;
     right: 10px;
     top: 10px;
+
+    &.added {
+      background-color: $pink;
+    }
   }
 
   .result-grid {
@@ -1494,4 +1527,61 @@ body {
   .lease-period {
     flex-grow: 2;
   }
+}
+
+.previous-logged-in-institution {
+  
+  display: flex;
+  position: relative;
+  margin-bottom: 80px;
+
+  .left-side {
+    width: 120px;
+    height: 120px;
+    margin-right: 10px;
+
+    .image-holder {
+      border: 1px solid $black;
+      border-radius: 3px;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .right-side {
+    flex-grow: 1;
+    .title {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .button-area {
+      position: absolute;
+      min-width: 200px;
+      max-width: 200px;
+      width: 200px;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+    }
+  }
+
+  .or-separator {
+    position: absolute;
+    bottom: -50px;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid black;
+  }
+}
+
+.centered-empty {
+  text-align: center;
+  font-weight: 600;
+  opacity: 0.6;
+  box-sizing: border-box;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
 }

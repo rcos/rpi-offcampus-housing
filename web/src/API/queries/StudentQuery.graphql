@@ -1,0 +1,28 @@
+query Student($id: String!) {
+  getStudent(_id: $id) {
+    ...StudentAPIResponseFields
+  }
+}
+
+mutation UpdateStudent($id: String!, $first_name: String!,
+$last_name: String!, $email: String!) {
+  updateStudent(_id:$id, new_student:{first_name: $first_name, last_name: $last_name,
+  email: $email}) {
+    ...StudentAPIResponseFields
+}
+}
+
+fragment StudentAPIResponseFields on StudentAPIResponse {
+  data {
+    _id
+    first_name
+    last_name
+    email
+    auth_info {
+      cas_id
+      institution_id
+    }
+  }
+  success
+  error
+}

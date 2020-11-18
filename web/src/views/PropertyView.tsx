@@ -6,6 +6,7 @@ import {Line} from 'react-chartjs-2'
 // import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 
 import PropertyAPI from '../API/PropertyAPI'
+import {useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
@@ -26,6 +27,7 @@ const Property = ({ property_id }: IProperty) => {
   const [showBackButton, setShowBackButton] = useState<boolean>(false)
   const [propertyData, setPropertyData] = useState<{} | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [GetProperty, {data: _propertyData}] = useGetPropertyLazyQuery()
 
   useEffect(() => {
     if (_.has(location.state, 'fromSearchPage')) {
@@ -42,6 +44,39 @@ const Property = ({ property_id }: IProperty) => {
     }
   }
 
+  useEffect(() => {
+    GetProperty({
+      variables: {
+        id: property_id,
+        withLandlord: false,
+        withReviews: false,
+        reviewCount: 0,
+        reviewOffset: 0
+      }
+    })
+  }, [property_id])
+
+  useEffect(() => {
+
+    if (_propertyData && _propertyData.getProperty.data) {
+      if (_propertyData.getProperty.success && _propertyData.getProperty.data) {
+        setPropertyData(
+          _propertyData.getProperty.data
+        )
+        setLoading(false)
+      }
+      else {
+        
+        console.error(`Property API returned success = false`)
+        console.error(_propertyData.getProperty.error)
+        setLoading(false)
+        history.push('/search')
+      }
+    }
+
+  }, [_propertyData])
+
+  /*
   useEffect(() => {
     
     // get the property data
@@ -64,6 +99,7 @@ const Property = ({ property_id }: IProperty) => {
     })
 
   }, [property_id, history])
+  */
 
   return (<ViewWrapper>
     

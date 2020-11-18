@@ -1,6 +1,8 @@
 import passport from 'passport'
 import chalk from 'chalk'
-import Landlord from '../schemas/landlord.schema'
+// import Landlord from '../schemas/landlord.schema'
+import {LandlordModel, Landlord} from '../GQL/entities/Landlord'
+import {DocumentType} from "@typegoose/typegoose"
 import bcrypt from 'bcrypt'
 
 /*
@@ -17,7 +19,7 @@ passport.use(new (require('passport-local').Strategy)(
     console.log(`Email: ${email}`)
     console.log(`Password: ${password}`)
 
-    Landlord.findOne({email: email}, (err, landlord_doc) => {
+    LandlordModel.findOne({email: email}, (err, landlord_doc: DocumentType<Landlord>) => {
 
       if (err) {
         console.log(chalk.bgRed(`❌ Error finding landlord`))
