@@ -16,6 +16,37 @@ const ObjectId = mongoose.Types.ObjectId
 export class OwnershipResolver {
 
   /**
+   * getOwnershipsForLandlord(landlord_id)
+   * @param landlord_id: string => The id of the landlord to query ownership of
+   * 
+   * @desc This query searches for all ownership documents that are owned by a landlord
+   * with the given landlord_id
+   */
+  @Query(() => OwnershipCollectionAPIResponse)
+  async getOwnershipsForLandlord(
+    @Arg("landlord_id") landlord_id: string
+  ): Promise<OwnershipCollectionAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 getOwnershipsForLandlord()`))
+    if (!ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: Landlord id provided is not a valid object id`))
+      return {
+        success: false,
+        error: "Invalid landlord id provided"
+      }
+    }
+
+    // find the ownerships
+    let ownerships: DocumentType<Ownership>[] = await OwnershipModel.find({landlord_id}) as DocumentType<Ownership>[]
+    console.log(chalk.bgGreen(`✔ Successfully retrieved ${ownerships.length} ownership documents for landlord with id ${landlord_id}`))
+    return {
+      success: true,
+      data: { ownerships }
+    }
+  }
+
+  /**
    * createOwnershipReview (landlord_id, property_location)
    * @param landlord_id: string => The id for the landlord to assign ownership to
    * @param property_location: string => The address location to match ownership to
