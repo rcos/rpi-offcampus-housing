@@ -51,6 +51,7 @@ const LandlordNewProperty = () => {
 
       if (ownershipData.createOwnershipReview.success) {
         // TODO proceed to next stage of registration
+        history.push(`/landlord/ownership-documents/${ownershipData.createOwnershipReview.data?._id}`)
       }
       else {
         console.error(`Error creating ownership`)

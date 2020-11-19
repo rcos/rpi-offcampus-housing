@@ -33,6 +33,7 @@ import LandlordDashboard from './views/LandlordDashboard'
 import CollectionView from './views/Collection'
 import StudentCASAuth from './modules/redirects/StudentCASAuth'
 import LandlordNewProperty from './views/LandlordNewProperty'
+import LandlordOwnershipDocuments from './views/LandlordOwnershipDocuments'
 
 // Redux setup
 import store from './redux/store'
@@ -86,6 +87,7 @@ const Routes = () => {
             {/* Landlord Only */}
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={LandlordOwnershipDocuments} />
 
             {/* Landlord and Student */}
             <AuthRoute accessLevel={AccessLevels.STUDENT_AND_LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
