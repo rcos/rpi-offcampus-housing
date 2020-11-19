@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import { BiHome, BiPlus } from 'react-icons/bi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { FiEdit2 } from 'react-icons/fi'
+import {useHistory} from 'react-router'
 import { motion, useSpring, useTransform } from 'framer-motion'
 import LandlordViewWrapper from '../components/LandlordViewWrapper'
 import Button from '../components/toolbox/form/Button'
@@ -80,6 +81,7 @@ interface IMainDashboardArea {
   focusProperty: (property_id: number) => void
 }
 const MainDashboardArea = ({ focusProperty }: IMainDashboardArea) => {
+  const history = useHistory()
 
   const headerContainerRef = useRef<HTMLDivElement>(null)
   const propertyContainerRef = useRef<HTMLDivElement>(null)
@@ -136,6 +138,9 @@ const MainDashboardArea = ({ focusProperty }: IMainDashboardArea) => {
           background="#99E1D9"
           icon={<BiPlus />}
           iconLocation="right"
+          onClick={() => {
+            history.push('/landlord/new-property')
+          }}
         />
       </div>
     </div>
