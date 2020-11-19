@@ -16,6 +16,44 @@ const ObjectId = mongoose.Types.ObjectId
 export class OwnershipResolver {
 
   /**
+   * getOwnership(_id)
+   * @param _id: string => The id for the ownership document we want
+   * 
+   * @desc Return the ownership document for the requested id. If no docunment
+   * exists, an error will be returned.
+   */
+  @Query(() => OwnershipAPIResponse)
+  async getOwnership(
+    @Arg("_id") _id: string
+  ): Promise<OwnershipAPIResponse> 
+  {
+
+    console.log(chalk.bgBlue(`👉 getOwnership(_id)`))
+    if (!ObjectId.isValid(_id)) {
+      console.log(chalk.bgRed(`❌ Error: Id is not valid.`))
+      return {
+        success: false, 
+        error: "Invalid id given"
+      }
+    }
+
+    let ownership_: DocumentType<Ownership> = await OwnershipModel.findById(_id) as DocumentType<Ownership>
+    if (!ownership_) {
+      console.log(chalk.bgRed(`❌ Error: No ownership document found`))
+      return {
+        success: false,
+        error: "No data found"
+      }
+    }
+
+    console.log(chalk.bgGreen(`✔ Successfully retrieved ownership data`))
+    return {
+      success: true,
+      data: ownership_
+    }
+  }
+
+  /**
    * getOwnershipsForLandlord(landlord_id)
    * @param landlord_id: string => The id of the landlord to query ownership of
    * 
