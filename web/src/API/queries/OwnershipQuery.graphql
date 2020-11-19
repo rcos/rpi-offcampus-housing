@@ -1,6 +1,12 @@
-query GetOwnerships($landlord_id: String!) {
+query GetOwnershipsForLandlord($landlord_id: String!) {
   getOwnershipsForLandlord(landlord_id:$landlord_id) {
     ...OwnershipCollectionAPIResponseFields
+  }
+}
+
+query GetOwnership($ownership_id: String!) {
+  getOwnership(_id:$ownership_id) {
+    ...OwnershipAPIResponseFields
   }
 }
 
