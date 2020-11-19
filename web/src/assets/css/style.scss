@@ -766,6 +766,9 @@ body {
   &.red {
     background-color: #ff787f;
   }
+  &.yellow {
+    background-color: #ff9175;
+  }
 
   .action-button {
     position: absolute;
@@ -1120,8 +1123,7 @@ body {
 }
 
 .title-0 {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
 }
 
 .section-header {
@@ -1589,4 +1591,26 @@ body {
   top: 30%;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.document-previews {
+  width: 100%;
+  border: 1px solid black;
+  position: relative;
+  border-radius: 3px;
+
+  &.empty {
+    height: 300px;
+    position: relative;
+  }
+  
+  .empty {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: rgba(0, 0, 0, 0.6);
+    letter-spacing: 1px;
+    font-style: italic;
+  }
 }

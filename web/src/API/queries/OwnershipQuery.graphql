@@ -37,7 +37,9 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
     landlord_id
     date_submitted
     status
-    ownership_doc_s3_keys
+    ownership_documents {
+      ...ownershipDocumentFields
+    }
   }
 }
 
@@ -51,7 +53,15 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
       landlord_id
       date_submitted
       status
-      ownership_doc_s3_keys
+      ownership_documents {
+        ...ownershipDocumentFields
+      }
     }
   }
+}
+
+fragment ownershipDocumentFields on OwnershipDocument {
+  s3_doc_key
+  format
+  date_uploaded
 }

@@ -86,7 +86,7 @@ type Ownership {
   _id: ID!
   date_submitted: String!
   landlord_id: String!
-  ownership_doc_s3_keys: [String!]!
+  ownership_documents: [OwnershipDocument!]!
   property_id: String
   status: String!
 }
@@ -106,6 +106,13 @@ type OwnershipCollectionAPIResponse {
   data: OwnershipCollection
   error: String
   success: Boolean!
+}
+
+"""Ownership Document Information"""
+type OwnershipDocument {
+  date_uploaded: String!
+  format: String!
+  s3_doc_key: String!
 }
 
 """Property model"""
@@ -161,6 +168,7 @@ type Query {
   getInstitution(_id: String!): InstitutionAPIResponse!
   getLandlord(_id: String!): LandlordAPIResponse!
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
+  getOwnership(_id: String!): OwnershipAPIResponse!
   getOwnershipsForLandlord(landlord_id: String!): OwnershipCollectionAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!

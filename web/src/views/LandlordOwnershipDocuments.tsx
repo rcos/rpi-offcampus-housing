@@ -1,13 +1,15 @@
 import React, {useEffect} from 'react'
 import {useMediaQuery} from 'react-responsive'
-import {HiArrowLeft} from 'react-icons/hi'
+import {HiArrowLeft, HiPlus} from 'react-icons/hi'
 import {useHistory} from 'react-router'
 import {useSelector} from 'react-redux'
 
+import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {useGetOwnershipLazyQuery, useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import Centered from '../components/toolbox/layout/Centered'
+import {FloatingLogo} from '../components/Logo'
 
 interface ILandlordOwnershipDocuments {
   ownership_id: string
@@ -60,28 +62,98 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
     }  
   }, [ownershipData, user])
 
+  const reviewStatus = (): 'in-review' | 'confirmed' | '' => {
+    if (!ownershipData || !ownershipData.getOwnership.data) return ''
+    if (ownershipData.getOwnership.data.status == `confirmed`) return 'confirmed'
+    if (ownershipData.getOwnership.data.status == `in-review`) return 'in-review'
+    return ''
+  }
+
+  const getCommentColor = (): string => {
+    if (reviewStatus() == `in-review`) return 'yellow'
+    if (reviewStatus() == `confirmed`) return 'blue'
+    return 'yellow'
+  }
+
+  const getCommentMessage = (): string => {
+    if (reviewStatus() == `in-review`)
+      return `Ownership documents are in review. Please upload documents
+      that indicate proof of ownership of this property`;
+    
+    if (reviewStatus() == `confirmed`)
+      return `Your ownership for this property has been successfully confirmed`
+
+    else return `Status unknown`
+  }
+
   const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
-  return (<Centered width={isMobile ? 300 : 400} height={`100%`}>
+  return (<Centered width={isMobile ? 300 : 600} height={`100%`}>
     <div style={{paddingTop: '80px'}}>
+      <FloatingLogo />
       {/* Button Area */}
       <div style={{marginBottom: '20px', width: '40%'}}>
-        <Button 
-          onClick={() => {
-            history.push('/landlord/dashboard')
-          }}
-          text="Home"
-          icon={<HiArrowLeft />}
-          iconLocation="left"
-          background="#E4E4E4"
-        />
       </div>
       <div className="title-1" style={{marginBottom: '20px'}}>Property Ownership</div>
+
+      {/* Property Location */}
       {propertyData && <div className="title-0" style={{marginBottom: '20px'}}>
         {propertyData.getProperty.data ? propertyData.getProperty.data.location : '__'}
       </div>}
+
+      {/* Status */}
+      {ownershipData && 
+      <CommentBubble 
+        header="status"
+        message={getCommentMessage ()}
+        color={getCommentColor ()}
+      />}
+
+      {/* Documents Uploaded */}
+      <div style={{marginBottom: '20px'}} />
+      <DocumentPreviews 
+        documents={ownershipData && ownershipData.getOwnership.data && ownershipData.getOwnership.data.ownership_documents ?
+          ownershipData.getOwnership.data.ownership_documents
+          :[]}
+        pending={[]}
+      />
       
     </div>
   </Centered>)
+}
+
+
+interface IDocumentPreviews {
+  documents: any[]
+  pending: any[]
+}
+const DocumentPreviews = ({documents, pending}: IDocumentPreviews) => {
+
+  return (<div className={`document-previews ${documents.length == 0 ? 'empty' : ''}`}>
+
+    {/* document count */}
+    <div className="title-1" style={{
+      paddingLeft: '5px',
+      height: '30px',
+      lineHeight: '30px'
+      }}>
+      {documents.length} Documents
+    </div>
+
+    {
+      documents.length == 0 && pending.length == 0 &&
+      <div className="empty">
+        <div style={{marginBottom: '10px'}}>No documents uploaded</div>
+        <div>
+          <Button 
+            text="Upload Document(s)"
+            icon={<HiPlus />}
+            iconLocation="left"
+            background="#99E1D9"
+          />
+        </div>
+      </div>
+    }
+  </div>)
 }
 
 export default LandlordOwnershipDocuments

@@ -116,7 +116,7 @@ export class OwnershipResolver {
 
     // TODO find matching property
     let saved_prop: DocumentType<Property>;
-    {
+    
       // TEMPORARY: Create the property for the time being
       let property_ = new PropertyModel();
       property_.landlord = landlord_id;
@@ -124,7 +124,7 @@ export class OwnershipResolver {
       property_.sq_ft = -1;
 
       saved_prop = await property_.save() as DocumentType<Property>;
-    }
+    
 
     let new_ownership: DocumentType<Ownership> = new OwnershipModel()
     // new_ownership.property_id = ???
@@ -132,7 +132,7 @@ export class OwnershipResolver {
     new_ownership.landlord_id = landlord_id;
     new_ownership.date_submitted = new Date().toISOString();
     new_ownership.status = "in-review";
-    new_ownership.ownership_doc_s3_keys = [];
+    new_ownership.ownership_documents = [];
     let saved_ownership: DocumentType<Ownership> = await new_ownership.save() as DocumentType<Ownership>;
 
     console.log(chalk.bgGreen(`✔ Successfully created new ownership for landlord!`))

@@ -3,6 +3,22 @@ import {Field, ObjectType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
 import {ObjectId} from "mongodb"
 
+@ObjectType({description: "Ownership Document Information"})
+export class OwnershipDocument {
+
+  @Field(type => String)
+  @prop({type: String})
+  s3_doc_key: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  format: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  date_uploaded: string;
+}
+
 @ObjectType({description: "Property Ownership Document Information"})
 export class Ownership {
   @Field(() => ID)
@@ -24,9 +40,9 @@ export class Ownership {
   @prop({type: String})
   status: "in-review" | "confirmed";
 
-  @Field(type => [String])
-  @prop({type: String})
-  ownership_doc_s3_keys: string[]
+  @Field(type => [OwnershipDocument])
+  @prop({type: OwnershipDocument})
+  ownership_documents: OwnershipDocument[]
 }
 
 @ObjectType({description: "Property Ownership Collection"})
