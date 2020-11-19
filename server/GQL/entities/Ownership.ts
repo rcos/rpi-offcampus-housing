@@ -29,6 +29,7 @@ export class Ownership {
   ownership_doc_s3_keys: string[]
 }
 
+@ObjectType({description: "Property Ownership Collection"})
 export class OwnershipCollection {
   @Field(type => [Ownership])
   @prop({type: [Ownership]})
