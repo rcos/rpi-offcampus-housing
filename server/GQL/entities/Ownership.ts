@@ -8,9 +8,13 @@ export class Ownership {
   @Field(() => ID)
   _id: string;
 
-  @Field(type => String)
+  @Field(type => String, {nullable: true})
   @prop({type: String})
   property_id: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  landlord_id: string;
 
   @Field(type => String)
   @prop({type: String})
@@ -27,3 +31,5 @@ export class Ownership {
 
 @ObjectType()
 export class OwnershipAPIResponse extends APIResult(Ownership) {}
+
+export const OwnershipModel = getModelForClass(Ownership)
