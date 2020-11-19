@@ -29,7 +29,15 @@ export class Ownership {
   ownership_doc_s3_keys: string[]
 }
 
+export class OwnershipCollection {
+  @Field(type => [Ownership])
+  @prop({type: [Ownership]})
+  ownerships: Ownership[]
+}
+
 @ObjectType()
 export class OwnershipAPIResponse extends APIResult(Ownership) {}
+@ObjectType()
+export class OwnershipCollectionAPIResponse extends APIResult(OwnershipCollection) {}
 
 export const OwnershipModel = getModelForClass(Ownership)

@@ -2,7 +2,11 @@ import {Resolver, Mutation, Arg, Query} from 'type-graphql'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
-import {Ownership, OwnershipModel, OwnershipAPIResponse} from '../entities/Ownership'
+import {Ownership, 
+  OwnershipModel, 
+  OwnershipAPIResponse,
+  OwnershipCollectionAPIResponse,
+  OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
 import { PropertyAlias } from 'aws-sdk/clients/iotsitewise'
 

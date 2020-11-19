@@ -76,8 +76,25 @@ input LandlordInput {
 type Mutation {
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
+  createOwnershipReview(address_line: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
+}
+
+"""Property Ownership Document Information"""
+type Ownership {
+  _id: ID!
+  date_submitted: String!
+  landlord_id: String!
+  ownership_doc_s3_keys: [String!]!
+  property_id: String
+  status: String!
+}
+
+type OwnershipAPIResponse {
+  data: Ownership
+  error: String
+  success: Boolean!
 }
 
 """Property model"""
