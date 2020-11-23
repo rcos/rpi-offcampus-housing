@@ -12,6 +12,8 @@ import _ from 'lodash'
 import sizeOf from 'buffer-image-size'
 // @ts-ignore
 import _resizeImage_ from 'resize-image-buffer'
+import mongoose from 'mongoose'
+let ObjectId = mongoose.Types.ObjectId
 const upload = mutler()
 
 let user_creds = new aws.Credentials({
@@ -38,6 +40,22 @@ const randKey = ({length}: {length: number}): string => {
  * 
  * To upload a file, send a post request of type multipart form-data and set the key
  * for each file to be uploaded as 'objects'.
+ * 
+ * Metadata: Metadata can be added to objects to describe the type of objects being uploaded.
+ *  max_image_width => This should be a string representation of a number. If this value is set, all files that images will
+ *                      be resized to have this max width, maintaining aspect ratio
+ *  max_image_height => Just like max_image_width, this will resize all files that are images to not exceed this value in height,
+ *                      maintaining aspect ratio. If both max width and height are set, the dimensions that give the higher resolution
+ *                      will be used.
+ *  restricted: "true" | "false" => If restricted is true, the uploaded documents will only be acessable to those
+ *              defined in the "r_n" fields, where n is a number.
+ *              e.g
+ *                restricted = "true",
+ *                r_1 = "landlord|aio123kj3jl13jk1jl3j" 
+ *                r_2 = "student|afeopqwoepqoepoqpweq"
+ *                
+ *                This example means the uploaded files will only be accessable to the landlord with id "aio123kj3jl13jk1jl3j"
+ *                and the student with id "afeopqwoepqoepoqpweq"
  */
 awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, res: express.Response) => {
 
@@ -46,8 +64,40 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
   let files = req.files
 
   let max_image_width = -1, max_image_height = -1;
+  let restricted = false;
+  let restricted_to: { type: 'student' | 'landlord', id: string }[] = [];
+
   if (_.has(req.body, 'max_image_width')) max_image_width = parseInt(req.body.max_image_width);
   if (_.has(req.body, 'max_image_height')) max_image_height = parseInt(req.body.max_image_height);
+  if (_.has(req.body, 'restricted')) {
+    if (req.body.restricted.toLowerCase() == "true") restricted = true;
+    console.log(`\t${chalk.cyan(`restricted?`)}: ${restricted}`)
+    if (restricted) {
+      let i = 0;
+
+      console.log(`\tRestricted to:`)
+      while (req.body[`r_${i}`]) {
+        let allowed_user = req.body[`r_${i}`].split('|')
+        if (allowed_user.length != 2 || 
+            (allowed_user[0] != "student" && 
+            allowed_user[0] != "landlord") || 
+            !ObjectId.isValid(allowed_user[1])) 
+            {
+              ++i;
+              continue;
+            }
+
+            let user_type: "student" | "landlord" = allowed_user[0]
+            let user_id: string = allowed_user[1]
+            console.log(`\t\t${user_type} (${chalk.cyan(user_id)})`);
+            restricted_to.push({
+              type: user_type,
+              id: user_id
+            })
+        ++i;
+      }
+    }
+  }
 
   if (!files) {
     console.log(chalk.bgRed(`❌ Error: No files to upload`))
@@ -106,10 +156,19 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
       Key += `-#-${randKey({length: 10})}`
       Key += `.${file_.mimetype.replace('/', '_')}`
 
-      let uploadParams = {
+      let uploadParams: aws.S3.PutObjectRequest = {
         Bucket: process.env.AWS_S3_BUCKET1 as string,
         Key: Key,
-        Body: file_.buffer
+        Body: file_.buffer,
+        Metadata: {
+          restricted: `${restricted}`,
+          ...(Object.fromEntries(
+
+            restricted_to.map((restricted_user) => {
+              return [restricted_user.type, restricted_user.id]
+            })
+          ))
+        }
       }
       
       aws_s3.upload(uploadParams, (err: any, data: aws.S3.ManagedUpload.SendData): void => {
