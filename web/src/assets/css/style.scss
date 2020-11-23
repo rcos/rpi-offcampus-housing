@@ -299,6 +299,7 @@ body {
   color: white;
   padding: 0 12px;
   border-radius: 3px;
+  border: none;
   cursor: pointer;
   font-weight: 600;
   transition: transform 0.25s;
@@ -310,7 +311,7 @@ body {
   &.right-icon {padding-right: 42px;}
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
 
   .text-area {
@@ -323,24 +324,24 @@ body {
 
   .icon-area {
     width: 30px;
-    line-height: 40px;
+    line-height: 38px;
     box-sizing: border-box;
     text-align: center;
     display: inline-block;
     vertical-align: middle;
     background-color: rgba(0, 0, 0, 0.05);
     position: absolute;
-    top: -2px;
-    bottom: -2px;
+    top: -0px;
+    bottom: -0px;
     font-size: 1rem;
 
     &.left {
       margin-right: 20px;
-      left: -2px;
+      left: 0px;
     }
     &.right {
       margin-left: 20px;
-      right: -2px;
+      right: 0px;
     }
   }
 }
@@ -457,6 +458,7 @@ body {
 }
 
 .nav-right-holder {
+  font-family: mukta;
   div {
     display: inline-block;
     vertical-align: middle;
@@ -517,8 +519,10 @@ body {
 }
 
 .subtext {
+  line-height: 15px;
   font-weight: 100;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-family: mukta;
 }
 
 .map-area {
@@ -543,10 +547,10 @@ body {
 }
 
 .icon-button {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   text-align: center;
-  line-height: 40px;
+  line-height: 35px;
   cursor: pointer;
   font-size: 0.9rem;
   border-radius: 3px;
@@ -844,6 +848,11 @@ body {
     margin-right: 10px;
     font-weight: 600;
     color: $black;
+  }
+
+  .desc {
+    font-family: mukta;
+    line-height: 15px;
   }
 }
 
@@ -1351,7 +1360,7 @@ body {
     width: 170px;
     background-color: #E4E4E4;
     border-radius: 3px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.35);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0);
 
     .context-menu-item {
       display: flex;

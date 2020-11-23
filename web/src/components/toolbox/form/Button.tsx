@@ -30,7 +30,6 @@ const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, b
       if (onClick) onClick ()
     }}
     style={{
-      border: `2px solid ${border ? border : bgColor()}`,
       backgroundColor: bgColor(),
       color: textColor ? textColor : `black`,
       width: `${width ?? width}px`
