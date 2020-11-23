@@ -13,6 +13,7 @@ import sizeOf from 'buffer-image-size'
 // @ts-ignore
 import _resizeImage_ from 'resize-image-buffer'
 import mongoose from 'mongoose'
+import { registerEnumType } from 'type-graphql';
 let ObjectId = mongoose.Types.ObjectId
 const upload = mutler()
 
@@ -164,8 +165,8 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
           restricted: `${restricted}`,
           ...(Object.fromEntries(
 
-            restricted_to.map((restricted_user) => {
-              return [restricted_user.type, restricted_user.id]
+            restricted_to.map((restricted_user, i) => {
+              return [`r_${i}`, `${restricted_user.type}|${restricted_user.id}`]
             })
           ))
         }
@@ -222,6 +223,39 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
       res.send(`Invalid Request`)
     }
     else {
+
+      // check if there are any restrictions
+
+      // check if the requester has access to this information
+      if (data.Metadata) {
+        if (data.Metadata["restricted"] && data.Metadata["restricted"].toLowerCase() == 'true') {
+          if (!req.user || !(req.user as any)._id || !(req.user as any).type) {
+            console.log(chalk.bgRed(`❌ Resource is restricted and user is unauthorized`))
+            res.send(`Forbidden`)
+            return;
+          }
+
+          // parse the authenticated user
+          let user_id = (req.user! as any)._id
+          let user_type = (req.user! as any).type
+          let access: IAccess = parseUserAccess(data.Metadata)
+
+          console.log(`Requested by ${user_type} => ${user_id}`)
+          console.log("Access", access)
+
+          if (user_type != "student" && user_type != "landlord") {
+            console.log(chalk.bgRed(`❌ Authorized user is not a student or a landlord. Cannot access resource.`))
+            res.send(`Forbidden`)
+            return;
+          }
+          if ((user_type == "student" && !access.students.includes(`${user_id}`)) ||  (user_type == "landlord" && !access.landlords.includes(`${user_id}`))) {
+            console.log(chalk.bgRed(`❌ Restricted resource is not accessible by ${user_type} => ${user_id}`))
+            res.send('Forbidden')
+            return;
+          }
+        }
+      }
+
       console.log(chalk.bgGreen(`✔ Successfully retrieved object!`))
       // console.log(data)
       
@@ -236,5 +270,25 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
   })
 
 })
+
+interface IAccess {
+  students: string[]
+  landlords: string[]
+}
+const parseUserAccess = (metadata: aws.S3.Metadata | undefined): IAccess => {
+  if (!metadata) return {students: [], landlords: []}
+
+  let result: IAccess = {students: [], landlords: []}
+  let i = 0;
+  while (metadata[`r_${i}`]) {
+    let access_info: string[] = metadata[`r_${i}`].split('|')
+    ++i;
+    if (access_info.length != 2 || (access_info[0] != "student" && access_info[0] != "landlord") || !ObjectId.isValid(access_info[1])) continue;
+
+    if (access_info[0] == "student") result.students.push(access_info[1])
+    if (access_info[1] == "landlord") result.landlords.push(access_info[1])
+  }
+  return result;
+}
 
 export { awsRouter }
