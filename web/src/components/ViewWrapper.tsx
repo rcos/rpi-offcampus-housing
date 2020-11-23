@@ -2,8 +2,9 @@ import React, {useState, useEffect} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
+import AuthAPI from '../API/AuthAPI'
 
-import { HiOutlineNewspaper } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiLogout, HiOutlineChatAlt } from 'react-icons/hi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive'
@@ -60,6 +61,23 @@ const ViewWrapper = ({children}: {children: any}) => {
     }
   }
 
+  const logout = () => {
+    // TODO implement logout
+    AuthAPI.logout()
+    .then(res => {
+      
+      // clear student auth
+      window.location.reload()
+    })
+    .catch(e => {
+      console.log(e)
+    })
+  }
+
+  const initFeedback = () => {
+
+  }
+
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
@@ -81,6 +99,22 @@ const ViewWrapper = ({children}: {children: any}) => {
               </div>)
 
           })}
+
+          {/* Footer Buttons */}
+          <div className="bottom-area">
+            {/* Feedback */}
+            <div className="icon-link" onClick={initFeedback}>
+              <div className="icon-holder"><HiOutlineChatAlt /></div>
+              <div className="link-desc">Feedback</div>
+            </div>
+            
+            {/* Logout */}
+            <div className="icon-link" onClick={logout}>
+              <div className="icon-holder"><HiLogout /></div>
+              <div className="link-desc">Logout</div>
+            </div>
+          </div>
+
 
         </div>
         <div className="content-area">

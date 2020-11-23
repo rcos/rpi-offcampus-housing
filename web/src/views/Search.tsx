@@ -98,30 +98,6 @@ const SearchView = () => {
       offset: searchPage * 8,
       count: 8
     }})
-    // get the results for the next page
-    /*
-    SearchAPI.properties(8, searchPage * 8)
-    .then(result => {
-      if (!result.data.success) {
-        console.error(`Failed to search for peoperties on page ${searchPage}`)
-        console.error(result.data.error)
-        setSearchResults([])
-        setLoading(false)
-        // update the url
-
-      }
-
-      else {
-        setSearchResults(result.data.properties)
-        setLoading(false)
-        // window.location.href = `${window.location.host}/search?p=${searchPage}`
-      }
-    })
-    .catch(err => {
-      console.log(`Error searching for properties...`)
-      console.log(err)
-    })
-    */
 
   }, [searchPage])
 
@@ -227,7 +203,7 @@ const SearchFilterArea = ({priceBound, roomIndex, setPriceBound, priceRange, roo
 
     let filterDiv: HTMLDivElement = filterAreaRef.current!;
 
-    let bottomOfFilter = filterDiv.getBoundingClientRect().bottom + 20
+    let bottomOfFilter = filterDiv.getBoundingClientRect().bottom + 30
     let viewportHeight = document.documentElement.clientHeight
 
     let height_ = Math.max(viewportHeight - bottomOfFilter, 0)
@@ -429,7 +405,7 @@ const SearchResultsArea = ({results, loading, handlePageChange, goToPage, page}:
     let rect_ = viewportDiv.getBoundingClientRect()
 
     let clientHeight = document.documentElement.clientHeight
-    return clientHeight - (rect_.top + 10)
+    return clientHeight - (rect_.top + 20)
   }
 
   const scrollTo = (element: any, to: number, duration: number) => {

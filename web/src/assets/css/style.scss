@@ -879,6 +879,7 @@ body {
     width: 180px;
     max-width: 150px;
     margin-right: 10px;
+    position: relative;
 
     .icon-link {
       height: 30px;
@@ -926,6 +927,12 @@ body {
       &:active {
         transform: scale(0.98);
       }
+    }
+
+    .bottom-area {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
     }
   }
 
