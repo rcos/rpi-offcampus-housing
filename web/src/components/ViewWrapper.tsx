@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
-import PopupBubble from './toolbox/misc/PopupBubble'
 
-import { BiSearch, BiCollection, BiHomeAlt } from "react-icons/bi";
+import { HiOutlineNewspaper } from 'react-icons/hi';
+import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive'
 
@@ -44,9 +44,9 @@ const ViewWrapper = ({children}: {children: any}) => {
 
   const pageLinks = {
     home: {
-      target: '/home',
-      icon: <BiHomeAlt />,
-      name: "Home"
+      target: '/feed',
+      icon: <HiOutlineNewspaper />,
+      name: "Feed"
     },
     search: {
       target: '/search',
@@ -73,27 +73,11 @@ const ViewWrapper = ({children}: {children: any}) => {
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
 
-            if (navbarMinMode)
-              return (<div key={index} style={{marginBottom: '15px'}} onClick={() => history.push((pageLinks as any)[page_].target)}>
+              return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((pageLinks as any)[page_].target)}>
                 <div className={`icon-link ${window.location.pathname.toLowerCase() === (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-                  {(pageLinks as any)[page_].icon}
+                  <div className="icon-holder">{(pageLinks as any)[page_].icon}</div>
                   <div className="link-desc">{(pageLinks as any)[page_].name}</div>
                 </div>
-              </div>)
-            
-            else return (<div key={index}
-                onClick={() => history.push((pageLinks as any)[page_].target)}
-                style={{marginBottom: '15px'}}>
-                <PopupBubble
-                  message={(pageLinks as any)[page_].name}
-                  direction="right"
-                  width={60}
-                >
-                  <div 
-                  className={`icon-link ${window.location.pathname.toLowerCase() === (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-                    {(pageLinks as any)[page_].icon}
-                  </div>
-                </PopupBubble>
               </div>)
 
           })}
