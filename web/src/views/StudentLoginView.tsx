@@ -9,7 +9,7 @@ import SuggestionInput from '../components/toolbox/form/SuggestionInput'
 import urlencode from 'urlencode'
 import {BiBookAlt} from 'react-icons/bi'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
-import {imageURI} from '../API/S3API'
+import {objectURI} from '../API/S3API'
 import { useGetInstitutionsLazyQuery, useGetInstitutionLazyQuery, GetInstitutionQuery } from '../API/queries/types/graphqlFragmentTypes'
 import Cookies from 'universal-cookie'
 import {motion, useSpring, useTransform} from 'framer-motion'
@@ -109,7 +109,7 @@ const StudentLoginView = () => {
               src={lastInstitution != null 
                 && lastInstitution!.getInstitution.data 
                 && lastInstitution!.getInstitution.success
-                && lastInstitution!.getInstitution.data!.s3_thumb_key ? imageURI(lastInstitution!.getInstitution.data!.s3_thumb_key as string) : ""}
+                && lastInstitution!.getInstitution.data!.s3_thumb_key ? objectURI(lastInstitution!.getInstitution.data!.s3_thumb_key as string) : ""}
               width="100%"
               height="100%"
             />

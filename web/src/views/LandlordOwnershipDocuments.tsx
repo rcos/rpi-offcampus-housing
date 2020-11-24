@@ -9,11 +9,15 @@ import {OwnershipDocument} from '../API/queries/types/graphqlFragmentTypes'
 import Fixate from '../components/toolbox/layout/Fixate'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import {ReduxState} from '../redux/reducers/all_reducers'
-import {useGetOwnershipLazyQuery, useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+import {
+  useGetOwnershipLazyQuery, 
+  useGetPropertyLazyQuery,
+  useAddOwnershipDocumentsMutation
+} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import Centered from '../components/toolbox/layout/Centered'
 import {FloatingLogo} from '../components/Logo'
-import {uploadObjects} from '../API/S3API'
+import {uploadObjects, objectURI} from '../API/S3API'
 
 interface ILandlordOwnershipDocuments {
   ownership_id: string
@@ -46,6 +50,12 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
   const [getOwnership, {data: ownershipData}] = useGetOwnershipLazyQuery()
   const [getProperty, {data: propertyData}] = useGetPropertyLazyQuery()
   const [uploadsInFlight, setUploadsInFlight] = useState<Document_[]>([])
+  const [AddDocuments, {data: newOwnershipDocuments}] = useAddOwnershipDocumentsMutation()
+
+  useEffect(() => {
+    console.log(`useEffect: New Ownership Documents`, newOwnershipDocuments)
+    setUploadsInFlight([])
+  }, [newOwnershipDocuments])
 
   useEffect(() => {
     getOwnership({variables: { ownership_id: ownership_id }})
@@ -166,6 +176,18 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
             console.log(`Files Uploaded:`, files_uploaded)
 
             // TODO add these files to the ownership of the landlord
+            AddDocuments({
+              variables: {
+                ownership_id: ownership_id,
+                documents_info: files_uploaded.map((s3_info: any, index: number) => {
+                  return {
+                    s3_doc_key: s3_info.Key,
+                    format: files_[Object.keys(files_)[index]].type
+                  }
+                })
+              }
+            })
+            
           }
           else {
             console.error(`Error uploading files...`)
@@ -217,24 +239,6 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
       {/* Documents Uploaded */}
       <div style={{marginBottom: '20px'}} />
 
-      {/* Save Changes Button */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row-reverse',
-        marginBottom: '20px'
-        }}>
-        <div style={{width: `100px`}}>
-          <Fixate active={true}>
-            <Button 
-              text="Save"
-              icon={<RiSave3Line />}
-              iconLocation="right"
-              background="#99E1D9"
-            />
-          </Fixate>
-        </div>
-      </div>
-
       <DocumentPreviews
         uploadEnabled={uploadsInFlight.length == 0}
         chooseDocument={chooseDocument}
@@ -271,10 +275,10 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
     {/* document count */}
     <div className="title-1" style={{
       paddingLeft: '5px',
-      height: '30px',
-      lineHeight: '30px'
+      height: '50px',
+      lineHeight: '50px'
       }}>
-      {documents.length} Documents <div
+      {documents.length} {documents.length == 1 ? "Document" : "Documents"} <div
         style={{
           display: 'inline-block',
           fontFamily: 'mukta',
@@ -284,6 +288,16 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
       }}
       >
         | PDF, JPG, PNG, DOCS
+      </div>
+
+      <div className="add-docs-btn-area">
+          <Button 
+            text="Upload Document(s)"
+            icon={<HiPlus />}
+            iconLocation="left"
+            background="#99E1D9"
+            onClick={uploadEnabled ? chooseDocument : () => {}}
+          />
       </div>
     </div>
 
@@ -304,9 +318,18 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
     }
 
     {
-      documents.length > 0 || pending.length > 0 &&
+      (documents.length > 0 || pending.length > 0) &&
       <div className="document-entry-grid">
         {/* Show the Uploaded */}
+        {documents.map((document_: Document_, index: number) => {
+          return (<div key={index} className="document-entry added"
+            onClick={() => {
+              window.open(objectURI(document_.s3_doc_key), '_blank')
+            }}
+          >
+          <div className="filename-area">{document_.s3_doc_key}</div>
+          </div>)
+        })}
 
         {/* Show the Pending */}
         {pending.map((pending_: Document_, index: number) => {

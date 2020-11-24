@@ -166,6 +166,14 @@ export class OwnershipResolver {
   {
 
     console.log(chalk.bgBlue(`👉 addOwnershipDocuments(ownership_id, documents_info)`))
+
+    if (!ObjectId.isValid(ownership_id)) {
+      console.log(chalk.bgRed(`❌ Error: Invalid ObjectId format for ownership_id`))
+      return {
+        success: false,
+        error: "Invalid id format"
+      }
+    }
     let ownership_doc: DocumentType<Ownership> | null = await OwnershipModel.findById(ownership_id)
     if (ownership_doc == null) {
       console.log(chalk.bgRed(`❌ Error: No ownership document with id ${ownership_id}`))

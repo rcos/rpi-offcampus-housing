@@ -1622,6 +1622,12 @@ body {
   border-radius: 3px;
   min-height: 300px;
 
+  .add-docs-btn-area {
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
   &.empty {
     height: 300px;
     position: relative;
@@ -1639,7 +1645,7 @@ body {
 
   .document-entry-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, 12rem);
     grid-column-gap: 0.2rem;
     grid-row-gap: 0.8rem;
     margin-left: 6px;
@@ -1650,7 +1656,6 @@ body {
       height: 30px;
       position: relative;
       border-radius: 3px;
-      cursor: wait;
 
       .filename-area {
         height: 100%;
@@ -1664,7 +1669,19 @@ body {
         text-overflow: ellipsis;
       }
 
+      &.added {
+        cursor: pointer;
+        box-sizing: border-box;
+        border: 1px solid rgba(0, 0, 0, 0);
+        transition: border 0.25s;
+
+        &:hover {
+          border: 1px solid $grey;
+        }
+      }
+
       &.pending {
+        cursor: wait;
         
         .loader {
           position: absolute;

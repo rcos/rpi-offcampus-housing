@@ -3,7 +3,7 @@ import {backendPath} from '../config'
 import urlencode from 'urlencode'
 import API from './API'
 
-export const imageURI = (s3_key: string): string => backendPath(`/vendors/aws_s3/get-object/${urlencode(s3_key)}`)
+export const objectURI = (s3_key: string): string => backendPath(`/vendors/aws_s3/get-object/${urlencode(s3_key)}`)
 
 interface IUploadObjectsConfig {
   restricted: boolean
