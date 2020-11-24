@@ -243,7 +243,7 @@ body {
           box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4);
 
           .value-label {
-            transform: scale(0.8);
+            transform: scale(0.8) translateX(-50%);
           }
         }
 
@@ -258,7 +258,7 @@ body {
           font-size: 0.65rem;
           padding: 2px 5px;
           border-radius: 3px;
-          transform: scale(1);
+          transform: scale(1) translateX(-50%);
         }
       }
 
@@ -294,11 +294,12 @@ body {
 }
 
 .app-button {
-  height: 38px;
-  line-height: 38px;
+  height: 30px;
+  line-height: 32px;
   color: white;
-  padding: 0 20px;
+  padding: 0 12px;
   border-radius: 3px;
+  border: none;
   cursor: pointer;
   font-weight: 600;
   transition: transform 0.25s;
@@ -306,11 +307,11 @@ body {
   position: relative;
   transform: scale(1);
 
-  &.left-icon {padding-left: 58px;}
-  &.right-icon {padding-right: 58px;}
+  &.left-icon {padding-left: 42px;}
+  &.right-icon {padding-right: 42px;}
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
 
   .text-area {
@@ -322,25 +323,25 @@ body {
   }
 
   .icon-area {
-    width: 38px;
-    line-height: 46px;
+    width: 30px;
+    line-height: 38px;
     box-sizing: border-box;
     text-align: center;
     display: inline-block;
     vertical-align: middle;
     background-color: rgba(0, 0, 0, 0.05);
     position: absolute;
-    top: -2px;
-    bottom: -2px;
+    top: -0px;
+    bottom: -0px;
     font-size: 1rem;
 
     &.left {
       margin-right: 20px;
-      left: -2px;
+      left: 0px;
     }
     &.right {
       margin-left: 20px;
-      right: -2px;
+      right: 0px;
     }
   }
 }
@@ -457,6 +458,7 @@ body {
 }
 
 .nav-right-holder {
+  font-family: mukta;
   div {
     display: inline-block;
     vertical-align: middle;
@@ -517,8 +519,10 @@ body {
 }
 
 .subtext {
+  line-height: 15px;
   font-weight: 100;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-family: mukta;
 }
 
 .map-area {
@@ -543,10 +547,10 @@ body {
 }
 
 .icon-button {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   text-align: center;
-  line-height: 40px;
+  line-height: 35px;
   cursor: pointer;
   font-size: 0.9rem;
   border-radius: 3px;
@@ -757,7 +761,7 @@ body {
 
 .comment-bubble {
   padding: 10px 15px;
-  border-radius: 5px;
+  border-radius: 3px;
   position: relative;
 
   &.blue {
@@ -845,6 +849,11 @@ body {
     font-weight: 600;
     color: $black;
   }
+
+  .desc {
+    font-family: mukta;
+    line-height: 15px;
+  }
 }
 
 .progress-bar {
@@ -867,31 +876,38 @@ body {
   position: relative;
 
   .user-navbar {
-    width: 40px;
-    max-width: 40px;
-    margin-right: 20px;
+    width: 180px;
+    max-width: 150px;
+    margin-right: 10px;
+    position: relative;
 
     .icon-link {
-      width: 40px;
-      height: 40px;
+      height: 30px;
       font-size: 1.4rem;
-      line-height: 54px;
-      text-align: center;
+      line-height: 40px;
+      text-align: left;
       cursor: pointer;
       background-color: white;
       transition: background 0.25s, transform 0.25s;
-      border-radius: 3px;
+      border-radius: 2px;
       transform: scale(1);
       position: relative;
+      display: flex;
+
+      .icon-holder {
+        width: 40px;
+        text-align: center;
+        font-size: 1.1rem;
+      }
+
+      .icon-holder, .link-desc {
+        align-items: center;
+      }
 
       .link-desc {
-        position: absolute;
-        top: 50%;
-        color: $black;
         font-size: 0.8rem;
-        transform: translateY(-50%);
-        right: calc(100% + 10px);
-        font-weight: 600;
+        font-family: mukta;
+        line-height: 32px;
       }
 
       &.active {
@@ -909,8 +925,14 @@ body {
         background-color: $limewhite;
       }
       &:active {
-        transform: scale(0.9);
+        transform: scale(0.98);
       }
+    }
+
+    .bottom-area {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
     }
   }
 
@@ -1345,7 +1367,7 @@ body {
     width: 170px;
     background-color: #E4E4E4;
     border-radius: 3px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.35);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0);
 
     .context-menu-item {
       display: flex;
@@ -1598,6 +1620,13 @@ body {
   border: 1px solid black;
   position: relative;
   border-radius: 3px;
+  min-height: 300px;
+
+  .add-docs-btn-area {
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
 
   &.empty {
     height: 300px;
@@ -1609,8 +1638,83 @@ body {
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(168, 93, 93, 0.6);
     letter-spacing: 1px;
     font-style: italic;
   }
+
+  .document-entry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 12rem);
+    grid-column-gap: 0.2rem;
+    grid-row-gap: 0.8rem;
+    margin-left: 6px;
+
+    .document-entry {
+      background-color: $lightgrey;
+      width: 190px;
+      height: 30px;
+      position: relative;
+      border-radius: 3px;
+
+      .filename-area {
+        height: 100%;
+        font-family: mukta;
+        font-size: 0.8rem;
+        line-height: 30px;
+        margin: 0 7px;
+        font-weight: 600;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      &.added {
+        cursor: pointer;
+        box-sizing: border-box;
+        border: 1px solid rgba(0, 0, 0, 0);
+        transition: border 0.25s;
+
+        &:hover {
+          border: 1px solid $grey;
+        }
+      }
+
+      &.pending {
+        cursor: wait;
+        
+        .loader {
+          position: absolute;
+          height: 3px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          
+          div {
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background-color: $cyanDark;
+            animation: document-upload-loader 5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes document-upload-loader {
+  0% {left: -40px;}
+  50% {left: 100%;}
+  100% {left: -40px;}
+}
+
+.fixate-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000000;
 }

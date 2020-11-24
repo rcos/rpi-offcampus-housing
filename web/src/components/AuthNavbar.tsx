@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import {imageURI} from '../API/S3API'
+import {objectURI} from '../API/S3API'
 import LeftAndRight from './toolbox/layout/LeftAndRight'
 import Logo from './Logo'
 
@@ -35,7 +35,7 @@ const Navbar = () => {
 
   const getSchoolThumbSource = (): string => {
     if (institution == null) return '';
-    return imageURI(institution.s3_thumb_key)
+    return objectURI(institution.s3_thumb_key)
   }
 
   return (<React.Fragment>

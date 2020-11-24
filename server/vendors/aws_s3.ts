@@ -12,6 +12,9 @@ import _ from 'lodash'
 import sizeOf from 'buffer-image-size'
 // @ts-ignore
 import _resizeImage_ from 'resize-image-buffer'
+import mongoose from 'mongoose'
+const util = require('util')
+let ObjectId = mongoose.Types.ObjectId
 const upload = mutler()
 
 let user_creds = new aws.Credentials({
@@ -38,16 +41,66 @@ const randKey = ({length}: {length: number}): string => {
  * 
  * To upload a file, send a post request of type multipart form-data and set the key
  * for each file to be uploaded as 'objects'.
+ * 
+ * Metadata: Metadata can be added to objects to describe the type of objects being uploaded.
+ *  max_image_width => This should be a string representation of a number. If this value is set, all files that images will
+ *                      be resized to have this max width, maintaining aspect ratio
+ *  max_image_height => Just like max_image_width, this will resize all files that are images to not exceed this value in height,
+ *                      maintaining aspect ratio. If both max width and height are set, the dimensions that give the higher resolution
+ *                      will be used.
+ *  restricted: "true" | "false" => If restricted is true, the uploaded documents will only be acessable to those
+ *              defined in the "r_n" fields, where n is a number.
+ *              e.g
+ *                restricted = "true",
+ *                r_1 = "landlord|aio123kj3jl13jk1jl3j" 
+ *                r_2 = "student|afeopqwoepqoepoqpweq"
+ *                
+ *                This example means the uploaded files will only be accessable to the landlord with id "aio123kj3jl13jk1jl3j"
+ *                and the student with id "afeopqwoepqoepoqpweq"
  */
 awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, res: express.Response) => {
 
   console.log(chalk.bgBlue(`👉 AWS S3 File Upload`))
+  console.log(util.inspect(req.headers, {showHidden: false, depth: null}))
+
   if (_.has(req.body, 'description')) console.log(`${chalk.cyan(`@desc`)} ${req.body.description}`)
   let files = req.files
 
   let max_image_width = -1, max_image_height = -1;
+  let restricted = false;
+  let restricted_to: { type: 'student' | 'landlord', id: string }[] = [];
+
   if (_.has(req.body, 'max_image_width')) max_image_width = parseInt(req.body.max_image_width);
   if (_.has(req.body, 'max_image_height')) max_image_height = parseInt(req.body.max_image_height);
+  if (_.has(req.body, 'restricted')) {
+    if (req.body.restricted.toLowerCase() == "true") restricted = true;
+    console.log(`\t${chalk.cyan(`restricted?`)}: ${restricted}`)
+    if (restricted) {
+      let i = 0;
+
+      console.log(`\tRestricted to:`)
+      while (req.body[`r_${i}`]) {
+        let allowed_user = req.body[`r_${i}`].split('|')
+        if (allowed_user.length != 2 || 
+            (allowed_user[0] != "student" && 
+            allowed_user[0] != "landlord") || 
+            !ObjectId.isValid(allowed_user[1])) 
+            {
+              ++i;
+              continue;
+            }
+
+            let user_type: "student" | "landlord" = allowed_user[0]
+            let user_id: string = allowed_user[1]
+            console.log(`\t\t${user_type} (${chalk.cyan(user_id)})`);
+            restricted_to.push({
+              type: user_type,
+              id: user_id
+            })
+        ++i;
+      }
+    }
+  }
 
   if (!files) {
     console.log(chalk.bgRed(`❌ Error: No files to upload`))
@@ -74,6 +127,7 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
     if (w_dim.height * w_dim.width > h_dim.height * h_dim.width) new_dim = w_dim;
     else new_dim = h_dim
 
+    console.log(chalk.blue(`\tNew image Dimensions: width => ${new_dim.width}, height => ${new_dim.height}`))
     return _resizeImage_(img_buffer, { width: new_dim.width, height: new_dim.height })
   }
 
@@ -106,10 +160,19 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
       Key += `-#-${randKey({length: 10})}`
       Key += `.${file_.mimetype.replace('/', '_')}`
 
-      let uploadParams = {
+      let uploadParams: aws.S3.PutObjectRequest = {
         Bucket: process.env.AWS_S3_BUCKET1 as string,
         Key: Key,
-        Body: file_.buffer
+        Body: file_.buffer,
+        Metadata: {
+          restricted: `${restricted}`,
+          ...(Object.fromEntries(
+
+            restricted_to.map((restricted_user, i) => {
+              return [`r_${i}`, `${restricted_user.type}|${restricted_user.id}`]
+            })
+          ))
+        }
       }
       
       aws_s3.upload(uploadParams, (err: any, data: aws.S3.ManagedUpload.SendData): void => {
@@ -163,6 +226,41 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
       res.send(`Invalid Request`)
     }
     else {
+
+      // check if there are any restrictions
+
+      // check if the requester has access to this information
+      if (data.Metadata) {
+        if (data.Metadata["restricted"] && data.Metadata["restricted"].toLowerCase() == 'true') {
+          if (!req.user || !(req.user as any)._id || !(req.user as any).type) {
+            console.log(chalk.bgRed(`❌ Resource is restricted and user is unauthorized`))
+            res.send(`Forbidden`)
+            return;
+          }
+
+          // parse the authenticated user
+          let user_id = (req.user! as any)._id
+          let user_type = (req.user! as any).type
+          console.log(`User Type: ${user_type}`)
+          console.log(`User Id: ${user_id}`)
+          let access: IAccess = parseUserAccess(data.Metadata)
+
+          console.log(`Requested by ${user_type} => ${user_id}`)
+          console.log("Access", access)
+
+          if (user_type != "student" && user_type != "landlord") {
+            console.log(chalk.bgRed(`❌ Authorized user is not a student or a landlord. Cannot access resource.`))
+            res.send(`Forbidden`)
+            return;
+          }
+          if ((user_type == "student" && !access.students.includes(`${user_id}`)) ||  (user_type == "landlord" && !access.landlords.includes(`${user_id}`))) {
+            console.log(chalk.bgRed(`❌ Restricted resource is not accessible by ${user_type} => ${user_id}`))
+            res.send('Forbidden')
+            return;
+          }
+        }
+      }
+
       console.log(chalk.bgGreen(`✔ Successfully retrieved object!`))
       // console.log(data)
       
@@ -177,5 +275,29 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
   })
 
 })
+
+interface IAccess {
+  students: string[]
+  landlords: string[]
+}
+const parseUserAccess = (metadata: aws.S3.Metadata | undefined): IAccess => {
+  if (!metadata) return {students: [], landlords: []}
+
+  let result: IAccess = {students: [], landlords: []}
+  let i = 0;
+  while (metadata[`r_${i}`]) {
+    console.log(`r_${i} = ${metadata[`r_${i}`]}`)
+    let access_info: string[] = metadata[`r_${i}`].split('|')
+    ++i;
+    if (access_info.length != 2 || (access_info[0] != "student" && access_info[0] != "landlord") || !ObjectId.isValid(access_info[1])) {
+      console.log(`skipping r_${i} = ${metadata[`r_${i}`]}`)
+      continue;
+    }
+
+    if (access_info[0] == "student") result.students.push(access_info[1])
+    if (access_info[0] == "landlord") result.landlords.push(access_info[1])
+  }
+  return result;
+}
 
 export { awsRouter }

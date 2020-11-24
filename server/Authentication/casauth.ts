@@ -98,6 +98,7 @@ function(profile: any, done: Function) {
 
 //need to create api route for CAS login
 import express from 'express'
+import {frontendPath} from '../config'
 const authRouter = express.Router()
 authRouter.get("/rpi/cas-auth", (req, res, next) => {
   console.log(chalk.bgCyan(`👉 CAS Auth`))
@@ -125,6 +126,16 @@ authRouter.get("/user", (req, res) => {
     authenticated: req.isAuthenticated()
   })
 })
+
+authRouter.get('/logout', function(req, res){
+  req.logout();
+
+  res.header('Access-Control-Allow-Credentials', "true");
+  res.header('Access-Control-Allow-Origin', frontendPath(null));
+  res.json({
+    success: true
+  })
+});
 
 
 

@@ -1,5 +1,5 @@
 import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
-import {Field, ObjectType, ID, InputType, Int} from "type-graphql"
+import {Field, ObjectType, ArgsType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
 import {ObjectId} from "mongodb"
 
@@ -50,6 +50,28 @@ export class OwnershipCollection {
   @Field(type => [Ownership])
   @prop({type: [Ownership]})
   ownerships: Ownership[]
+}
+
+@InputType({ description: "Input for adding ownership documents" })
+export class OwnershipDocumentInput {
+
+  @Field(type => String)
+  @prop({type: String})
+  s3_doc_key: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  format: string;
+}
+
+@ArgsType()
+export class AddOwnershipArgs {
+
+  @Field(type => String)
+  ownership_id: string;
+
+  @Field(type => [OwnershipDocumentInput])
+  documents_info: OwnershipDocumentInput[];
 }
 
 @ObjectType()

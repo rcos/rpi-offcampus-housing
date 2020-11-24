@@ -5,9 +5,10 @@ const AuthAPI = {
   API.get('/auth/status'),
 
   getUser: (): Promise<any> => 
-  API.get('/auth/user')
-  // todo create getUser that returns the current
-  // logged in user or null. 
+  API.get('/auth/user'),
+  
+  logout: (): Promise<any> =>
+  API.get('/auth/logout')
 }
 
 export default AuthAPI
