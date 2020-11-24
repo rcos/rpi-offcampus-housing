@@ -98,14 +98,18 @@ import "reflect-metadata"
 import { ApolloServer } from "apollo-server-express"
 import { buildSchema } from "type-graphql";
 import * as http from "http";
-import {StudentResolver, LandlordResolver, InstitutionResolver, PropertyResolver} from "./GQL/resolvers"
+import {StudentResolver, 
+  OwnershipResolver, 
+  LandlordResolver, 
+  InstitutionResolver, 
+  PropertyResolver} from "./GQL/resolvers"
 import { ObjectIdScalar } from "./GQL/entities";
 import {ObjectId} from 'mongodb'
 
 const StartServer = async (): Promise<http.Server> => {
 
   const schema = await buildSchema ({
-    resolvers: [StudentResolver, LandlordResolver, InstitutionResolver, PropertyResolver],
+    resolvers: [StudentResolver, OwnershipResolver, LandlordResolver, InstitutionResolver, PropertyResolver],
     emitSchemaFile: true,
     validate: true,
     scalarsMap: [{type: ObjectId, scalar: ObjectIdScalar}]

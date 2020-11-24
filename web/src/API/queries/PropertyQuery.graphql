@@ -4,7 +4,11 @@ query SearchProperties($offset: Int!, $count: Int!) {
   }
 }
 
-query GetProperty($id:String!,$withLandlord:Boolean!,$withReviews:Boolean!,$reviewCount:Int!,$reviewOffset:Int!) {
+query GetProperty(
+  $id:String!,
+  $withLandlord:Boolean!,
+  $withReviews:Boolean!,
+  $reviewCount:Int!,$reviewOffset:Int!) {
   getProperty(_id:$id,withLandlord:$withLandlord,reviewOptions:{withReviews:$withReviews,offset:$reviewOffset,count:$reviewCount}) {
     ...PropertyAPIResponseFields
   }

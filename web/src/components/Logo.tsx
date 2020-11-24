@@ -18,4 +18,13 @@ const Logo = ({width, height}: LogoInterface) => {
   ></div>)
 }
 
+export const FloatingLogo = () => {
+
+  return(<div style={{
+    position: 'absolute',
+    top: '20px',
+    left: '0px'
+}}><Logo /></div>)
+}
+
 export default Logo

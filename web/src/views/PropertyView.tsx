@@ -5,7 +5,6 @@ import {Line} from 'react-chartjs-2'
 // import ChartJSDraggablePlugin from 'chartjs-plugin-draggable'
 // import ChartJSAnnotationPlugin from 'chartjs-plugin-annotation'
 
-import PropertyAPI from '../API/PropertyAPI'
 import {useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 
 import ViewWrapper from '../components/ViewWrapper'

@@ -1,0 +1,67 @@
+query GetOwnershipsForLandlord($landlord_id: String!) {
+  getOwnershipsForLandlord(landlord_id:$landlord_id) {
+    ...OwnershipCollectionAPIResponseFields
+  }
+}
+
+query GetOwnership($ownership_id: String!) {
+  getOwnership(_id:$ownership_id) {
+    ...OwnershipAPIResponseFields
+  }
+}
+
+mutation CreateOwnership(
+  $landlord_id: String!,
+  $address_line: String!,
+  $city: String!,
+  $state: String!,
+  $zip_code: String!
+) {
+  createOwnershipReview(
+    landlord_id:$landlord_id,
+    address_line:$address_line,
+    city:$city,
+    state:$state,
+    zip_code:$zip_code
+  ) {
+    ...OwnershipAPIResponseFields
+  }
+}
+
+fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
+  success
+  error
+  data {
+    _id
+    property_id
+    landlord_id
+    date_submitted
+    status
+    ownership_documents {
+      ...ownershipDocumentFields
+    }
+  }
+}
+
+fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse {
+  success
+  error
+  data {
+    ownerships {
+      _id
+      property_id
+      landlord_id
+      date_submitted
+      status
+      ownership_documents {
+        ...ownershipDocumentFields
+      }
+    }
+  }
+}
+
+fragment ownershipDocumentFields on OwnershipDocument {
+  s3_doc_key
+  format
+  date_uploaded
+}
