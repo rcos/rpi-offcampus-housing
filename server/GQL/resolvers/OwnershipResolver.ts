@@ -1,11 +1,13 @@
-import {Resolver, Mutation, Arg, Query} from 'type-graphql'
-import {DocumentType} from "@typegoose/typegoose"
+import {Resolver, Mutation, Arg, Args, Query, Field} from 'type-graphql'
+import {DocumentType, prop} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
 import {Ownership, 
   OwnershipModel, 
   OwnershipAPIResponse,
   OwnershipCollectionAPIResponse,
+  OwnershipDocumentInput,
+  AddOwnershipArgs,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
 import { PropertyAlias } from 'aws-sdk/clients/iotsitewise'
@@ -139,6 +141,55 @@ export class OwnershipResolver {
     return {
       success: true,
       data: saved_ownership
+    }
+
+  }
+  
+  /**
+   * createOwnershipReview(ownership_id, documents_info)
+   * @param ownership_id: string => The ObjectId of the ownership document
+   * to store the document information into.
+   * @param documents_info: OwnershipDocumentInput => The list of document
+   * informations that need to be added to the ownership document.
+   * 
+   * @desc Adds the documents from documents_info to the ownership
+   * document with the specified ownership_id.
+   * Returns the updated ownership document
+   */
+  @Mutation(() => OwnershipAPIResponse)
+  async addOwnershipDocuments(
+    @Args() {
+      ownership_id,
+      documents_info
+    }: AddOwnershipArgs
+  ): Promise<OwnershipAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 addOwnershipDocuments(ownership_id, documents_info)`))
+    let ownership_doc: DocumentType<Ownership> | null = await OwnershipModel.findById(ownership_id)
+    if (ownership_doc == null) {
+      console.log(chalk.bgRed(`❌ Error: No ownership document with id ${ownership_id}`))
+      return {
+        success: false,
+        error: "Invalid ownership id"
+      }
+    }
+
+    // update the documents list
+    ownership_doc.ownership_documents = [
+      ... ownership_doc.ownership_documents,
+      ... documents_info.map((doc_info: OwnershipDocumentInput) => {
+        return {
+          ... doc_info,
+          date_uploaded: new Date().toISOString()
+        }
+      })
+    ]
+
+    let updated_ownership_doc: DocumentType<Ownership> = await ownership_doc.save() as DocumentType<Ownership>;
+    return {
+      success: true,
+      data: updated_ownership_doc
     }
 
   }

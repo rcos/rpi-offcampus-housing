@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useMediaQuery} from 'react-responsive'
-import {HiArrowLeft, HiPlus} from 'react-icons/hi'
+import {HiPlus} from 'react-icons/hi'
 import {RiSave3Line} from 'react-icons/ri'
 import {useHistory} from 'react-router'
 import {useSelector} from 'react-redux'
@@ -164,6 +164,8 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
           if (result.data && result.data.success) {
             let files_uploaded = result.data.files_uploaded
             console.log(`Files Uploaded:`, files_uploaded)
+
+            // TODO add these files to the ownership of the landlord
           }
           else {
             console.error(`Error uploading files...`)

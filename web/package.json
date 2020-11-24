@@ -59,8 +59,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "npm run __gen__ && rm src/API/graphqlGlobalTypes.ts",
-    "__gen__": "graphql-codegen --config src/API/graphql-codegen-config.yml && npx apollo codegen:generate types --endpoint=http://localhost:9010/graphql --target=typescript --includes=src/API/**/*.graphql --tagName=gql --addTypename --globalTypesFile=src/API/graphqlGlobalTypes.ts"
+    "generate_old": "npm run generate && rm src/API/graphqlGlobalTypes.ts",
+    "generate": "graphql-codegen --config src/API/graphql-codegen-config.yml && npx apollo codegen:generate types --endpoint=http://localhost:9010/graphql --target=typescript --includes=src/API/**/*.graphql --tagName=gql --addTypename --globalTypesFile=src/API/graphqlGlobalTypes.ts"
   },
   "eslintConfig": {
     "extends": "react-app"

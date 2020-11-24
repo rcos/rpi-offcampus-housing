@@ -1,3 +1,4 @@
+# Queries
 query GetOwnershipsForLandlord($landlord_id: String!) {
   getOwnershipsForLandlord(landlord_id:$landlord_id) {
     ...OwnershipCollectionAPIResponseFields
@@ -6,6 +7,17 @@ query GetOwnershipsForLandlord($landlord_id: String!) {
 
 query GetOwnership($ownership_id: String!) {
   getOwnership(_id:$ownership_id) {
+    ...OwnershipAPIResponseFields
+  }
+}
+
+
+# Mutations
+mutation AddOwnershipDocuments (
+  $ownership_id: String!,
+  $documents_info: [OwnershipDocumentInput!]!
+) {
+  addOwnershipDocuments(ownership_id: $ownership_id, documents_info: $documents_info) {
     ...OwnershipAPIResponseFields
   }
 }
@@ -28,6 +40,7 @@ mutation CreateOwnership(
   }
 }
 
+# Fragments
 fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
   success
   error

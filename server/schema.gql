@@ -74,6 +74,7 @@ input LandlordInput {
 }
 
 type Mutation {
+  addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
@@ -111,6 +112,12 @@ type OwnershipCollectionAPIResponse {
 """Ownership Document Information"""
 type OwnershipDocument {
   date_uploaded: String!
+  format: String!
+  s3_doc_key: String!
+}
+
+"""Input for adding ownership documents"""
+input OwnershipDocumentInput {
   format: String!
   s3_doc_key: String!
 }
