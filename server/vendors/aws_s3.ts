@@ -241,6 +241,8 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
           // parse the authenticated user
           let user_id = (req.user! as any)._id
           let user_type = (req.user! as any).type
+          console.log(`User Type: ${user_type}`)
+          console.log(`User Id: ${user_id}`)
           let access: IAccess = parseUserAccess(data.Metadata)
 
           console.log(`Requested by ${user_type} => ${user_id}`)
@@ -284,12 +286,16 @@ const parseUserAccess = (metadata: aws.S3.Metadata | undefined): IAccess => {
   let result: IAccess = {students: [], landlords: []}
   let i = 0;
   while (metadata[`r_${i}`]) {
+    console.log(`r_${i} = ${metadata[`r_${i}`]}`)
     let access_info: string[] = metadata[`r_${i}`].split('|')
     ++i;
-    if (access_info.length != 2 || (access_info[0] != "student" && access_info[0] != "landlord") || !ObjectId.isValid(access_info[1])) continue;
+    if (access_info.length != 2 || (access_info[0] != "student" && access_info[0] != "landlord") || !ObjectId.isValid(access_info[1])) {
+      console.log(`skipping r_${i} = ${metadata[`r_${i}`]}`)
+      continue;
+    }
 
     if (access_info[0] == "student") result.students.push(access_info[1])
-    if (access_info[1] == "landlord") result.landlords.push(access_info[1])
+    if (access_info[0] == "landlord") result.landlords.push(access_info[1])
   }
   return result;
 }
