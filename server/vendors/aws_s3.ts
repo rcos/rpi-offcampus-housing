@@ -13,7 +13,7 @@ import sizeOf from 'buffer-image-size'
 // @ts-ignore
 import _resizeImage_ from 'resize-image-buffer'
 import mongoose from 'mongoose'
-import { registerEnumType } from 'type-graphql';
+const util = require('util')
 let ObjectId = mongoose.Types.ObjectId
 const upload = mutler()
 
@@ -61,6 +61,8 @@ const randKey = ({length}: {length: number}): string => {
 awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, res: express.Response) => {
 
   console.log(chalk.bgBlue(`👉 AWS S3 File Upload`))
+  console.log(util.inspect(req.headers, {showHidden: false, depth: null}))
+
   if (_.has(req.body, 'description')) console.log(`${chalk.cyan(`@desc`)} ${req.body.description}`)
   let files = req.files
 
@@ -125,6 +127,7 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
     if (w_dim.height * w_dim.width > h_dim.height * h_dim.width) new_dim = w_dim;
     else new_dim = h_dim
 
+    console.log(chalk.blue(`\tNew image Dimensions: width => ${new_dim.width}, height => ${new_dim.height}`))
     return _resizeImage_(img_buffer, { width: new_dim.width, height: new_dim.height })
   }
 

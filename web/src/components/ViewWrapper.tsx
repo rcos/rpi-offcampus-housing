@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
@@ -11,10 +11,39 @@ import {useMediaQuery} from 'react-responsive'
 
 const ViewWrapper = ({children}: {children: any}) => {
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
   // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
+
+  const setHeight = () => {
+    // set the height
+    if (containerRef.current == null) return;
+    let bounding = containerRef.current.getBoundingClientRect()
+    let viewportHeight = document.documentElement.clientHeight
+
+    console.log(`viewport: ${viewportHeight}`)
+    console.log(`Top: ${bounding.top}`, bounding)
+
+    let height_ = viewportHeight - bounding.top - 20
+    containerRef.current.style.height = `${height_}px`
+  }
+
+  useEffect(() => {
+    setHeight ()
+    let t_1 = setTimeout(setHeight, 50)
+    let t_2 = setTimeout(setHeight, 100)
+    let t_3 = setTimeout(setHeight, 200)
+    let t_4 = setTimeout(setHeight, 400)
+
+    return () => {
+      clearTimeout(t_1)
+      clearTimeout(t_2)
+      clearTimeout(t_3)
+      clearTimeout(t_4)
+    }
+  }, [containerRef])
 
   useEffect(() => {
     const handleResize = (e:any) => {
@@ -83,10 +112,7 @@ const ViewWrapper = ({children}: {children: any}) => {
       <div>
         <Navbar />
       </div>
-      <div className="app-view-area" style={{
-        // width: `${viewWidth}px`,
-        // maxWidth: `${viewWidth}px`
-      }}>
+      <div className="app-view-area" ref={containerRef}>
         <div className="user-navbar">
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
