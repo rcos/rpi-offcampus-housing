@@ -4,6 +4,7 @@ import {objectURI} from '../API/S3API'
 import LeftAndRight from './toolbox/layout/LeftAndRight'
 import Logo from './Logo'
 
+import {RiAtLine} from 'react-icons/ri'
 import {useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useHistory} from 'react-router'
@@ -44,7 +45,13 @@ const Navbar = () => {
       left={<div><Logo /></div>}
       right={<div className="nav-right-holder">
         <div><span style={{fontWeight: 'bold'}}>
-  {getName ()}</span> @ <span className="dashed-underline">{getInstitution()}</span></div>
+  {getName ()}</span> 
+    <span style={{
+      position: 'relative',
+      top: '4px',
+      margin: '0 3px'
+    }}><RiAtLine /></span> 
+    <span className="dashed-underline">{getInstitution()}</span></div>
         <div className="school-logo-area">
           <img
             src={getSchoolThumbSource()}

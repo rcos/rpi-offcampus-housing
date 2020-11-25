@@ -1,5 +1,37 @@
 import React, {useRef, useEffect, useState} from 'react'
 import {useSpring, motion, useTransform} from 'framer-motion'
+import {RiBookOpenLine} from 'react-icons/ri'
+
+const Testing = () => {
+
+  return (<div style={{
+    width: `300px`,
+    height: `300px`,
+    position: 'absolute',
+    left: `50%`, top: `50%`,
+    transform: `translateX(-50%) translateY(-50%)`
+  }}>
+    <Dropdown 
+      label="institution"
+      icon={<RiBookOpenLine />}
+      inferenceFn={(val: string): {[key: string]: string[]} => {
+        if (val.length > 0 && val[0].toLowerCase() == "r") {
+          return {
+            "Institution": ["Entry1", "Entry2"],
+            "Schools": ["Entry3", "Entry4"]
+          }
+        }
+        else if (val.length > 0 && val[0].toLowerCase() == "g") {
+          return {
+            "Institution": ["Entry1", "Entry2"]
+          }
+        }
+        return {}
+      }}
+    />
+  </div>)
+}
+
 
 interface IDropdown {
   label: string
@@ -17,13 +49,13 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   const [inferences, setInferences] = useState<{[key: string]: string[]}>({})
   const dropdownSpring = useSpring(0)
   const dropdownOffset = useTransform(dropdownSpring, [0, 1], [-5, 0])
-  const dropdownVisibility = useTransform(dropdownSpring, (x: number) => {
-    if (x <= 0.1) return `hidden`;
-    return `visible`
-  })
 
   const inputRef = useRef<HTMLInputElement>(null)
   const focusSpring = useSpring(0, {stiffness: 120, damping: 20})
+  // const lineHeightTransform = useTransform(focusSpring, (x: number) => {
+  //   let range = [40, 15]
+  //   return `${range[1] + ((range[0] - range[1]) * (1-x))}px`
+  // })
   const scaleTransform = useTransform(focusSpring, [0, 1], [1, 0.8], {clamp: false})
   const translateTrasnform = useTransform(focusSpring, [0, 1], [0, -6], {clamp: false})
 
@@ -70,6 +102,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
 
   const selectIndex = (index: number) => {
     let value_: string | null = getInferenceValue(index)
+    console.log(`Value (${highlightRef.current}): ${value_}`)
     if (value_ != null) {
       setValue(value_)
       if (inputRef.current) inputRef.current.value = value_
@@ -110,7 +143,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
         setInferences(inferenceFn(value))
       }
     }
-  }, [value])
+  }, [value, onChange])
 
   const handleBlur = () => {
     if (value.length === 0) setFocused(false)
@@ -221,8 +254,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
     {/* Dropdown */}
     <motion.div className="dropdown" style={{
         opacity: dropdownSpring,
-        translateY: dropdownOffset,
-        visibility: dropdownVisibility
+        translateY: dropdownOffset
       }}>
 
         {showOptions ()}
@@ -230,4 +262,4 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   </div>)
 }
 
-export default Dropdown
+export default Testing

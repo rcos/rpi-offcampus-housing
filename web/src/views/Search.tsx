@@ -3,7 +3,6 @@ import queryString from 'query-string'
 import _ from 'lodash'
 
 import ViewWrapper from '../components/ViewWrapper'
-
 import Pagination from '../components/toolbox/layout/Pagination'
 import Dropdown from '../components/toolbox/form/Dropdown'
 import RangeSelector from '../components/toolbox/form/RangeSelector'
@@ -141,7 +140,6 @@ const SearchView = () => {
   return (<div>
     <ViewWrapper>
       <div>
-
         <div className="search-page-contents">
           <div className="left-area"><SearchFilterArea 
             priceBound={priceBound}
