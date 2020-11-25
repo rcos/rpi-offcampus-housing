@@ -344,9 +344,14 @@ body {
 .input-field {
   border: 1px solid $black;
   height: 42px;
-  border-radius: 3px;
+  border-radius: 2px;
   position: relative;
   display: flex;
+  z-index: 5;
+
+  &.focused {
+    border-bottom: none;
+  }
 
   .label-area {
 
@@ -413,6 +418,65 @@ body {
     &.icon {
       input {
         padding: 0;
+      }
+    }
+  }
+}
+
+.dropdown-wrapper {
+  z-index: 1;
+  .dropdown{
+    border-left: 1px solid $black;
+    border-right: 1px solid $black;
+    border-bottom: 1px solid $black;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    position: absolute;
+    z-index: 1;
+    left: 0px;
+    right: 0px;
+    top: calc(100% - 1px);
+    background-color: white;
+
+    .section {
+      text-transform: uppercase;
+      font-size: 0.6rem;
+      font-weight: 600;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 10px;
+      letter-spacing: 2px;
+      opacity: 0.6;
+    }
+
+    .option {
+      padding: 0 10px;
+      font-family: mukta;
+      height: 26px;
+      line-height: 26px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      background-color: white;
+      transition: background 0.25s;
+      letter-spacing: 1.1px;
+      position: relative;
+
+      &:hover, &.hover {
+        background-color: $limewhite;
+      }
+
+      &.hover {
+        &::after {
+          content: "Enter";
+          position: absolute;
+          right: 10px;
+          background-color: rgba(0, 0, 0, 0.05);
+          height: 15px;
+          line-height: 15px;
+          margin-top: 5px;
+          padding: 0 4px;
+          border-radius: 2px;
+        }
       }
     }
   }

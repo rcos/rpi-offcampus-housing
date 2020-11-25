@@ -35,6 +35,8 @@ import StudentCASAuth from './modules/redirects/StudentCASAuth'
 import LandlordNewProperty from './views/LandlordNewProperty'
 import LandlordOwnershipDocuments from './views/LandlordOwnershipDocuments'
 
+import Testing from './views/Testing'
+
 // Redux setup
 import store from './redux/store'
 import {Provider} from 'react-redux'
@@ -70,6 +72,8 @@ const Routes = () => {
     }}>
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
+
+          <AuthRoute accessLevel={AccessLevels.ANY} exact path="/testing_" component={Testing} />
 
           {/* Unrestricted Paths */}
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/" component={LandingView} />
