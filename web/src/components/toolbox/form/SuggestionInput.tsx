@@ -162,17 +162,18 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
 
     for (let i = 0; i < Object.keys(inferences).length; ++i) {
 
-      let _options_ = inferences[ Object.keys(inferences)[i] ]
+      let _options_ = inferences[Object.keys(inferences)[i]]
       if (_options_.length > 0) {
 
         let o_: any[] = []
-        o_.push(<div className="section" key={-1}>{Object.keys(inferences)[i]}</div>)
+        o_.push(<div className="section" key={-1} onClick={focusInput}>{Object.keys(inferences)[i]}</div>)
 
         // options
         for (let j = 0; j < _options_.length; ++j) {
           o_.push(<div className={`option ${c_ == highlightIndex? 'hover' :  ''}`} key={j}
             onClick={() => {
               selectValue(_options_[j])
+              focusInput()
             }}
           >{_options_[j]}</div>)
 
@@ -180,7 +181,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
           ++c_;
         }
 
-        options.push(<div key={i}>{o_}</div>)
+        options.push(<div key={i} onClick={focusInput}>{o_}</div>)
       }
 
     }
