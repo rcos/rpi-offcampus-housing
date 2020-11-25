@@ -39,9 +39,6 @@ const ViewWrapper = ({children}: {children: any}) => {
     let bounding = containerRef.current.getBoundingClientRect()
     let viewportHeight = document.documentElement.clientHeight
 
-    console.log(`viewport: ${viewportHeight}`)
-    console.log(`Top: ${bounding.top}`, bounding)
-
     let height_ = viewportHeight - bounding.top - 20
     containerRef.current.style.height = `${height_}px`
   }
@@ -53,7 +50,10 @@ const ViewWrapper = ({children}: {children: any}) => {
     let t_3 = setTimeout(setHeight, 200)
     let t_4 = setTimeout(setHeight, 400)
 
+    window.addEventListener('resize', setHeight)
+
     return () => {
+      window.removeEventListener('resize', setHeight)
       clearTimeout(t_1)
       clearTimeout(t_2)
       clearTimeout(t_3)
