@@ -74,8 +74,9 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
     if (dropdownFocused) dropdownSpring.set(1)
     else {
       dropdownSpring.set(0)
-      setHightlightIndex(-1)
     }
+    setHightlightIndex(-1)
+    if (highlightRef.current) highlightRef.current = -1
   }, [dropdownFocused])
 
   const handleInferenceSelect = (e: any) => {
