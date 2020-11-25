@@ -137,7 +137,12 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
 
   useEffect(() => {
     if (onChange) onChange(value)
-    if (inferenceFn) setInferences(inferenceFn(value))
+    if (inferenceFn) {
+      if (value.length == 0) setDropdownFocused(false)
+      else {
+        setInferences(inferenceFn(value))
+      }
+    }
   }, [value, onChange])
 
   const handleBlur = () => {

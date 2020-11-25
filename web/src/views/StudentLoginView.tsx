@@ -19,14 +19,17 @@ const StudentLoginView = () => {
   const cookies = new Cookies()
 
   const handleInstitutionLogin = (institution_name: string | null) => {
-    let name_ = institution_name == null ? partialInstitutioName : institution_name
-    switch (name_) {
-      case 'Rensselaer Polytechnic Institute':
+    console.log(`Clicked...`)
+    let name_ = institution_name == null ? institutionName : institution_name
+
+    console.log(`name: ${name_}`)
+    switch (name_.toLowerCase()) {
+      case 'rensselaer polytechnic institute':
       window.location.replace(getCASURL())
         break;
 
       default:
-        setError({error: partialInstitutioName.length == 0 ? `No institution selected` : `Unrecognized institution: ${partialInstitutioName}`})
+        setError({error: institutionName.length == 0 ? `No institution selected` : `Unrecognized institution: ${institutionName}`})
     }
   }
 
@@ -37,13 +40,11 @@ const StudentLoginView = () => {
     return `https://cas-auth.rpi.edu/cas/login?service=${urlencoded_}`
   }
 
+  const [institutionName, setInstitutionName] = useState<string>("")
   const [lastInstitution, setLastInstitution] = useState<GetInstitutionQuery | null>(null)
   const [_error, setError] = useState<{error: string | null}>({error: null})
-  const [partialInstitutioName, setPartialInstitutioName] = useState<string>("")
   const [matchedInstitutions, setMatchedInstitutions] = useState<string[]>([])
-  const [getInstitions, {loading: institutionsLoading, data: institutionList}] = useGetInstitutionsLazyQuery({
-    variables: {partial_name: partialInstitutioName}
-  })
+  const [getInstitions, {loading: institutionsLoading, data: institutionList}] = useGetInstitutionsLazyQuery()
   const [getInstitution, {loading: institutionLoading, data: institutionData}] = useGetInstitutionLazyQuery()
 
   const lastRef = useRef<HTMLDivElement>(null)
@@ -77,9 +78,6 @@ const StudentLoginView = () => {
     }
   }, [institutionData])
 
-  useEffect(() => {
-    if (partialInstitutioName != "") getInstitions()
-  }, [partialInstitutioName])
 
   useEffect(() => {
     let matched_list: string[] = []
@@ -92,49 +90,18 @@ const StudentLoginView = () => {
     if (!institutionsLoading) setMatchedInstitutions(matched_list)
   }, [institutionList])
 
+  const matchesName = (name: string, partial: string): boolean => {
+    let k = 0;
+    for (let i = 0; i < name.length; ++i) {
+      if (partial[k] == name[i]) ++k;
+    }
+
+    return partial.length == k
+  }
+
   return (<Centered width={400} height={lastInstitution == null? 300 : 500}>
 
     <div>
-
-      <motion.div 
-        ref={lastRef}
-        style={{
-          opacity: lastOpacityTransform,
-          marginTop: lastHeightTransform
-        }}
-        className="previous-logged-in-institution">
-        <div className="left-side">
-          <div className="image-holder">
-            <img 
-              src={lastInstitution != null 
-                && lastInstitution!.getInstitution.data 
-                && lastInstitution!.getInstitution.success
-                && lastInstitution!.getInstitution.data!.s3_thumb_key ? objectURI(lastInstitution!.getInstitution.data!.s3_thumb_key as string) : ""}
-              width="100%"
-              height="100%"
-            />
-          </div>
-        </div>
-        <div className="right-side">
-        <div className="title">{lastInstitution == null ? "" : lastInstitution.getInstitution.data!.name}</div>
-          <div className="button-area">
-            <Button 
-              text="Continue"
-              icon={<BiLogIn/>}
-              background="#E0777D"
-              textColor="white"
-              iconLocation="right"
-              onClick={() => {
-                handleInstitutionLogin(lastInstitution == null ? null : lastInstitution.getInstitution.data!.name)
-              }}
-            />
-          </div>
-        </div>
-
-        <motion.div className="or-separator" style={{opacity: lastOpacityTransform}}>
-          
-        </motion.div>
-      </motion.div>
 
       <CommentBubble 
         message={_error.error ? _error.error : "No error"}
@@ -147,10 +114,32 @@ const StudentLoginView = () => {
         <SuggestionInput 
           icon={<BiBookAlt />}
           label="Institution"
-          selectOnClick={true}
-          suggestedList={matchedInstitutions}
-          onChange={(x: string) => {
-            setPartialInstitutioName(x)
+          onChange={(value: string) => {
+            setInstitutionName(value)
+          }}
+          inferenceFn={(x: string): {[key: string]: string[];} => {
+            setInstitutionName(x)
+            if (x.length == 1 || (x.length > 0 && matchedInstitutions.length == 0)) {
+              getInstitions({
+                variables: {
+                  partial_name: x
+                }
+              })
+              return {
+                "recent": [
+                  institutionData && institutionData.getInstitution.data ? institutionData.getInstitution.data.name : ""
+                ]
+              }
+            }
+
+            else {
+              return {
+                "institutions": (matchedInstitutions as string[]).filter((_name_: string) => matchesName(_name_.toLowerCase(), x.toLowerCase())),
+                "recent": [
+                  institutionData && institutionData.getInstitution.data ? institutionData.getInstitution.data.name : ""
+                ]
+              }
+            }
           }}
         />
       </div>
