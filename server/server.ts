@@ -12,7 +12,7 @@ if (!process.env.NODE_ENV) {
 }
 dotenv.config({ path: `../.env.${process.env.NODE_ENV!.replace(" ", "")}` });
 
-import {frontendPath} from './config'
+import { frontendPath } from "./config";
 
 const PORT = process.env.SERVER_PORT;
 
@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 import passport from "passport";
 import session from "express-session";
 import CasAuthRouter from "./Authentication/casauth";
-import LocalAuthRouter from './Authentication/localauth';
+import LocalAuthRouter from "./Authentication/localauth";
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string,
@@ -48,8 +48,8 @@ app.use(passport.session());
 app.use("/auth", CasAuthRouter);
 app.use("/auth", LocalAuthRouter);
 
-import {awsRouter} from './vendors/aws_s3'
-app.use('/vendors/aws_s3', awsRouter)
+import { awsRouter } from "./vendors/aws_s3";
+app.use("/vendors/aws_s3", awsRouter);
 
 // API routes
 // import StudentGET from "./API/Student/student.get";
@@ -94,46 +94,54 @@ const connectMongo = () =>
     )
   );
 
-import "reflect-metadata"
-import { ApolloServer } from "apollo-server-express"
+import "reflect-metadata";
+import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import * as http from "http";
-import {StudentResolver, 
-  OwnershipResolver, 
-  LandlordResolver, 
-  InstitutionResolver, 
-  PropertyResolver} from "./GQL/resolvers"
+import {
+  StudentResolver,
+  OwnershipResolver,
+  LandlordResolver,
+  InstitutionResolver,
+  PropertyResolver,
+} from "./GQL/resolvers";
 import { ObjectIdScalar } from "./GQL/entities";
-import {ObjectId} from 'mongodb'
+import { ObjectId } from "mongodb";
 
-const StartServer = async (): Promise<http.Server> => {
-
-  const schema = await buildSchema ({
-    resolvers: [StudentResolver, OwnershipResolver, LandlordResolver, InstitutionResolver, PropertyResolver],
+const StartServer = async (): Promise<{
+  server: http.Server;
+  apolloServer: ApolloServer;
+}> => {
+  const schema = await buildSchema({
+    resolvers: [
+      StudentResolver,
+      OwnershipResolver,
+      LandlordResolver,
+      InstitutionResolver,
+      PropertyResolver,
+    ],
     emitSchemaFile: true,
     validate: true,
-    scalarsMap: [{type: ObjectId, scalar: ObjectIdScalar}]
-  })
-  const server = new ApolloServer({ schema })
-  server.applyMiddleware({ app })
-  
-  return app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  
-    if (process.env.USING_MOCHA !== "true") {
-      connectMongo()
-        .then(() => {
-          console.log(`✔ Successfully connect to MongoDB instance.`);
-        })
-        .catch((err) => {
-          console.error(`❌ Error connecting to mongoose.`);
-          console.error(err);
-          process.exit(1);
-        });
-    }
+    scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
   });
-}
+  const apolloServer = new ApolloServer({ schema });
+  apolloServer.applyMiddleware({ app });
+  try {
+    await connectMongo();
+    console.log(`✔ Successfully connect to MongoDB instance.`);
+  } catch (err) {
+    console.error(`❌ Error connecting to mongoose.`);
+    console.error(err);
+    process.exit(1);
+  }
 
-const server = StartServer ()
+  const server = app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+
+  return { server, apolloServer };
+};
+
+const server = StartServer();
 
 export { app, connectMongo, server, MONGO_URI };
