@@ -234,7 +234,7 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar showNavbar={false} />
+        <Navbar showNavbar={showNavbar} />
       </div>
       <div className="app-view-area" ref={containerRef}>
         {showNavbar != false && <div className="user-navbar">

@@ -1,7 +1,8 @@
 {
-  "UNAUTH": 0,
-  "STUDENT": 1,
-  "LANDLORD": 2,
-  "STUDENT_AND_LANDLORD": 3,
-  "ANY": 4
+  "UNAUTH": 1,
+  "STUDENT": 2,
+  "LANDLORD": 4,
+  "STUDENT_AND_LANDLORD": 8,
+  "ANY": 16,
+  "OWNERSHIP_REVIEWER": 32
 }
