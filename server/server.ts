@@ -51,26 +51,9 @@ app.use("/auth", LocalAuthRouter);
 import {awsRouter} from './vendors/aws_s3'
 app.use('/vendors/aws_s3', awsRouter)
 
-// API routes
-// import StudentGET from "./API/Student/student.get";
-// import StudentPUT from "./API/Student/student.put";
-// import LandlordGET from "./API/Landlord/landlord.get";
-// import LandlordPUT from "./API/Landlord/landlord.put";
-// import ReviewGET from "./API/Review/review.get";
-// import ReviewPUT from "./API/Review/review.put";
-// import PropertyGET from "./API/Property/property.get";
-// import PropertyPUT from "./API/Property/property.put";
-// import SearchGET from "./API/Search/search.get";
-
-// app.use("/api/students", StudentGET);
-// app.use("/api/students", StudentPUT);
-// app.use("/api/landlords", LandlordGET);
-// app.use("/api/landlords", LandlordPUT);
-// app.use("/api/reviews", ReviewGET);
-// app.use("/api/reviews", ReviewPUT);
-// app.use("/api/properties", PropertyGET);
-// app.use("/api/properties", PropertyPUT);
-// app.use("/api/search", SearchGET);
+// SendGrid
+import sgMail from '@sendgrid/mail'
+sgMail.setApiKey (process.env.SENDGRID_API_KEY as string)
 
 const connectMongo = () =>
   // connect to MongoDB via mongoose

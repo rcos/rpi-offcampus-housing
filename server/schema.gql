@@ -187,6 +187,7 @@ type Query {
 type Student {
   _id: ID!
   auth_info: CasAuthInfo
+  elevated_privileges: [String!]
   email: String!
   first_name: String!
   last_name: String!

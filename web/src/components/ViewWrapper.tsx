@@ -7,11 +7,13 @@ import AuthAPI from '../API/AuthAPI'
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiLogout, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive';
-import axios from 'axios';
+import {useSelector} from 'react-redux'
+import {ReduxState} from '../redux/reducers/all_reducers'
+import {Student} from '../API/queries/types/graphqlFragmentTypes'
 
 interface IFeedbackInfo {
   bug: boolean
@@ -27,6 +29,7 @@ const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
 
 const ViewWrapper = ({children}: {children: any}) => {
 
+  const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
@@ -104,6 +107,23 @@ const ViewWrapper = ({children}: {children: any}) => {
       icon: <BiCollection />,
       name: 'Collection'
     }
+  }
+
+  const reviewerLinks = {
+    home: {
+      target: '/ownership/review',
+      icon: <HiClipboard />,
+      name: "Ownership"
+    }
+  }
+
+  const isOwnershipReviewer = (): boolean => {
+    if (user && user.type && user.type == "student" && user.user && user.user.elevated_privileges) {
+      return user.user.elevated_privileges.includes("ownership_reviewer")
+    }
+    else {
+    }
+    return false;
   }
 
   const logout = () => {
@@ -229,6 +249,22 @@ const ViewWrapper = ({children}: {children: any}) => {
               </div>)
 
           })}
+
+          {isOwnershipReviewer() &&
+            <div>
+              <div className="submenu-title">Reviewer</div>
+              {Object.keys(reviewerLinks).map((page_: string, index: number) => {
+
+              return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((reviewerLinks as any)[page_].target)}>
+                <div className={`icon-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                  <div className="icon-holder">{(reviewerLinks as any)[page_].icon}</div>
+                  <div className="link-desc">{(reviewerLinks as any)[page_].name}</div>
+                </div>
+              </div>)
+
+              })}
+            </div>
+          }
 
           {/* Footer Buttons */}
           <div className="bottom-area">

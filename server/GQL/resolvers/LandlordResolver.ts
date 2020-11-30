@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import chalk from 'chalk'
 import bcrypt from 'bcrypt'
 const ObjectId = mongoose.Types.ObjectId
+import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
 
 @Resolver()
 export class LandlordResolver {
@@ -69,6 +70,12 @@ export class LandlordResolver {
         last_name,
         email,
         password: hashed_password
+      })
+
+      // Email
+      SendGrid.sendMail({
+        to: email,
+        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION
       })
 
       let saved_landlord: DocumentType<Landlord> = await new_landlord.save() as DocumentType<Landlord>

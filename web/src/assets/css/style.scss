@@ -939,6 +939,16 @@ body {
     margin-right: 10px;
     position: relative;
 
+    .submenu-title {
+      font-weight: 600;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.6);
+      letter-spacing: 1.3px;
+      font-size: 0.7rem;
+      height: 30px;
+      line-height: 30px;
+    }
+
     .icon-link {
       height: 30px;
       font-size: 1.4rem;
