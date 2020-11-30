@@ -63,6 +63,12 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
     ownerships {
       _id
       property_id
+      property_doc {
+        _id
+        location
+        sq_ft
+        landlord
+      }
       landlord_id
       date_submitted
       status

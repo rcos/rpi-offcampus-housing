@@ -1893,11 +1893,12 @@ body {
   outline: none;
 }
 
-.no-results-container {
+.results-container {
   height: 300px;
+  overflow-y: scroll;
   position: relative;
 
-  .contents {
+  .no-contents {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -1917,4 +1918,35 @@ body {
   font-weight: 600;
   letter-spacing: 1.2px;
   color: rgba(0, 0, 0, 0.55);
+}
+
+.property-list-entry {
+  height: 30px;
+  line-height: 30px;
+  font-family: mukta;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s, background-color 0.2s;
+  background-color: white;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+
+  &:hover {
+    opacity: 1;
+    background-color:$limewhite;
+  }
+
+  display: flex;
+  .address-area {
+    width: 30%;
+  }
+  .city-area {
+    width: 10%;
+  }
+  .state-area {
+    width: 10%;
+  }
+  .info-area {
+
+  }
 }

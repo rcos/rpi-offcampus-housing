@@ -10,10 +10,46 @@ import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import Pagination from '../components/toolbox/layout/Pagination'
 import ContextMenu from '../components/toolbox/misc/ContextMenu'
+import {Ownership, Property, useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+import {useSelector} from 'react-redux'
+import {ReduxState} from '../redux/reducers/all_reducers'
+
+type OwnedProperty = Property & {
+  status: string
+  ownership_id: string
+}
 
 const LandlordDashboard = () => {
+  
+  const history = useHistory()
+  const user = useSelector((state: ReduxState) => state.user)
+  const [properties, setProperties] = useState<OwnedProperty[]>([])
+  const [GetOwnerships, {data: ownershipDataResponse}] = useGetOwnershipsForLandlordLazyQuery()
 
-  const [properties, setProperties] = useState<string[]>([])
+  useEffect(() => {
+    if (user && user.user && user.type == "landlord") {
+      GetOwnerships({
+        variables: {
+          landlord_id: user.user._id
+        }
+      })
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (ownershipDataResponse && ownershipDataResponse.getOwnershipsForLandlord
+      && ownershipDataResponse.getOwnershipsForLandlord.data && ownershipDataResponse.getOwnershipsForLandlord.data.ownerships) {
+        setProperties(
+          (ownershipDataResponse.getOwnershipsForLandlord.data.ownerships
+          .map((ownership: Ownership) => ownership.property_doc ? {
+            ...ownership.property_doc,
+            status: ownership.status,
+            ownership_id: ownership._id
+          } : undefined)
+          .filter( (property_doc: OwnedProperty | undefined): boolean => property_doc != undefined )) as OwnedProperty[]
+        )
+      }
+  }, [ownershipDataResponse])
 
   useEffect(() => {
 
@@ -42,12 +78,12 @@ const LandlordDashboard = () => {
 
   const containerRef = useRef<HTMLDivElement>(null)
   
-  const ownedProperties = (): string[] => {
-    return properties;
+  const ownedProperties = (): OwnedProperty[] => {
+    return properties.filter((property_: OwnedProperty) => property_.status == 'complete');
   }
 
-  const inReviewProperties = (): string[] => {
-    return properties;
+  const inReviewProperties = (): OwnedProperty[] => {
+    return properties.filter((property_: OwnedProperty) => property_.status == 'in-review');
   }
 
   return (<LandlordViewWrapper>
@@ -84,6 +120,9 @@ const LandlordDashboard = () => {
             iconLocation="right"
             text="Add Property"
             background="#99E1D9"
+            onClick={() => {
+              history.push('/landlord/new-property')
+            }}
           />
         </div>
       </div>
@@ -99,13 +138,26 @@ const LandlordDashboard = () => {
           borderBottom: '1px solid rgba(0, 0, 0, 0.3)',
           overflowY: 'scroll'}}>
           {/* Owned Properties Area */}
-          {ownedProperties().length == 0 && <div className="no-results-container">
-            <div className="contents">
+          {ownedProperties().length == 0 && <div className="results-container">
+            <div className="no-contents">
               <div></div>
               No Properties
             </div>
           </div>}
-          {ownedProperties().length > 0 && <div>TODO: Show properties`</div>}
+          {ownedProperties().length > 0 && <div className="results-container">
+            <div className="contents">
+              {ownedProperties().map((property: OwnedProperty, index: number) => {
+                return (<div key={index} className="property-list-entry" onClick={() => {
+                  history.push(`/landlord/ownership-documents/${property.ownership_id}`)
+                }}>
+                  <div className="address-area">{property.location}</div>
+                  <div className="city-area">Troy</div>
+                  <div className="state-area">NY</div>
+                  <div className="info-area">3 Rooms / 2 Bedrooms</div>
+                </div>)
+              })}
+            </div>    
+          </div>}
         </div>
 
         <div>
@@ -113,13 +165,28 @@ const LandlordDashboard = () => {
             In Review
           </div>
           {/* In Review Properties Area */}
-          {inReviewProperties().length == 0 && <div className="no-results-container">
-            <div className="contents">
+          {inReviewProperties().length == 0 && <div className="results-container">
+            <div className="no-contents">
               <div></div>
               No Properties In Review
             </div>
           </div>}
-          {inReviewProperties().length > 0 && <div>TODO: Show properties`</div>}
+          {inReviewProperties().length > 0 && <div className="results-container">
+            <div className="contents">
+              {inReviewProperties().map((property: OwnedProperty, index: number) => {
+                return (<div key={index} 
+                  onClick={() => {
+                    history.push(`/landlord/ownership-documents/${property.ownership_id}`)
+                  }}
+                  className="property-list-entry">
+                  <div className="address-area">{property.location}</div>
+                  <div className="city-area">Troy</div>
+                  <div className="state-area">NY</div>
+                  <div className="info-area">3 Rooms / 2 Bedrooms</div>
+                </div>)
+              })}
+            </div>    
+          </div>}
         </div>
 
       </div>
