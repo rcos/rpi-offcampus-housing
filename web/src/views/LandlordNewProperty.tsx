@@ -7,7 +7,7 @@ import {useCreateOwnershipMutation} from '../API/queries/types/graphqlFragmentTy
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {BiHomeAlt} from 'react-icons/bi'
 import {HiArrowRight} from 'react-icons/hi'
-import Input from '../components/toolbox/form/Input'
+import Input, {noSpaces, $and, $or, numbersOnly, alnumOnly} from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import Centered from '../components/toolbox/layout/Centered'
@@ -136,6 +136,9 @@ const LandlordNewProperty = () => {
         <Input label="Address" 
           icon={<BiHomeAlt />}
           onChange={(val) => { let reg2 = propertyInfo; reg2.address_line = val; setPropertyInfo(reg2) }}
+          inputFilters={[
+            alnumOnly
+          ]}
         />
       </div>
 
@@ -143,18 +146,27 @@ const LandlordNewProperty = () => {
         <div style={{width: "30%", marginRight:"10px"}}>
           <Input label="City" 
             onChange={(val) => { let reg2 = propertyInfo; reg2.city = val; setPropertyInfo(reg2) }}
+            inputFilters={[
+              alnumOnly
+            ]}
           />
         </div>
 
         <div style={{width: "30%", marginRight:"10px"}}>
           <Input label="State" 
             onChange={(val) => { let reg2 = propertyInfo; reg2.state = val; setPropertyInfo(reg2) }}
+            inputFilters={[
+              $and(noSpaces, alnumOnly)
+            ]}
           />
         </div>
 
         <div style={{flexGrow: 1}}>
           <Input label="Zip Code"
             onChange={(val) => { let reg2 = propertyInfo; reg2.zip_code = val; setPropertyInfo(reg2) }}
+            inputFilters={[
+              $and(noSpaces, numbersOnly)
+            ]}
           />
         </div>
       </div>
