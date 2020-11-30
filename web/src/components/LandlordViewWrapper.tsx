@@ -43,8 +43,8 @@ const LandlordViewWrapper = ({children}: {children: any}) => {
   }
 
   const pageLinks = {
-    dashboard: {
-      target: '/landlord/dashboard',
+    properties: {
+      target: '/landlord/properties',
       icon: <BsFillGridFill />,
       name: "Dashboard"
     }

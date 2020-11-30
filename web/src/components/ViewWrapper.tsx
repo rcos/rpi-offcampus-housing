@@ -27,7 +27,7 @@ const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
   // TODO implement
 }
 
-const ViewWrapper = ({children}: {children: any}) => {
+const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolean}) => {
 
   const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -234,10 +234,10 @@ const ViewWrapper = ({children}: {children: any}) => {
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar />
+        <Navbar showNavbar={false} />
       </div>
       <div className="app-view-area" ref={containerRef}>
-        <div className="user-navbar">
+        {showNavbar != false && <div className="user-navbar">
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
 
@@ -282,7 +282,7 @@ const ViewWrapper = ({children}: {children: any}) => {
           </div>
 
 
-        </div>
+        </div>}
         <div className="content-area">
           {children}
         </div>

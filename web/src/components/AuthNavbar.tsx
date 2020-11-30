@@ -9,7 +9,7 @@ import {useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useHistory} from 'react-router'
 
-const Navbar = () => {
+const Navbar = ({showNavbar}:{showNavbar?:boolean}) => {
 
   const history = useHistory()
   const user = useSelector((state: any) => state.user)
@@ -43,7 +43,7 @@ const Navbar = () => {
     <div style={{marginTop: '20px'}}></div>
     <LeftAndRight 
       left={<div><Logo /></div>}
-      right={<div className="nav-right-holder">
+      right={showNavbar != false ? <div className="nav-right-holder">
         <div><span style={{fontWeight: 'bold'}}>
   {getName ()}</span> 
     <span style={{
@@ -59,7 +59,7 @@ const Navbar = () => {
             height="100%"
           />
         </div>
-      </div>}
+      </div> : <div></div>}
     />
     <div style={{marginTop: '20px'}}></div>
   </React.Fragment>)

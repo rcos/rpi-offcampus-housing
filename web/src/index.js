@@ -89,7 +89,7 @@ const Routes = () => {
             <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/collection" component={CollectionView} />
 
             {/* Landlord Only */}
-            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/properties" component={LandlordDashboard} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={({match}) => (<LandlordOwnershipDocuments ownership_id={match.params.id} />)} />
 

@@ -40,7 +40,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   
   const defaultRoute = (user_type: number): string => {
     if (user_type === AccessLevels.STUDENT) return '/search'
-    if (user_type === AccessLevels.LANDLORD) return '/landlord/dashboard'
+    if (user_type === AccessLevels.LANDLORD) return '/landlord/properties'
     if (user_type === AccessLevels.UNAUTH) return '/'
     return '/'
   }
