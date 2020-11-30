@@ -4,7 +4,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs'
 import { FiEdit2 } from 'react-icons/fi'
 import {useHistory} from 'react-router'
 import { motion, useSpring, useTransform } from 'framer-motion'
-import LandlordViewWrapper from '../components/LandlordViewWrapper'
+import ViewWrapper from '../components/ViewWrapper'
 import {HiOutlineHome, HiSearch, HiPlus} from 'react-icons/hi'
 import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
@@ -87,7 +87,7 @@ const LandlordDashboard = () => {
     return properties.filter((property_: OwnedProperty) => property_.status == 'in-review');
   }
 
-  return (<LandlordViewWrapper>
+  return (<ViewWrapper>
     <div>
 
       <div className="section-header left-and-right">
@@ -200,7 +200,7 @@ const LandlordDashboard = () => {
       </div>
 
     </div>
-  </LandlordViewWrapper>)
+  </ViewWrapper>)
 }
 
 export default LandlordDashboard

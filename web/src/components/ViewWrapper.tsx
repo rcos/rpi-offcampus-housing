@@ -2,12 +2,14 @@ import React, {useState, useEffect, useRef, ChangeEvent} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
+import LandlordNavbar from './LandlordAuthNavbar'
 import AuthAPI from '../API/AuthAPI'
 
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive';
@@ -20,6 +22,12 @@ interface IFeedbackInfo {
   feature: boolean
   comment: boolean
   feedback_message: string
+}
+
+interface PageLinkInfo {
+  target: string,
+  icon: any,
+  name: string
 }
 
 const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
@@ -91,23 +99,65 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     }
   }
 
-  const pageLinks = {
-    home: {
-      target: '/feed',
-      icon: <HiOutlineNewspaper />,
-      name: "Feed"
-    },
-    search: {
-      target: '/search',
-      icon: <BiSearch />,
-      name: 'Search'
-    },
-    collection: {
-      target: '/collection',
-      icon: <BiCollection />,
-      name: 'Collection'
+  const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
+
+  useEffect(() => {
+    if (user){
+      
+      if (user.type && user.type == "student") {
+        setPageLinks({
+          home: {
+            target: '/feed',
+            icon: <HiOutlineNewspaper />,
+            name: "Feed"
+          },
+          search: {
+            target: '/search',
+            icon: <BiSearch />,
+            name: 'Search'
+          },
+          collection: {
+            target: '/collection',
+            icon: <BiCollection />,
+            name: 'Collection'
+          }
+        })
+      }
+
+      else if (user.type && user.type == "landlord") {
+        setPageLinks({
+          properties: {
+            target: '/landlord/properties',
+            icon: <HiOutlineHome />,
+            name: "Properties"
+          },
+          leases: {
+            target: '/landlord/leases',
+            icon: <FiFileText />,
+            name: "Leases"
+          }
+        })
+      }
     }
-  }
+  }, [user])
+
+  // const pageLinks = {
+  //   home: {
+  //     target: '/feed',
+  //     icon: <HiOutlineNewspaper />,
+  //     name: "Feed"
+  //   },
+  //   search: {
+  //     target: '/search',
+  //     icon: <BiSearch />,
+  //     name: 'Search'
+  //   },
+  //   collection: {
+  //     target: '/collection',
+  //     icon: <BiCollection />,
+  //     name: 'Collection'
+  //   }
+  // }
 
   const reviewerLinks = {
     home: {
@@ -234,7 +284,8 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar showNavbar={showNavbar} />
+        {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
+        {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />}
       </div>
       <div className="app-view-area" ref={containerRef}>
         {showNavbar != false && <div className="user-navbar">

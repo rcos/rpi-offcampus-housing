@@ -136,7 +136,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
    */
   const canAccess = (): boolean => {
     let user_perm_flags = getUserType(auth)
-    return (accessLevel & user_perm_flags) == accessLevel
+    return (accessLevel & user_perm_flags) != 0
   }
 
   return (<Route {...rest} render={(props) => {
@@ -153,29 +153,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
           return <Component {...props} />
         }
         else return (<Redirect to={defaultRoute(getUserType(auth))} />);
-
-        /*
-        if (hasAccess(AccessLevels.UNAUTH)) return <Redirect to={defaultRoute(getUserType(auth))} />
-        
-        else if (hasAccess(AccessLevels.STUDENT)) {
-          if (auth.user !== null && auth.type && auth.type === "student") {
-            return <Component {...props} />
-          }
-          else return <Redirect to={defaultRoute(getUserType(auth))} />
-        }
-
-        else if (hasAccess(AccessLevels.LANDLORD)) {
-          if (auth.user !== undefined && auth.type && auth.type === "landlord") {
-            return <Component {...props} />
-          }
-          else return <Redirect to={defaultRoute(getUserType(auth))} />
-        }
-
-        
-
-        // default case
-        else return <Component {...props} />
-        */
 
       }
       else {
