@@ -10,7 +10,6 @@ import {Ownership,
   AddOwnershipArgs,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
-import { PropertyAlias } from 'aws-sdk/clients/iotsitewise'
 
 const ObjectId = mongoose.Types.ObjectId
 
@@ -79,6 +78,18 @@ export class OwnershipResolver {
 
     // find the ownerships
     let ownerships: DocumentType<Ownership>[] = await OwnershipModel.find({landlord_id}) as DocumentType<Ownership>[]
+
+    let property_docs: DocumentType<Property>[] = []
+    for (let i = 0; i < ownerships.length; ++i) {
+      if (!ObjectId.isValid(ownerships[i].property_id)) {
+        console.error(`❌ Error: Ownership with id ${ownerships[i]._id} has an invalid property_id value of ${ownerships[i].property_id}`)
+        return { success: false, error: `Data malformed` }
+      }
+
+      let property_: DocumentType<Property> | null = await PropertyModel.findById(ownerships[i].property_id) as DocumentType<Property>
+      ownerships[i].property_doc = property_
+    }
+
     console.log(chalk.bgGreen(`✔ Successfully retrieved ${ownerships.length} ownership documents for landlord with id ${landlord_id}`))
     return {
       success: true,

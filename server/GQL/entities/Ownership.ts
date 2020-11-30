@@ -1,6 +1,7 @@
 import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
 import {Field, ObjectType, ArgsType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
+import {Property} from './Property'
 import {ObjectId} from "mongodb"
 
 @ObjectType({description: "Ownership Document Information"})
@@ -27,6 +28,10 @@ export class Ownership {
   @Field(type => String, {nullable: true})
   @prop({type: String})
   property_id: string;
+
+  @Field(type => Property, {nullable: true})
+  @prop({type: Property})
+  property_doc?: Property;
 
   @Field(type => String)
   @prop({type: String})

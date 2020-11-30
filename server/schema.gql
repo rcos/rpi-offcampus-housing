@@ -88,6 +88,7 @@ type Ownership {
   date_submitted: String!
   landlord_id: String!
   ownership_documents: [OwnershipDocument!]!
+  property_doc: Property
   property_id: String
   status: String!
 }

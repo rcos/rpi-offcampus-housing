@@ -1879,3 +1879,42 @@ body {
     border-radius: 3px;
   }
 }
+
+.input-incognito {
+  width: 250px;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 0 10px;
+  letter-spacing: 1px;
+  height: 100%;
+  box-sizing: border-box;
+  border: none;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.no-results-container {
+  height: 300px;
+  position: relative;
+
+  .contents {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 0.7;
+    font-family: mukta;
+    line-height: 15px;
+  }
+}
+
+.light-label-div {
+  height: 34px;
+  line-height: 34px;
+  font-size: 0.7rem;
+  font-family: khumbh-sans;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: rgba(0, 0, 0, 0.55);
+}
