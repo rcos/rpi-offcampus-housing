@@ -22,6 +22,7 @@ type OwnedProperty = Property & {
 const LandlordDashboard = () => {
   
   const history = useHistory()
+  const [showInReview, setShowInReview] = useState<boolean>(true)
   const user = useSelector((state: ReduxState) => state.user)
   const [properties, setProperties] = useState<OwnedProperty[]>([])
   const [GetOwnerships, {data: ownershipDataResponse}] = useGetOwnershipsForLandlordLazyQuery()
@@ -163,9 +164,16 @@ const LandlordDashboard = () => {
         <div>
           <div className="light-label-div">
             In Review
+            <div 
+              className="link"
+              style={{
+                display: 'inline-block',
+                float: 'right'
+              }}
+              onClick={() => {setShowInReview(!showInReview)}}>{showInReview ? 'hide' : 'show'}</div>
           </div>
           {/* In Review Properties Area */}
-          {inReviewProperties().length == 0 && <div className="results-container">
+          {showInReview && <div>{inReviewProperties().length == 0 && <div className="results-container">
             <div className="no-contents">
               <div></div>
               No Properties In Review
@@ -186,7 +194,7 @@ const LandlordDashboard = () => {
                 </div>)
               })}
             </div>    
-          </div>}
+          </div>}</div>}
         </div>
 
       </div>

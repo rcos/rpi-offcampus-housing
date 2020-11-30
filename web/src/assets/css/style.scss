@@ -1950,3 +1950,14 @@ body {
 
   }
 }
+
+.link {
+  color: #64aae3;
+  text-transform: none;
+  font-weight: 100;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
