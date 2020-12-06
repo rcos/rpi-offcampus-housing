@@ -77,6 +77,13 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
         landlord
       }
       landlord_id
+      landlord_doc {
+        _id
+        first_name
+        last_name
+        email
+        phone_number
+      }
       date_submitted
       status
       ownership_documents {

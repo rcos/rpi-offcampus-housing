@@ -32,7 +32,7 @@ passport.use(new (require('passport-local').Strategy)(
       }
       else {
         // verify password
-        bcrypt.compare(password, landlord_doc.password, (bcrypt_err, result: boolean) => {
+        bcrypt.compare(password, landlord_doc.password ? landlord_doc.password : '', (bcrypt_err, result: boolean) => {
 
           console.log(`Passwords match? ${result}`)
 

@@ -10,6 +10,7 @@ import {Ownership,
   AddOwnershipArgs,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
+import {Landlord, LandlordModel} from '../entities/Landlord'
 
 const ObjectId = mongoose.Types.ObjectId
 
@@ -64,6 +65,11 @@ export class OwnershipResolver {
   {
 
     let under_review: DocumentType<Ownership>[] = await OwnershipModel.find({status: "in-review"})
+    // fill the landlord_doc parts
+    for (let i = 0; i < under_review.length; ++i) {
+      under_review[i].landlord_doc = await LandlordModel.findById(under_review[i].landlord_id) as DocumentType<Landlord>
+    }
+
     return {
       success: true,
       data: {

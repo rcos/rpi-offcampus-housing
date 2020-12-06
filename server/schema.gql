@@ -68,7 +68,7 @@ type Landlord {
   email: String!
   first_name: String!
   last_name: String!
-  password: String!
+  password: String
   phone_number: String
   type: String
 }
@@ -101,6 +101,7 @@ type Mutation {
 type Ownership {
   _id: ID!
   date_submitted: String!
+  landlord_doc: Landlord
   landlord_id: String!
   ownership_documents: [OwnershipDocument!]!
   property_doc: Property
