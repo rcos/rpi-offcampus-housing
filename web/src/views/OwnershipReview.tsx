@@ -36,7 +36,9 @@ const OwnershipReview = () => {
       <div className="app-label">{ownershipsInReview.length} forms</div>
     </div>
 
-    <SortableList 
+    {!ownershipsInReviewData && <div>Loading TODO add loading animation</div>}
+
+    {ownershipsInReviewData && <SortableList 
       labels={["Landlord Name", "Date Submitted", "Conflicts"]}
       init_size_ratios={[2.5, 1, 1]}
       entries={
@@ -55,7 +57,7 @@ const OwnershipReview = () => {
       onClick={(entry: {[key: string]: EntryValue}) => {
         history.push(`/ownership/review/${entry["id"]}`)
       }}
-    />
+    />}
 
     </div>
   </ViewWrapper>)
