@@ -3,6 +3,21 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+"""Response from USPS Address Verify API"""
+type AddressVerification {
+  address_1: String!
+  address_2: String!
+  city: String!
+  state: String!
+  zip: String!
+}
+
+type AddressVerificationAPIResponse {
+  data: AddressVerification
+  error: String
+  success: Boolean!
+}
+
 """Cas Auth Information"""
 type CasAuthInfo {
   cas_id: String
@@ -77,7 +92,7 @@ type Mutation {
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
-  createOwnershipReview(address_line: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
+  createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
@@ -182,6 +197,7 @@ type Query {
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
   searchProperties(searchOptions: PropertySearchInput!): PropertyListAPIResponse!
+  verifyAddress(address_1: String!, address_2: String!, city: String!, state: String!, zip: String!): AddressVerificationAPIResponse!
 }
 
 """Student model"""

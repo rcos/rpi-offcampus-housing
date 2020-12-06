@@ -12,7 +12,25 @@ query GetProperty(
   getProperty(_id:$id,withLandlord:$withLandlord,reviewOptions:{withReviews:$withReviews,offset:$reviewOffset,count:$reviewCount}) {
     ...PropertyAPIResponseFields
   }
- }
+}
+
+query VerifyAddress(
+  $address_1: String!,
+  $address_2: String!,
+  $zip: String!,
+  $state: String!,
+  $city: String!
+) {
+  verifyAddress(
+    address_1:$address_1,
+    address_2:$address_2,
+    zip:$zip,
+    state:$state,
+    city:$city
+  ){
+    ...AddressVerificationAPIResponseFields
+  }
+}
 
 fragment PropertyAPIResponseFields on PropertyAPIResponse {
   success
@@ -35,5 +53,17 @@ fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
       landlord
       _id
     }
+  }
+}
+
+fragment AddressVerificationAPIResponseFields on AddressVerificationAPIResponse {
+  success
+  error
+  data {
+    address_1
+    address_2
+    city
+    state
+    zip
   }
 }

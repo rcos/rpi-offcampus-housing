@@ -112,6 +112,7 @@ export class OwnershipResolver {
   async createOwnershipReview(
     @Arg("landlord_id") landlord_id: string,
     @Arg("address_line") address_line: string,
+    @Arg("address_line_2") address_line_2: string,
     @Arg("city") city: string,
     @Arg("state") state: string,
     @Arg("zip_code") zip_code: string
@@ -133,7 +134,7 @@ export class OwnershipResolver {
       // TEMPORARY: Create the property for the time being
       let property_ = new PropertyModel();
       property_.landlord = landlord_id;
-      property_.location = `${address_line}, ${city} ${state}, ${zip_code}`;
+      property_.location = `${address_line}, ${address_line_2}${address_line_2 == "" ? '' : ','} ${city} ${state}, ${zip_code}`;
       property_.sq_ft = -1;
 
       saved_prop = await property_.save() as DocumentType<Property>;

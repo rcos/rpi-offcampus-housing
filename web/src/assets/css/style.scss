@@ -1961,3 +1961,31 @@ body {
     text-decoration: underline;
   }
 }
+
+.error-line {
+  font-family: mukta;
+  font-size: 0.8rem;
+  letter-spacing: 0.8px;
+  line-height: 15px;
+  padding: 10px 0;
+
+  &.error {
+    color: #d64949;
+  }
+
+  &.warning {
+
+  }
+
+  .icon-holder {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 0px;
+    transform: translateY(1px);
+  }
+
+  .error-area {
+    display: inline-block;
+    vertical-align: top;
+  }
+}

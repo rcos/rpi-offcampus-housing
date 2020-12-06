@@ -25,6 +25,7 @@ mutation AddOwnershipDocuments (
 mutation CreateOwnership(
   $landlord_id: String!,
   $address_line: String!,
+  $address_line_2: String!,
   $city: String!,
   $state: String!,
   $zip_code: String!
@@ -32,6 +33,7 @@ mutation CreateOwnership(
   createOwnershipReview(
     landlord_id:$landlord_id,
     address_line:$address_line,
+    address_line_2:$address_line_2,
     city:$city,
     state:$state,
     zip_code:$zip_code
