@@ -11,6 +11,11 @@ query GetOwnership($ownership_id: String!) {
   }
 }
 
+query GetOwnershipsInReview {
+  getOwnershipsInReview {
+    ...OwnershipCollectionAPIResponseFields
+  }
+}
 
 # Mutations
 mutation AddOwnershipDocuments (

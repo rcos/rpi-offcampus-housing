@@ -1989,3 +1989,119 @@ body {
     vertical-align: top;
   }
 }
+
+.app-label {
+  font-family: mukta;
+  font-weight: 100;
+  font-size: 0.7rem;
+  background-color: $black;
+  color: white;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 5px;
+  border-radius: 3px;
+  letter-spacing: 0.6px;
+  margin: 0 5px;
+}
+
+.sortable-list {
+
+  table {
+    border-spacing: 0px;
+
+    .list-label {
+      .label-text {
+        position: relative;
+        display: inline-block;
+        padding-right: 10px;
+        height: 15px;
+        line-height: 18px;
+        &::selection {
+          background-color: white;
+        }
+
+        .up-sort, .down-sort {
+          position: absolute;
+          right: 0px;
+        }
+
+        .up-sort {
+          top: -2px;
+          border-left: 3px solid rgba(0, 0, 0, 0);
+          border-right: 3px solid rgba(0, 0, 0, 0);
+          border-top: 4px solid rgba(0, 0, 0, 0);
+          border-bottom: 4px solid rgba(0, 0, 0, 0.5);
+
+          &.active {
+            border-bottom: 4px solid $cyanDark;
+          }
+        }
+
+        .down-sort {
+          bottom: -2px;
+          border-left: 3px solid rgba(0, 0, 0, 0);
+          border-right: 3px solid rgba(0, 0, 0, 0);
+          border-top: 4px solid rgba(0, 0, 0, 0.5);
+          border-bottom: 4px solid rgba(0, 0, 0, 0);
+
+          &.active {
+            border-top: 4px solid $cyanDark;
+          }
+        }
+      }
+    }
+
+    th {
+      font-weight: 100;
+      min-width: 100px;
+      position: relative;
+      text-align: left;
+      font-family: khumbh-sans;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      height: 25px;
+      cursor: pointer;
+      padding-left: 10px;
+      box-sizing: border-box;
+      color: $cyanDark;
+    }
+
+    .entry {
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, 0);
+      transition: background 0.25s;
+      &:hover {
+        background-color: $limewhite;
+      }
+
+      td {
+        font-family: mukta;
+        height: 30px;
+        padding-left: 10px;
+        font-size: 0.9rem;
+        font-weight: 100;
+        box-sizing: border-box;
+      }
+    }
+
+  }
+
+  .resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2.5px;
+    cursor: col-resize;
+    user-select: none;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);// #ededed;
+    transition: background-color 0.25s, width 0.25s;
+
+    &:hover {
+      width: 4px;
+      background-color: $cyan;
+    }
+  }
+}

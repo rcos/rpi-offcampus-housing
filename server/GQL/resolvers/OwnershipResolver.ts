@@ -53,7 +53,24 @@ export class OwnershipResolver {
       data: ownership_
     }
   }
+  
+  /**
+   * getOwnershipsInReview()
+   * @desc Return the list of ownership documents that are currently under
+   * review.
+   */
+  @Query(() => OwnershipCollectionAPIResponse)
+  async getOwnershipsInReview() : Promise<OwnershipCollectionAPIResponse>
+  {
 
+    let under_review: DocumentType<Ownership>[] = await OwnershipModel.find({status: "in-review"})
+    return {
+      success: true,
+      data: {
+        ownerships: under_review
+      }
+    }
+  }
   /**
    * getOwnershipsForLandlord(landlord_id)
    * @param landlord_id: string => The id of the landlord to query ownership of
@@ -129,16 +146,22 @@ export class OwnershipResolver {
     }
 
     // TODO find matching property
-    let saved_prop: DocumentType<Property>;
-    
-      // TEMPORARY: Create the property for the time being
+    let prop_address = `${address_line}, ${address_line_2}${address_line_2 == "" ? '' : ','} ${city} ${state}, ${zip_code}`;
+    let saved_prop: DocumentType<Property> | null = await PropertyModel.findOne({location: prop_address})
+    /*
+    Let's assume USPS gives us 1 address representation for each unique address
+    With that assumption, then any property address entered should match at most 1 property object
+    in our database (0 if it is not yet in our db.)
+    */
+    if (saved_prop == null) {
+      // if there is no property with this prop_address, then we can create a new property object and add
+      // that to the ownership.
       let property_ = new PropertyModel();
       property_.landlord = landlord_id;
-      property_.location = `${address_line}, ${address_line_2}${address_line_2 == "" ? '' : ','} ${city} ${state}, ${zip_code}`;
+      property_.location = prop_address;
       property_.sq_ft = -1;
-
       saved_prop = await property_.save() as DocumentType<Property>;
-    
+    }
 
     let new_ownership: DocumentType<Ownership> = new OwnershipModel()
     // new_ownership.property_id = ???
