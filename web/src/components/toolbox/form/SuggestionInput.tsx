@@ -27,11 +27,13 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   const scaleTransform = useTransform(focusSpring, [0, 1], [1, 0.8], {clamp: false})
   const translateTrasnform = useTransform(focusSpring, [0, 1], [0, -6], {clamp: false})
 
+  const [optionClickControl, setOptionClickControl] = useState<boolean>(false)
   const [dropdownFocused, setDropdownFocused] = useState<boolean>(false)
   const [focused, setFocused] = useState(false)
   const [value, setValue] = useState<string>("")
 
   const focusInput = () => {
+    console.log(`Focusing.`)
     setFocused(true)
     if (inputRef.current != null) {
       inputRef.current.focus ()
@@ -39,6 +41,8 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   }
 
   useEffect(() => {
+
+    console.log(`Dropdown Focused: ${dropdownFocused}`)
     if (dropdownFocused) dropdownSpring.set(1)
     else {
       dropdownSpring.set(0)
@@ -65,7 +69,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   const selectValue = (value_: string) => {
     setValue(value_)
     if (inputRef.current) inputRef.current.value = value_
-    setDropdownFocused(false)
+    if (inputRef.current) inputRef.current.blur()
   }
 
   const selectIndex = (index: number) => {
@@ -74,7 +78,8 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
       setValue(value_)
       if (inputRef.current) inputRef.current.value = value_
     }
-    setDropdownFocused(false)
+
+    if (inputRef.current) inputRef.current.blur()
   }
 
   const selectHighlighted = () => {
@@ -90,7 +95,10 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   useEffect(() => {
 
     setHightlightIndex(-1)
-    if (inferenceCount() == 0) setDropdownFocused(false)
+    if (inferenceCount() == 0 || optionClickControl) {
+      setDropdownFocused(false)
+      if (optionClickControl) setOptionClickControl(false)
+    }
     else setDropdownFocused(true)
 
     // bind keypress function
@@ -113,6 +121,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
   }, [value])
 
   const handleBlur = () => {
+    console.log(`Blurred!`)
     if (value.length === 0) setFocused(false)
     setDropdownFocused(false)
   }
@@ -166,14 +175,15 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
       if (_options_.length > 0) {
 
         let o_: any[] = []
-        o_.push(<div className="section" key={-1} onClick={focusInput}>{Object.keys(inferences)[i]}</div>)
+        o_.push(<div className="section" key={-1} onClick={() => {}/*focusInput*/}>{Object.keys(inferences)[i]}</div>)
 
         // options
         for (let j = 0; j < _options_.length; ++j) {
           o_.push(<div className={`option ${c_ == highlightIndex? 'hover' :  ''}`} key={j}
             onClick={() => {
+              setOptionClickControl(true)
               selectValue(_options_[j])
-              focusInput()
+              // focusInput()
             }}
           >{_options_[j]}</div>)
 
@@ -181,7 +191,7 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
           ++c_;
         }
 
-        options.push(<div key={i} onClick={focusInput}>{o_}</div>)
+        options.push(<div key={i} onClick={() => {}/*focusInput*/}>{o_}</div>)
       }
 
     }
