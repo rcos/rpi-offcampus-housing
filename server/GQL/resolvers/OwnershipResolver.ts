@@ -7,6 +7,7 @@ import {Ownership,
   OwnershipAPIResponse,
   OwnershipCollectionAPIResponse,
   OwnershipDocumentInput,
+  ConfirmationActivity,
   AddOwnershipArgs,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
@@ -49,8 +50,8 @@ export class OwnershipResolver {
     }
 
     // get the property information and the landlord information
-    ownership_.landlord_doc = await LandlordModel.findById(ownership_._id) as DocumentType<Landlord>
-    ownership_.property_doc = await PropertyModel.findById(ownership_._id) as DocumentType<Property>
+    ownership_.landlord_doc = await LandlordModel.findById(ownership_.landlord_id) as DocumentType<Landlord>
+    ownership_.property_doc = await PropertyModel.findById(ownership_.property_id) as DocumentType<Property>
 
     console.log(chalk.bgGreen(`✔ Successfully retrieved ownership data`))
     return {
@@ -248,4 +249,64 @@ export class OwnershipResolver {
 
   }
 
+  @Mutation(() => OwnershipAPIResponse)
+  async addOwnershipConfirmationActivity(
+    @Arg("ownership_id") ownership_id: string,
+    @Arg("user_id") user_id: string,
+    @Arg("user_type") user_type: string,
+    @Arg("message") message: string,
+    @Arg("date_submitted") date_submitted: string
+  ): Promise<OwnershipAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 getOwnershipConfirmationActivity`))
+    if (!['landlord', 'student'].includes(user_type)) {
+      console.log(chalk.bgRed(`❌ Error: user_type is not student / landlord`))
+      return {
+        success: false,
+        error: 'Invalid user type'
+      }
+    }
+
+    if (!ObjectId.isValid(user_id)) {
+      console.log(chalk.bgRed(`❌ Error: user_id is not a valid object id`))
+      return {
+        success: false,
+        error: 'Invalid id format for user_id'
+      }
+    }
+
+    if (!ObjectId.isValid(ownership_id)) {
+      console.log(chalk.bgRed(`❌ Error: ownership_id is not a valid object id`))
+      return {
+        success: false,
+        error: 'Invalid id format for ownership_id'
+      }
+    }
+
+    let ownership_doc: DocumentType<Ownership> = await OwnershipModel.findById(ownership_id) as DocumentType<Ownership>
+    if (!ownership_id) {
+      console.log(chalk.bgRed(`❌ Error: No ownership document wih id ${ownership_id}`))
+      return {
+        success: false,
+        error: 'Invalid ownership doc id'
+      }
+    }
+
+    let new_activity: ConfirmationActivity = new ConfirmationActivity()
+    new_activity.user_id = user_id
+    new_activity.user_type = user_type as ('landlord' | 'student')
+    new_activity.message = message
+    new_activity.date_submitted = date_submitted
+
+    if (ownership_doc.confirmation_activity == null) ownership_doc.confirmation_activity = [new_activity]
+    else ownership_doc.confirmation_activity.push(new_activity)
+    
+    let updated_ownership: DocumentType<Ownership> = await ownership_doc.save() as DocumentType<Ownership>
+    return {
+      success: true,
+      data: updated_ownership
+    }
+
+  }
 }

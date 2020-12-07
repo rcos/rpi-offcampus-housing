@@ -29,6 +29,14 @@ input CollectionFetchInput {
   offset: Int!
 }
 
+"""Ownership Confirmation Activity"""
+type ConfirmationActivity {
+  date_submitted: String!
+  message: String!
+  user_id: String!
+  user_type: String!
+}
+
 """Institution Model"""
 type Institution {
   _id: ID!
@@ -89,6 +97,7 @@ input LandlordInput {
 }
 
 type Mutation {
+  addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
@@ -100,6 +109,7 @@ type Mutation {
 """Property Ownership Document Information"""
 type Ownership {
   _id: ID!
+  confirmation_activity: [ConfirmationActivity!]!
   date_submitted: String!
   landlord_doc: Landlord
   landlord_id: String!

@@ -5,6 +5,26 @@ import {Property} from './Property'
 import {Landlord} from './Landlord'
 import {ObjectId} from "mongodb"
 
+@ObjectType({description: "Ownership Confirmation Activity"})
+export class ConfirmationActivity {
+
+  @Field(type => String)
+  @prop({type: String})
+  user_id: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  user_type: 'landlord' | 'student';
+
+  @Field(type => String)
+  @prop({type: String})
+  message: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  date_submitted: string;
+}
+
 @ObjectType({description: "Ownership Document Information"})
 export class OwnershipDocument {
 
@@ -53,6 +73,10 @@ export class Ownership {
   @Field(type => [OwnershipDocument])
   @prop({type: OwnershipDocument})
   ownership_documents: OwnershipDocument[]
+
+  @Field(type => [ConfirmationActivity])
+  @prop({type: [ConfirmationActivity]})
+  confirmation_activity: ConfirmationActivity[];
 }
 
 @ObjectType({description: "Property Ownership Collection"})
