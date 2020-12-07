@@ -130,6 +130,42 @@ export class OwnershipResolver {
   }
 
   /**
+   * getOwnershipConflicts
+   * @desc Given the id to an ownership document, look through the collection of all ownership
+   * documents and see if there area any conflicts with this ownership and other ownerships.
+   * A conflict is represented where there are multiple ownership submissions for the same property.
+   * 
+   * @param ownership_id: string => The id of the ownership document to check conflicts for
+   */
+  @Query(() => OwnershipCollectionAPIResponse)
+  async getOwnershipConflicts(
+    @Arg("ownership_id") ownership_id: string
+  ): Promise<OwnershipCollectionAPIResponse>
+  {
+
+    if (!ObjectId.isValid(ownership_id)) {
+      console.log(chalk.bgRed(`❌ Error: Invalid ownership id ObjectID format (${ownership_id})`))
+      return {error: "invalid ownership_id", success: false};
+    }
+    let ownership_doc: DocumentType<Ownership> = await OwnershipModel.findById(ownership_id) as DocumentType<Ownership>
+    if (!ownership_doc) {
+      console.log(chalk.bgRed(`❌ Error: Could not find ownership document for _id ${ownership_id}`))
+      return {error: "ownership document deos not exist", success: false};
+    }
+
+    /**
+     * !Conflict => conflict exists where multiple ownerships have the same property id
+     */
+    let conflicts: DocumentType<Ownership>[] = await OwnershipModel.find({property_id: ownership_doc.property_id})
+    return {
+      success: true,
+      data: {
+        ownerships: conflicts
+      }
+    }
+  }
+
+  /**
    * createOwnershipReview (landlord_id, property_location)
    * @param landlord_id: string => The id for the landlord to assign ownership to
    * @param property_location: string => The address location to match ownership to
@@ -252,6 +288,20 @@ export class OwnershipResolver {
 
   }
 
+  /**
+   * addOwnershipConfirmationActivity()
+   * @desc confirmation_activity => This is an array of messages sent by ownership_reviewers to update
+   * the status of an ownership document that is in-review. This is so that any other ownership_reviewer
+   * that looks at the in-review form can see what other reviewers have done, for example, if they have
+   * already gotten in contact with the landlord or sent messages or approved that their documents are
+   * real, etc.
+   * 
+   * @param ownership_id => The id of the ownership document to add activity to
+   * @param user_id => The id of the user that is updating the activity
+   * @param user_type => The type of user that is interactinv with the activity (student / landlord)
+   * @param message => The message describing the activity that it is being updated with
+   * @param date_submitted => The ISO string date the activity update was submitted
+   */
   @Mutation(() => OwnershipAPIResponse)
   async addOwnershipConfirmationActivity(
     @Arg("ownership_id") ownership_id: string,
