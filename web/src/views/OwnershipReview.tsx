@@ -39,8 +39,8 @@ const OwnershipReview = () => {
     {!ownershipsInReviewData && <div>Loading TODO add loading animation</div>}
 
     {ownershipsInReviewData && <SortableList 
-      labels={["Landlord Name", "Date Submitted", "Conflicts"]}
-      init_size_ratios={[2.5, 1, 1]}
+      labels={["Landlord Name", "Address", "Date Submitted", "Assigned To", "Conflicts"]}
+      init_size_ratios={[2, 3, 1, 1, 1]}
       entries={
       ownershipsInReview.map((ownership_: Ownership) => {
         return {
@@ -50,7 +50,9 @@ const OwnershipReview = () => {
             toString: dateToString
           },
           "conflicts": "no",
-          "id": ownership_._id
+          "assigned-to": "-",
+          "address": ownership_.property_doc ? ownership_.property_doc.location : '',
+          "id": ownership_._id,
         }
       })
     }

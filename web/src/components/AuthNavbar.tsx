@@ -42,7 +42,7 @@ const Navbar = ({showNavbar}:{showNavbar?:boolean}) => {
   return (<React.Fragment>
     <div style={{marginTop: '20px'}}></div>
     <LeftAndRight 
-      left={<div><Logo /></div>}
+      left={<div className="logo-holder"><Logo /><div className="logo-text">offcmpus</div></div>}
       right={showNavbar != false ? <div className="nav-right-holder">
         <div><span style={{fontWeight: 'bold'}}>
   {getName ()}</span> 

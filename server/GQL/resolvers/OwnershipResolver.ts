@@ -48,6 +48,10 @@ export class OwnershipResolver {
       }
     }
 
+    // get the property information and the landlord information
+    ownership_.landlord_doc = await LandlordModel.findById(ownership_._id) as DocumentType<Landlord>
+    ownership_.property_doc = await PropertyModel.findById(ownership_._id) as DocumentType<Property>
+
     console.log(chalk.bgGreen(`✔ Successfully retrieved ownership data`))
     return {
       success: true,
@@ -68,6 +72,7 @@ export class OwnershipResolver {
     // fill the landlord_doc parts
     for (let i = 0; i < under_review.length; ++i) {
       under_review[i].landlord_doc = await LandlordModel.findById(under_review[i].landlord_id) as DocumentType<Landlord>
+      under_review[i].property_doc = await PropertyModel.findById(under_review[i].property_id) as DocumentType<Property>
     }
 
     return {

@@ -204,21 +204,25 @@ const SortableList = ({labels, entries, init_size_ratios, sortConfig, onClick}: 
 
     return (<div className="sortable-list" ref={containerRef}>
 
-        <table>
-            <tbody>
+        <table style={{width: '100%'}}>
+            <tbody style={{width: '100%'}}>
                 <tr className="list-labels">
                     {labels.map((label: string, id: number) => (<th 
                         style={{
                             width: `${columnWidths[id]}px`
                         }}
-                        key={id} className="list-label"
-                        onClick={() => {
-                            setSortState({label, dir: sortState.label == label ? sortState.dir * -1 : 1})
-                        }}>
-                        <div className="label-text">{label}
-                            <div className={`up-sort ${label == sortState.label && sortState.dir == 1 ? 'active' : ''}`} />
-                            <div className={`down-sort ${label == sortState.label && sortState.dir == -1 ? 'active' : ''}`} />
+                        key={id} className="list-label">
+                        
+                        <div onClick={() => {
+                                setSortState({label, dir: sortState.label == label ? sortState.dir * -1 : 1})
+                            }}>
+                            <div className="label-text">
+                                {label}
+                                <div className={`up-sort ${label == sortState.label && sortState.dir == 1 ? 'active' : ''}`} />
+                                <div className={`down-sort ${label == sortState.label && sortState.dir == -1 ? 'active' : ''}`} />
+                            </div>
                         </div>
+
                         {id < labels.length - 1 && <div className="resizer" onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
                             {initResize(e, id)}} />}
                     </th>) )}

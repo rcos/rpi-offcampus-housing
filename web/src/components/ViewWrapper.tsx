@@ -8,7 +8,7 @@ import AuthAPI from '../API/AuthAPI'
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiTerminal, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
 import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
@@ -160,10 +160,15 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
   // }
 
   const reviewerLinks = {
-    home: {
+    mod_console: {
+      target: '/mod/console',
+      icon: <HiTerminal />,
+      name: "Mod Console"
+    },
+    ownerships: {
       target: '/ownership/review',
       icon: <HiClipboard />,
-      name: "Ownership"
+      name: "Ownerships"
     }
   }
 
@@ -303,7 +308,7 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
 
           {isOwnershipReviewer() &&
             <div>
-              <div className="submenu-title">Reviewer</div>
+              <div className="submenu-title">moderator</div>
               {Object.keys(reviewerLinks).map((page_: string, index: number) => {
 
               return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((reviewerLinks as any)[page_].target)}>
