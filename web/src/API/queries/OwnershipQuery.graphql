@@ -17,6 +17,12 @@ query GetOwnershipsInReview {
   }
 }
 
+query GetOwnershipConflicts ($ownership_id: String!) {
+  getOwnershipConflicts(ownership_id:$ownership_id) {
+    ...OwnershipCollectionAPIResponseFields
+  }
+}
+
 # Mutations
 mutation AddOwnershipConfirmationActivity (
   $ownership_id: String!,

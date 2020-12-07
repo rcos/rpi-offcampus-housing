@@ -204,6 +204,7 @@ type Query {
   getLandlord(_id: String!): LandlordAPIResponse!
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
   getOwnership(_id: String!): OwnershipAPIResponse!
+  getOwnershipConflicts(ownership_id: String!): OwnershipCollectionAPIResponse!
   getOwnershipsForLandlord(landlord_id: String!): OwnershipCollectionAPIResponse!
   getOwnershipsInReview: OwnershipCollectionAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!

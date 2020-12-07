@@ -6,18 +6,22 @@ import {useContainerRef} from '../components/hooks/useContainerRefHook'
 import {
     useGetOwnershipQuery,
     useAddOwnershipConfirmationActivityMutation,
-    ConfirmationActivity
+    ConfirmationActivity,
+    Ownership,
+    useGetOwnershipConflictsQuery
 } from '../API/queries/types/graphqlFragmentTypes'
-import {HiClipboard, HiPhone} from 'react-icons/hi'
+import {HiClipboard, HiCheck, HiPhone} from 'react-icons/hi'
 import {BsBoxArrowInUpRight} from 'react-icons/bs'
 import {FiAlertTriangle} from 'react-icons/fi'
 import SortableList from '../components/toolbox/layout/SortableList'
 import Button from '../components/toolbox/form/Button'
 import {objectURI} from '../API/S3API'
 import { ReduxState } from '../redux/reducers/all_reducers'
+import { useHistory } from 'react-router-dom'
 
 const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
 
+    const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
     const containerRef = useRef<HTMLDivElement>(null)
     useContainerRef({ ref_: containerRef })
@@ -30,6 +34,11 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
             ownership_id
         }
     })
+    const {data: ownershipConflicts} = useGetOwnershipConflictsQuery({
+        variables: {
+            ownership_id
+        }
+    })
     const [AddConfirmationActivity, {data: confirmationActivityResponse}] = useAddOwnershipConfirmationActivityMutation()
     const [updater_, setUpdater_] = useState<boolean>(false)
 
@@ -38,8 +47,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const [activityUpdateValue, setActivityUpdateValue] = useState<string>("")
 
     useEffect(() => {
-        console.log(ownershipDocData)
-    }, [ownershipDocData])
+        console.log(ownershipConflicts)
+    }, [ownershipConflicts])
 
     useEffect(() => {
         if (confirmationActivityResponse 
@@ -64,6 +73,17 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         })
         setActivityUpdateValue("")
         if (textareaRef.current) textareaRef.current.value = ""
+    }
+
+    const hasConflicts = (): boolean => {
+        return (ownershipConflicts && ownershipConflicts.getOwnershipConflicts
+        && ownershipConflicts.getOwnershipConflicts.data
+        && ownershipConflicts.getOwnershipConflicts.data.ownerships.length > 0) as boolean;
+    }
+
+    const getConflicts = (): Ownership[] => {
+        if (!hasConflicts()) return []
+        return ownershipConflicts!.getOwnershipConflicts!.data!.ownerships;
     }
 
     return (<ViewWrapper>
@@ -142,28 +162,57 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 <div>
                     <div className="submenu-title">Conflicts</div>
                     <div>
-                    <div className="error-line warning" style={{
+
+                    {!hasConflicts() &&
+                    <div
+                        style={{
+                            transform: `translateY(-10px)`,
+                            marginLeft: '10px'
+                        }}
+                        className="success-line">
+                            <span className="icon-holder"><HiCheck /></span>
+                            There are no conflicts!
+                        </div>}
+
+                    {hasConflicts() && <div className="error-line warning" style={{
                         transform: `translateY(-10px)`,
                         marginLeft: '10px'
                     }}>
                         <span className="icon-holder"><FiAlertTriangle /></span>
-                        There are 2 conflicts for this property. 
-                        One conflict is for an approved ownership and another 
-                        conflict is for an ownership in-review
-                    </div>
+                        There {getConflicts().length == 1 ? 'is' : 'are'} {getConflicts().length} conflicts for this property.
+                    </div>}
 
                     <div style={{
                         position: 'relative',
                         top: '-15px'
                     }}>
+                        {
+                        hasConflicts ()
+                        &&
                         <SortableList 
-                            labels={["Landlord Name", "Date Submitted"]}
+                            labels={["Landlord Name", "Status", "Date Submitted"]}
                             init_size_ratios={[1, 1]}
-                            entries={[
-                                {'landlord-name': 'Jojo Bobo', 'date-submitted': {data: new Date(0), toString: dateToString} },
-                                {'landlord-name': 'Kim Baba', 'date-submitted': {data: new Date(1000000000000), toString: dateToString} }
-                            ]}
-                        />
+                            entries={
+                                getConflicts().map((ownership: Ownership) => {
+                                    return {
+                                        'landlord-name': 
+                                            ownership.landlord_doc ? 
+                                            `${ownership.landlord_doc?.first_name} ${ownership.landlord_doc?.last_name}`:
+                                            ownership._id
+                                        ,
+                                        'status': ownership.status,
+                                        'date-submitted': {
+                                            data: new Date(ownership.date_submitted),
+                                            toString: dateToString
+                                        },
+                                        '_id': ownership._id
+                                    }
+                                })
+                            }
+                            onClick={(entry_: any) => {
+                                history.push(`/ownership/review/${entry_._id}`)
+                            }}
+                        />}
                     </div>
 
                     </div>

@@ -157,9 +157,17 @@ export class OwnershipResolver {
      * !Conflict => conflict exists where multiple ownerships have the same property id
      */
     let conflicts: DocumentType<Ownership>[] = await OwnershipModel.find({property_id: ownership_doc.property_id})
+    conflicts = conflicts.filter((ownership_: Ownership) => ownership_._id.toString() != ownership_id)
+
+    // add the landlord information
+    for (let i = 0; i < conflicts.length; ++i) {
+      conflicts[i].landlord_doc = await LandlordModel.findById(conflicts[i].landlord_id) as DocumentType<Landlord>
+    }
+
     return {
       success: true,
       data: {
+        // only return the ownerships that do not include ourselves
         ownerships: conflicts
       }
     }
