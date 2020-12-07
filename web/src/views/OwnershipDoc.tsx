@@ -21,6 +21,7 @@ import { useHistory } from 'react-router-dom'
 
 const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
 
+    const confirmActivityRef = useRef<HTMLDivElement>(null)
     const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
     const containerRef = useRef<HTMLDivElement>(null)
@@ -57,8 +58,22 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
             && ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
                 ownershipDocData.getOwnership.data.confirmation_activity = confirmationActivityResponse.addOwnershipConfirmationActivity.data.confirmation_activity
                 forceUpdate()
+
+                if (confirmActivityRef.current) {
+                    confirmActivityRef.current.scrollTo({
+                        top: confirmActivityRef.current.scrollHeight + 20
+                    })
+                }
         }
     }, [confirmationActivityResponse])
+
+    useEffect(() => {
+        if (confirmActivityRef.current) {
+            confirmActivityRef.current.scrollTo({
+                top: confirmActivityRef.current.scrollHeight
+            })
+        }
+    }, [ownershipDocData])
 
     const submitActivityUpdate = () => {
         if (activityUpdateValue.length == 0) return;
@@ -223,7 +238,9 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 <div>
                     <div className="submenu-title">Confirmation Activity</div>
 
-                    <div style={{
+                    <div 
+                        ref={confirmActivityRef}
+                        style={{
                         height: `150px`,
                         overflowY: `scroll`,
                         position: `relative`,
@@ -245,8 +262,21 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         </div>}
 
                         {ownershipDocData!.getOwnership!.data!.confirmation_activity.length > 0 && 
-                            ownershipDocData!.getOwnership!.data!.confirmation_activity.map((entry: ConfirmationActivity) => {
-                            return (<div>{entry.full_name? entry.full_name : entry.user_id}: {entry.message}</div>)
+                            ownershipDocData!.getOwnership!.data!.confirmation_activity
+                            .sort((a: ConfirmationActivity, b: ConfirmationActivity): number => new Date(a.date_submitted) > new Date(b.date_submitted)? 1 : -1)
+                            .map((entry: ConfirmationActivity, i: number) => {
+                            return (<div key={i}>
+                                <span style={{
+                                    marginRight: '5px'
+                                }}>{getTimeInfo(entry.date_submitted)}</span>
+                                <span style={{
+                                fontWeight: 600,
+                                marginRight: '5px',
+                                fontFamily: 'khumbh-sans',
+                                cursor: 'pointer',
+                                fontSize: '0.7rem',
+                                letterSpacing: `0.5px`
+                            }}>{entry.full_name? entry.full_name : entry.user_id}</span> {entry.message}</div>)
                             })
                         }
                     </div>
@@ -294,6 +324,10 @@ const DocumentThumbPreview = ({s3_key}: {s3_key: string}) => {
     </div>)
 }
 
-const dateToString = (date_: Date): string => `${date_.getMonth()} / ${date_.getDate()} / ${date_.getFullYear()}`
+const dateToString = (date_: Date): string => `${date_.getMonth()} / ${date_.getDate()} / ${date_.getFullYear()}`;
+const getTimeInfo = (iso: string): string => {
+    let date_: Date = new Date(iso)
+    return `${date_.getMonth()}/${date_.getDay()}/${date_.getFullYear()} ${date_.getHours()}:${date_.getMinutes()}`
+}
 
 export default OwnershipDoc
