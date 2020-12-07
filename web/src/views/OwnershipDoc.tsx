@@ -52,6 +52,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }, [confirmationActivityResponse])
 
     const submitActivityUpdate = () => {
+        if (activityUpdateValue.length == 0) return;
         AddConfirmationActivity({
             variables: {
                 ownership_id: ownershipDocData && ownershipDocData.getOwnership.data ? ownershipDocData.getOwnership.data._id : '',
@@ -66,9 +67,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }
 
     return (<ViewWrapper>
-        <div style={{
-            border: `1px solid orange`
-        }}>
+        <div>
 
             {/* Header */}
             <div className="section-header left-and-right" ref={headerRef}>
@@ -240,7 +239,7 @@ const DocumentThumbPreview = ({s3_key}: {s3_key: string}) => {
 
     return (<div className="document-thumb-preview" onClick={() => {window.open(objectURI(s3_key), '_blank')}}>
         <div className="meta-header">
-            <div className="file-name">sample file name</div>
+            <div className="file-name">{s3_key}</div>
             <div className="expand-button"><BsBoxArrowInUpRight /></div>
         </div>
     </div>)
