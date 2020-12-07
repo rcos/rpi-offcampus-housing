@@ -197,7 +197,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
 
                         {ownershipDocData!.getOwnership!.data!.confirmation_activity.length > 0 && 
                             ownershipDocData!.getOwnership!.data!.confirmation_activity.map((entry: ConfirmationActivity) => {
-                            return (<div>{entry.user_id}: {entry.message}</div>)
+                            return (<div>{entry.full_name? entry.full_name : entry.user_id}: {entry.message}</div>)
                             })
                         }
                     </div>

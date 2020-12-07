@@ -141,4 +141,5 @@ fragment confirmationActivityFields on ConfirmationActivity {
   user_type
   message
   date_submitted
+  full_name
 }

@@ -12,6 +12,8 @@ import {Ownership,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
+import {Student, StudentModel} from '../entities/Student'
+import util from 'util'
 
 const ObjectId = mongoose.Types.ObjectId
 
@@ -52,6 +54,7 @@ export class OwnershipResolver {
     // get the property information and the landlord information
     ownership_.landlord_doc = await LandlordModel.findById(ownership_.landlord_id) as DocumentType<Landlord>
     ownership_.property_doc = await PropertyModel.findById(ownership_.property_id) as DocumentType<Property>
+    ownership_ = await fillNamesForConfirmationActivities(ownership_)
 
     console.log(chalk.bgGreen(`✔ Successfully retrieved ownership data`))
     return {
@@ -303,10 +306,39 @@ export class OwnershipResolver {
     else ownership_doc.confirmation_activity.push(new_activity)
     
     let updated_ownership: DocumentType<Ownership> = await ownership_doc.save() as DocumentType<Ownership>
+
+    // update the fullnames.
+    updated_ownership = await fillNamesForConfirmationActivities(updated_ownership)
+
     return {
       success: true,
       data: updated_ownership
     }
 
   }
+}
+
+const fillNamesForConfirmationActivities = async (ownership_: DocumentType<Ownership>): Promise<DocumentType<Ownership>> => {
+  let name_map: {student: {[key: string]: string}, landlord: {[key: string]: string}} = {student: {}, landlord: {}}
+
+  for (let i = 0; i < ownership_.confirmation_activity.length; ++i) {
+
+    if (ownership_.confirmation_activity[i].user_type == 'student') {
+      if (!Object.keys(name_map.student).includes(ownership_.confirmation_activity[i].user_id)) {
+        let student_doc: DocumentType<Student> = await StudentModel.findById(ownership_.confirmation_activity[i].user_id) as DocumentType<Student>
+        name_map.student[ownership_.confirmation_activity[i].user_id] = `${student_doc.first_name} ${student_doc.last_name}`
+      }
+      ownership_.confirmation_activity[i].full_name = name_map.student[ownership_.confirmation_activity[i].user_id]
+    }
+    else if (ownership_.confirmation_activity[i].user_type == 'landlord') {
+      if (!Object.keys(name_map.landlord).includes(ownership_.confirmation_activity[i].user_id)) {
+        let landlord_doc: DocumentType<Landlord> = await LandlordModel.findById(ownership_.confirmation_activity[i].user_id) as DocumentType<Landlord>
+        name_map.landlord[ownership_.confirmation_activity[i].user_id] = `${landlord_doc.first_name} ${landlord_doc.last_name}`
+      }
+      ownership_.confirmation_activity[i].full_name = name_map.landlord[ownership_.confirmation_activity[i].user_id]
+    }
+
+  }
+
+  return ownership_;
 }

@@ -23,6 +23,10 @@ export class ConfirmationActivity {
   @Field(type => String)
   @prop({type: String})
   date_submitted: string;
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  full_name?: string;
 }
 
 @ObjectType({description: "Ownership Document Information"})
