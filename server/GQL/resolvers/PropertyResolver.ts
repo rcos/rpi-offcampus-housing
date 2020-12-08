@@ -5,12 +5,22 @@ import {Property,
   PropertyReviewInput,
   PropertySearchInput,
   PropertyList,
+  AddressVerificationAPIResponse,
   PropertyListAPIResponse} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
 const ObjectId = mongoose.Types.ObjectId
+
+// setup usps webtools api
+let USPS = require('usps-webtools')
+const usps = new USPS({
+  server: 'http://production.shippingapis.com/ShippingAPI.dll',
+  userId: (process.env.USPS_USER_ID as string),
+  ttl: 10000 //TTL in milliseconds for request
+});
+
 
 @Resolver()
 export class PropertyResolver {
@@ -81,4 +91,54 @@ export class PropertyResolver {
     }
 
   }
+
+  @Query(() => AddressVerificationAPIResponse)
+  async verifyAddress(
+    @Arg("address_1") address_1: string,
+    @Arg("address_2") address_2: string,
+    @Arg("city") city: string,
+    @Arg("state") state: string,
+    @Arg("zip") zip: string
+  ): Promise<AddressVerificationAPIResponse>
+  {
+
+    return new Promise((resolve, reject) => {
+      usps.verify({
+        street1: address_1,
+        street2: address_2,
+        city: city,
+        state: state,
+        zip: zip
+      }, function(err: any, address: any) {
+        // console.log(err, address);
+        if (err) {
+          resolve({
+            success: false,
+            error: "Invalid address"
+          })
+        }
+        else resolve({
+          success: true,
+          data: {
+            address_1: address.street1,
+            address_2: address.street2,
+            city: address.city,
+            state: address.state,
+            zip: address.zip
+          }
+        })
+      });
+    })
+
+  }
+
+  // usps.verify({
+  //   street1: '2227 14 street',
+  //   street2: '',
+  //   city: 'Troy',
+  //   state: 'NY',
+  //   zip: '12180'
+  // }, function(err: any, address: any) {
+  //   console.log(err, address);
+  // });
 }

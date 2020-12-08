@@ -6,7 +6,11 @@ import Logo from './Logo'
 import {useSelector} from 'react-redux'
 import _ from 'lodash'
 
-const LandlordNavbar = () => {
+interface ILandlordNavbar {
+  showNavbar?: boolean
+}
+
+const LandlordNavbar = ({showNavbar}: ILandlordNavbar) => {
 
   const user = useSelector((state: any) => state.user)
 
@@ -16,7 +20,7 @@ const LandlordNavbar = () => {
     return `${user.user.first_name} ${user.user.last_name}`
   }
 
-  return (<React.Fragment>
+  if (showNavbar != false) return (<React.Fragment>
     <div style={{marginTop: '20px'}}></div>
     <LeftAndRight 
       left={<div><Logo /></div>}
@@ -27,6 +31,7 @@ const LandlordNavbar = () => {
     />
     <div style={{marginTop: '20px'}}></div>
   </React.Fragment>)
+  else return (<div></div>)
 }
 
 export default LandlordNavbar

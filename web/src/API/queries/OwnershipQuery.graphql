@@ -11,8 +11,37 @@ query GetOwnership($ownership_id: String!) {
   }
 }
 
+query GetOwnershipsInReview {
+  getOwnershipsInReview {
+    ...OwnershipCollectionAPIResponseFields
+  }
+}
+
+query GetOwnershipConflicts ($ownership_id: String!) {
+  getOwnershipConflicts(ownership_id:$ownership_id) {
+    ...OwnershipCollectionAPIResponseFields
+  }
+}
 
 # Mutations
+mutation AddOwnershipConfirmationActivity (
+  $ownership_id: String!,
+  $user_id: String!,
+  $user_type: String!,
+  $message: String!,
+  $date_submitted: String!
+) {
+  addOwnershipConfirmationActivity(
+    ownership_id:$ownership_id,
+    user_id:$user_id,
+    user_type:$user_type,
+    message:$message,
+    date_submitted:$date_submitted
+  ) {
+     ...OwnershipAPIResponseFields
+  }
+}
+
 mutation AddOwnershipDocuments (
   $ownership_id: String!,
   $documents_info: [OwnershipDocumentInput!]!
@@ -25,6 +54,7 @@ mutation AddOwnershipDocuments (
 mutation CreateOwnership(
   $landlord_id: String!,
   $address_line: String!,
+  $address_line_2: String!,
   $city: String!,
   $state: String!,
   $zip_code: String!
@@ -32,6 +62,7 @@ mutation CreateOwnership(
   createOwnershipReview(
     landlord_id:$landlord_id,
     address_line:$address_line,
+    address_line_2:$address_line_2,
     city:$city,
     state:$state,
     zip_code:$zip_code
@@ -50,8 +81,24 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
     landlord_id
     date_submitted
     status
+    property_doc {
+      _id
+      location
+      sq_ft
+      landlord
+    }
+    landlord_doc {
+      _id
+      first_name
+      last_name
+      email
+      phone_number
+    }
     ownership_documents {
       ...ownershipDocumentFields
+    }
+    confirmation_activity {
+      ...confirmationActivityFields
     }
   }
 }
@@ -63,7 +110,23 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
     ownerships {
       _id
       property_id
+      confirmation_activity {
+        ...confirmationActivityFields
+      }
+      property_doc {
+        _id
+        location
+        sq_ft
+        landlord
+      }
       landlord_id
+      landlord_doc {
+        _id
+        first_name
+        last_name
+        email
+        phone_number
+      }
       date_submitted
       status
       ownership_documents {
@@ -77,4 +140,12 @@ fragment ownershipDocumentFields on OwnershipDocument {
   s3_doc_key
   format
   date_uploaded
+}
+
+fragment confirmationActivityFields on ConfirmationActivity {
+  user_id
+  user_type
+  message
+  date_submitted
+  full_name
 }

@@ -2,16 +2,20 @@ import React, {useState, useEffect, useRef, ChangeEvent} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
+import LandlordNavbar from './LandlordAuthNavbar'
 import AuthAPI from '../API/AuthAPI'
 
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiLogout, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiTerminal, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive';
-import axios from 'axios';
+import {useSelector} from 'react-redux'
+import {ReduxState} from '../redux/reducers/all_reducers'
+import {Student} from '../API/queries/types/graphqlFragmentTypes'
 
 interface IFeedbackInfo {
   bug: boolean
@@ -20,13 +24,20 @@ interface IFeedbackInfo {
   feedback_message: string
 }
 
+interface PageLinkInfo {
+  target: string,
+  icon: any,
+  name: string
+}
+
 const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
   
   // TODO implement
 }
 
-const ViewWrapper = ({children}: {children: any}) => {
+const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolean}) => {
 
+  const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
@@ -88,22 +99,86 @@ const ViewWrapper = ({children}: {children: any}) => {
     }
   }
 
-  const pageLinks = {
-    home: {
-      target: '/feed',
-      icon: <HiOutlineNewspaper />,
-      name: "Feed"
-    },
-    search: {
-      target: '/search',
-      icon: <BiSearch />,
-      name: 'Search'
-    },
-    collection: {
-      target: '/collection',
-      icon: <BiCollection />,
-      name: 'Collection'
+  const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
+
+  useEffect(() => {
+    if (user){
+      
+      if (user.type && user.type == "student") {
+        setPageLinks({
+          home: {
+            target: '/feed',
+            icon: <HiOutlineNewspaper />,
+            name: "Feed"
+          },
+          search: {
+            target: '/search',
+            icon: <BiSearch />,
+            name: 'Search'
+          },
+          collection: {
+            target: '/collection',
+            icon: <BiCollection />,
+            name: 'Collection'
+          }
+        })
+      }
+
+      else if (user.type && user.type == "landlord") {
+        setPageLinks({
+          properties: {
+            target: '/landlord/properties',
+            icon: <HiOutlineHome />,
+            name: "Properties"
+          },
+          leases: {
+            target: '/landlord/leases',
+            icon: <FiFileText />,
+            name: "Leases"
+          }
+        })
+      }
     }
+  }, [user])
+
+  // const pageLinks = {
+  //   home: {
+  //     target: '/feed',
+  //     icon: <HiOutlineNewspaper />,
+  //     name: "Feed"
+  //   },
+  //   search: {
+  //     target: '/search',
+  //     icon: <BiSearch />,
+  //     name: 'Search'
+  //   },
+  //   collection: {
+  //     target: '/collection',
+  //     icon: <BiCollection />,
+  //     name: 'Collection'
+  //   }
+  // }
+
+  const reviewerLinks = {
+    mod_console: {
+      target: '/mod/console',
+      icon: <HiTerminal />,
+      name: "Mod Console"
+    },
+    ownerships: {
+      target: '/ownership/review',
+      icon: <HiClipboard />,
+      name: "Ownerships"
+    }
+  }
+
+  const isOwnershipReviewer = (): boolean => {
+    if (user && user.type && user.type == "student" && user.user && user.user.elevated_privileges) {
+      return user.user.elevated_privileges.includes("ownership_reviewer")
+    }
+    else {
+    }
+    return false;
   }
 
   const logout = () => {
@@ -214,10 +289,11 @@ const ViewWrapper = ({children}: {children: any}) => {
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar />
+        {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
+        {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />}
       </div>
       <div className="app-view-area" ref={containerRef}>
-        <div className="user-navbar">
+        {showNavbar != false && <div className="user-navbar">
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
 
@@ -229,6 +305,22 @@ const ViewWrapper = ({children}: {children: any}) => {
               </div>)
 
           })}
+
+          {isOwnershipReviewer() &&
+            <div>
+              <div className="submenu-title">moderator</div>
+              {Object.keys(reviewerLinks).map((page_: string, index: number) => {
+
+              return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((reviewerLinks as any)[page_].target)}>
+                <div className={`icon-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                  <div className="icon-holder">{(reviewerLinks as any)[page_].icon}</div>
+                  <div className="link-desc">{(reviewerLinks as any)[page_].name}</div>
+                </div>
+              </div>)
+
+              })}
+            </div>
+          }
 
           {/* Footer Buttons */}
           <div className="bottom-area">
@@ -246,7 +338,7 @@ const ViewWrapper = ({children}: {children: any}) => {
           </div>
 
 
-        </div>
+        </div>}
         <div className="content-area">
           {children}
         </div>

@@ -11,6 +11,7 @@ import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
 const ObjectId = mongoose.Types.ObjectId
+import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
 
 @Resolver()
 export class StudentResolver {
@@ -239,7 +240,14 @@ export class StudentResolver {
       let updated: boolean = false
       if (first_name) {student_doc.first_name = first_name; updated = true;}
       if (last_name) {student_doc.last_name = last_name; updated = true;}
-      if (email) {student_doc.email = email; updated = true;}
+      if (email) {
+        student_doc.email = email; updated = true;
+
+        SendGrid.sendMail({
+          to: email.toString(),
+          email_template_id: SendGridTemplate.STUDENT_EMAIL_CONFIRMATION
+        })
+      }
 
       console.log(chalk.bgGreen(`✔ Successfully updated student with id ${_id}`))
       if (updated) {

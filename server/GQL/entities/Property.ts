@@ -72,9 +72,35 @@ export class PropertyList {
   properties: Property[]
 }
 
+@ObjectType({description: "Response from USPS Address Verify API"})
+export class AddressVerification {
+
+  @Field(type => String)
+  @prop({type: String})
+  address_1: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  address_2: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  city: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  state: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  zip: string;
+}
+
 @ObjectType()
 export  class PropertyAPIResponse extends APIResult(Property) {}
 @ObjectType()
 export  class PropertyListAPIResponse extends APIResult(PropertyList) {}
+@ObjectType()
+export class AddressVerificationAPIResponse extends APIResult(AddressVerification) {}
 
 export const PropertyModel = getModelForClass(Property)

@@ -168,7 +168,8 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
         uploadObjects({
           files: Object.keys(files_).map((file_key) => files_[file_key]),
           restricted: true,
-          landlords_access: user && user.user ? [user.user._id.toString()] : []
+          landlords_access: user && user.user ? [user.user._id.toString()] : [],
+          elevated_privileges_access: ['ownership_reviewer']
         })
         .then((result) => {
           if (result.data && result.data.success) {

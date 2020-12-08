@@ -61,14 +61,13 @@ const randKey = ({length}: {length: number}): string => {
 awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, res: express.Response) => {
 
   console.log(chalk.bgBlue(`👉 AWS S3 File Upload`))
-  console.log(util.inspect(req.headers, {showHidden: false, depth: null}))
 
   if (_.has(req.body, 'description')) console.log(`${chalk.cyan(`@desc`)} ${req.body.description}`)
   let files = req.files
 
   let max_image_width = -1, max_image_height = -1;
   let restricted = false;
-  let restricted_to: { type: 'student' | 'landlord', id: string }[] = [];
+  let restricted_to: { type: 'student' | 'landlord' | 'elevated', id: string }[] = [];
 
   if (_.has(req.body, 'max_image_width')) max_image_width = parseInt(req.body.max_image_width);
   if (_.has(req.body, 'max_image_height')) max_image_height = parseInt(req.body.max_image_height);
@@ -83,14 +82,14 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
         let allowed_user = req.body[`r_${i}`].split('|')
         if (allowed_user.length != 2 || 
             (allowed_user[0] != "student" && 
-            allowed_user[0] != "landlord") || 
-            !ObjectId.isValid(allowed_user[1])) 
+            allowed_user[0] != "landlord" &&
+            allowed_user[0] != "elevated")) 
             {
               ++i;
               continue;
             }
 
-            let user_type: "student" | "landlord" = allowed_user[0]
+            let user_type: "student" | "landlord" | "elevated" = allowed_user[0]
             let user_id: string = allowed_user[1]
             console.log(`\t\t${user_type} (${chalk.cyan(user_id)})`);
             restricted_to.push({
@@ -244,9 +243,25 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
           console.log(`User Type: ${user_type}`)
           console.log(`User Id: ${user_id}`)
           let access: IAccess = parseUserAccess(data.Metadata)
+          let has_elevated_access = hasElevatedAccess(
+              Object.prototype.hasOwnProperty.call((req.user! as any), 'elevated_privileges') ?
+              (req.user as any).elevated_privileges : []
+            , access.elevated)
 
           console.log(`Requested by ${user_type} => ${user_id}`)
           console.log("Access", access)
+
+          // First check if the user has elevated access to the resource before checking individual access
+          if (has_elevated_access) {
+            console.log(chalk.bgGreen(`✔ Successfully retrieved object!`))
+            res.writeHead(200, {
+              // 'Content-Type': data.ContentType,
+              'Content-Type': content_type,
+              'Content-Length': (data.Body as Buffer).length
+            })
+            res.end(data.Body)
+            return;
+          }
 
           if (user_type != "student" && user_type != "landlord") {
             console.log(chalk.bgRed(`❌ Authorized user is not a student or a landlord. Cannot access resource.`))
@@ -279,25 +294,40 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
 interface IAccess {
   students: string[]
   landlords: string[]
+  elevated: string[]
 }
 const parseUserAccess = (metadata: aws.S3.Metadata | undefined): IAccess => {
-  if (!metadata) return {students: [], landlords: []}
+  if (!metadata) return {students: [], landlords: [], elevated: []}
 
-  let result: IAccess = {students: [], landlords: []}
+  let result: IAccess = {students: [], landlords: [], elevated: []}
   let i = 0;
   while (metadata[`r_${i}`]) {
     console.log(`r_${i} = ${metadata[`r_${i}`]}`)
     let access_info: string[] = metadata[`r_${i}`].split('|')
     ++i;
-    if (access_info.length != 2 || (access_info[0] != "student" && access_info[0] != "landlord") || !ObjectId.isValid(access_info[1])) {
+    if (access_info.length != 2 || 
+      (access_info[0] != "student" && access_info[0] != "landlord" && access_info[0] != "elevated") 
+     // || !ObjectId.isValid(access_info[1]) <- elevated privileges don't require a valid object id as 2nd parram
+    ) {
       console.log(`skipping r_${i} = ${metadata[`r_${i}`]}`)
       continue;
     }
 
     if (access_info[0] == "student") result.students.push(access_info[1])
     if (access_info[0] == "landlord") result.landlords.push(access_info[1])
+    if (access_info[0] == "elevated") result.elevated.push(access_info[1])
   }
   return result;
+}
+
+const hasElevatedAccess = (user_elevated: string[], elevated: string[]): boolean => {
+  let i = 0;
+  while (i < elevated.length) {
+    if (user_elevated.includes(elevated[i])) return true;
+    ++i;
+  }
+
+  return false;
 }
 
 export { awsRouter }

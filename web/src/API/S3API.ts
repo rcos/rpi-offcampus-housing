@@ -10,6 +10,7 @@ interface IUploadObjectsConfig {
   files: Blob[]
   students_access?: string[]
   landlords_access?: string[]
+  elevated_privileges_access?: string[]
   max_image_width?: number
   max_image_height?: number
 }
@@ -27,7 +28,7 @@ export const uploadObjects = async (config: IUploadObjectsConfig): Promise<any> 
 
   form_data.append('restricted', `${config.restricted}`)
   if (config.restricted) {
-    if (!config.students_access && !config.landlords_access) {
+    if (!config.students_access && !config.landlords_access && !config.elevated_privileges_access) {
       console.error(`No access provided for restricted uploaded objects.`)
       return {error: `No access provided for restricted uploaded objects.`}
     }
@@ -42,6 +43,11 @@ export const uploadObjects = async (config: IUploadObjectsConfig): Promise<any> 
     for (let k = 0;config.landlords_access && k < config.landlords_access.length; ++k) {
       form_data.append(`r_${i}`, `landlord|${config.landlords_access[k]}`)
       ++i;
+    }
+
+    // add elevated privileges access
+    for (let k = 0; config.elevated_privileges_access && k < config.elevated_privileges_access.length; ++k) {
+       form_data.append(`r_${i}`, `elevated|${config.elevated_privileges_access[k]}`)
     }
 
     // at least 1 person must be given access to this resource
