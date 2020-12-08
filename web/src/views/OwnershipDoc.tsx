@@ -108,6 +108,19 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         return ownershipConflicts!.getOwnershipConflicts!.data!.ownerships;
     }
 
+    const getStatusString = (): string => {
+        let status: string = getStatus()
+        switch (status) {
+            case 'in-review':
+                return "Undergoing Review";
+            case "confirmed":
+                return "Approved";
+            case "declined":
+                return "Declined"
+        }
+        return ''
+    }
+
     return (<ViewWrapper>
         <div>
 
@@ -173,14 +186,18 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                     fontSize: '0.8rem'
                 }}>
                     <div style={{marginRight: '20px'}}>
-                        Landlord: {ownershipDocData!.getOwnership!.data!.landlord_doc!.first_name} {ownershipDocData!.getOwnership!.data!.landlord_doc!.last_name}</div>
-                    <div style={{display: 'flex'}}>
+                        Landlord: {ownershipDocData!.getOwnership!.data!.landlord_doc!.first_name} {ownershipDocData!.getOwnership!.data!.landlord_doc!.last_name}
+                    </div>
+                    <div style={{display: 'flex', marginRight: '20px'}}>
                         <div style={{
                             width: `30px`, 
                             textAlign: 'center'
                             }}><HiPhone /></div>
                         <div>(504) 800 0000</div>
                     </div>
+                        <div className={`status-color ${getStatus()}`}>
+                            <div className="circle_"/>
+                            Status: {getStatusString ()}</div>
                 </div>
 
                 {/* Ownership Documents area */}
