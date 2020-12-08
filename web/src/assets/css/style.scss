@@ -2258,9 +2258,9 @@ body {
   }
 
   &.confirmed {
-    color: #55c98b;
+    color: #3fba78;
     .circle_ {
-      background-color: #55c98b;
+      background-color: #3fba78;
     }
   }
 
@@ -2272,4 +2272,18 @@ body {
     display: inline-block;
     margin-right: 5px;
   }
+}
+
+.ownership-status-change-message {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  .icon_ {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+    top: 2px;
+  }
+  font-family: khumbh-sans;
+  color: #3fba78;
+  font-style: italic;
 }

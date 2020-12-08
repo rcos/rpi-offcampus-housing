@@ -4,13 +4,15 @@ import {useSelector} from 'react-redux'
 
 import {useContainerRef} from '../components/hooks/useContainerRefHook'
 import {
-    useGetOwnershipQuery,
+    useGetOwnershipLazyQuery,
     useAddOwnershipConfirmationActivityMutation,
     ConfirmationActivity,
+    StatusChangeInfo,
     Ownership,
-    useGetOwnershipConflictsQuery
+    useGetOwnershipConflictsQuery,
+    useChangeOwnershipStatusMutation
 } from '../API/queries/types/graphqlFragmentTypes'
-import {HiClipboard, HiCheck, HiPhone} from 'react-icons/hi'
+import {HiClipboard, HiOutlineArrowNarrowRight, HiCheck, HiPhone} from 'react-icons/hi'
 import {BsBoxArrowInUpRight} from 'react-icons/bs'
 import {FiAlertTriangle} from 'react-icons/fi'
 import SortableList from '../components/toolbox/layout/SortableList'
@@ -29,7 +31,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const headerRef = useRef<HTMLDivElement>(null)
-    const {data: ownershipDocData} = useGetOwnershipQuery({
+    const [GetOwnership, {data: ownershipDocData}] = useGetOwnershipLazyQuery({
         fetchPolicy: 'no-cache',
         variables: {
             ownership_id
@@ -40,6 +42,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
             ownership_id
         }
     })
+    const [ChangeOwnershipStatus, {data: ownershipStatusChangeResponse}] = useChangeOwnershipStatusMutation()
     const [AddConfirmationActivity, {data: confirmationActivityResponse}] = useAddOwnershipConfirmationActivityMutation()
     const [updater_, setUpdater_] = useState<boolean>(false)
 
@@ -48,8 +51,17 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const [activityUpdateValue, setActivityUpdateValue] = useState<string>("")
 
     useEffect(() => {
+        GetOwnership()
+    }, [])
+
+    useEffect(() => {
         console.log(ownershipConflicts)
     }, [ownershipConflicts])
+
+    useEffect(() => {
+        console.log(ownershipStatusChangeResponse)
+        GetOwnership()
+    }, [ownershipStatusChangeResponse])
 
     useEffect(() => {
         if (confirmationActivityResponse 
@@ -68,6 +80,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }, [confirmationActivityResponse])
 
     useEffect(() => {
+        console.log(`HEREE!!!`)
+        console.log(ownershipDocData)
         if (confirmActivityRef.current) {
             confirmActivityRef.current.scrollTo({
                 top: confirmActivityRef.current.scrollHeight
@@ -108,8 +122,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         return ownershipConflicts!.getOwnershipConflicts!.data!.ownerships;
     }
 
-    const getStatusString = (): string => {
-        let status: string = getStatus()
+    const getStatusString = (status: string): string => {
         switch (status) {
             case 'in-review':
                 return "Undergoing Review";
@@ -119,6 +132,49 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 return "Declined"
         }
         return ''
+    }
+
+    const changeStatus = (status_action: 'approve' | 'decline' | 'set-to-review') => {
+        let new_status: string = '';
+        switch(status_action) {
+            case 'approve':
+                new_status = 'confirmed';
+                break;
+            case 'decline':
+                new_status = 'declined';
+                break;
+            case 'set-to-review':
+                new_status = 'in-review';
+                break;
+        }
+
+        ChangeOwnershipStatus({
+            variables: {
+                ownership_id,
+                new_status,
+                status_changer_user_id: user && user.user ? user.user._id : '',
+                status_changer_user_type: user && user.type ? user.type : ''
+            }
+        })
+    }
+
+    const getStatusAndConfirmation = (): (ConfirmationActivity | StatusChangeInfo)[] => {
+        let info_: (ConfirmationActivity | StatusChangeInfo)[] = [];
+
+        if (ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
+            info_ = [
+                ...ownershipDocData.getOwnership.data.status_change_history,
+                ...ownershipDocData.getOwnership.data.confirmation_activity
+            ]
+            // sort from least to most recent
+            info_.sort((a: ConfirmationActivity | StatusChangeInfo, b: ConfirmationActivity | StatusChangeInfo): number => {
+                let a_date = new Date( (a as any).date_submitted ? (a as any).date_submitted : (a as any).date_changed  )
+                let b_date = new Date( (b as any).date_submitted ? (b as any).date_submitted : (b as any).date_changed  )
+                return a_date > b_date ? 1 : -1
+            })
+        }
+
+        return info_;
     }
 
     return (<ViewWrapper>
@@ -165,6 +221,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             <Button 
                                 text="Approve"
                                 background="#99E1D9"
+                                onClick={() => {changeStatus('approve')}}
                             />
                         </div>}
                         {(getStatus() == "in-review") && <div 
@@ -174,7 +231,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             }}>
                             <Button 
                                 text="Decline"
-                                background="#99E1D9"
+                                background="#E0777D"
+                                onClick={() => {changeStatus('decline')}}
                             />
                         </div>}
                     </div>
@@ -197,7 +255,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                     </div>
                         <div className={`status-color ${getStatus()}`}>
                             <div className="circle_"/>
-                            Status: {getStatusString ()}</div>
+                            Status: {getStatusString (getStatus())}</div>
                 </div>
 
                 {/* Ownership Documents area */}
@@ -315,7 +373,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             No activity on record
                         </div>}
 
-                        {ownershipDocData!.getOwnership!.data!.confirmation_activity.length > 0 && 
+                        {/* {ownershipDocData!.getOwnership!.data!.confirmation_activity.length > 0 && 
                             ownershipDocData!.getOwnership!.data!.confirmation_activity
                             .sort((a: ConfirmationActivity, b: ConfirmationActivity): number => new Date(a.date_submitted) > new Date(b.date_submitted)? 1 : -1)
                             .map((entry: ConfirmationActivity, i: number) => {
@@ -332,7 +390,39 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                                 letterSpacing: `0.5px`
                             }}>{entry.full_name? entry.full_name : entry.user_id}</span> {entry.message}</div>)
                             })
-                        }
+                        } */}
+                        {getStatusAndConfirmation().map((entry: ConfirmationActivity | StatusChangeInfo, i: number) => {
+
+                            // Show status change
+                            if ((entry as any).status_changer_user_id) {
+                                let status_change: StatusChangeInfo = entry as StatusChangeInfo
+                                return (<div key={i} className="ownership-status-change-message">
+                                    <div className="icon_">
+                                        <HiOutlineArrowNarrowRight />
+                                    </div>
+                                    <span style={{
+                                        marginRight: '5px',
+                                        fontWeight: 600
+                                    }}>{getTimeInfo(status_change.date_changed)}</span>
+                                    Status changed from {getStatusString(status_change.changed_from)} to {getStatusString(status_change.changed_to)}
+                                </div>)
+                            }
+                            else {
+                                let activity: ConfirmationActivity = entry as ConfirmationActivity
+                                return (<div key={i}>
+                                    <span style={{
+                                        marginRight: '5px'
+                                    }}>{getTimeInfo(activity.date_submitted)}</span>
+                                    <span style={{
+                                    fontWeight: 600,
+                                    marginRight: '5px',
+                                    fontFamily: 'khumbh-sans',
+                                    cursor: 'pointer',
+                                    fontSize: '0.7rem',
+                                    letterSpacing: `0.5px`
+                                }}>{activity.full_name? activity.full_name : activity.user_id}</span> {activity.message}</div>)
+                            }
+                        })}
                     </div>
 
                     <div className="textarea-holder">
