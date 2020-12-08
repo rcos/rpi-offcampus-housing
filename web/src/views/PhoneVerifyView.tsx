@@ -1,7 +1,10 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {FiAlertTriangle} from 'react-icons/fi'
 import {HiX} from 'react-icons/hi'
+import {useSelector} from 'react-redux'
+import {useHistory} from 'react-router'
 
+import {ReduxState} from '../redux/reducers/all_reducers'
 import Centered from '../components/toolbox/layout/Centered'
 import Input, {numbersOnly, maxLen, $and} from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
@@ -16,11 +19,21 @@ import Button from '../components/toolbox/form/Button'
 
 const PhoneVerifyView = () => {
 
-    const [onTwilioPortion, setOnTwilioPortion] = useState<boolean>(true)
+    const user = useSelector((state: ReduxState) => state.user)
+    const [onTwilioPortion, setOnTwilioPortion] = useState<boolean>(false)
     const [phoneNumber, setPhoneNumber] = useState<{country_code: string, phone_number: string}>({
         country_code: "+1",
         phone_number: "1920194812"
     })
+    const history = useHistory()
+
+    useEffect(() => {
+        if (user && user.user) {
+            if (user.type == 'landlord' && user.user.phone_number) {
+                history.goBack()
+            }
+        }
+    }, [user])
 
     return (<Centered width={400} height={500}>
         <div>
@@ -39,7 +52,12 @@ const PhoneVerifyView = () => {
                     fontSize: `1rem`,
                     marginTop: `5px`,
                     position: 'relative'
-                }}>{phoneNumber.country_code} {phoneNumber.phone_number}
+                }}>
+                    <span style={{
+                        color: `#79b5ae`
+                    }}>
+                        {phoneNumber.country_code} {phoneNumber.phone_number}
+                    </span>
                     <div className="subtle-button" style={{
                         float: 'right',
                         position: 'relative',
@@ -55,7 +73,7 @@ const PhoneVerifyView = () => {
                 }}>
                     <Input 
                         label="confirm code"
-                        inputFilters={[numbersOnly]}
+                        inputFilters={[$and(numbersOnly, maxLen(6))]}
                         autoFocus={true}
                     />
                     <div className="error-line error"><span className="icon-holder">

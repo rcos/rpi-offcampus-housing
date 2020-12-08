@@ -77,6 +77,10 @@ const connectMongo = () =>
     )
   );
 
+// Twilio Router
+import smsRouter from './routers/twilio_smsVerify'
+app.use('/vendor/twilio', smsRouter)
+
 import "reflect-metadata"
 import { ApolloServer } from "apollo-server-express"
 import { buildSchema } from "type-graphql";
