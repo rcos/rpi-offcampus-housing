@@ -2223,3 +2223,20 @@ body {
     line-height: 40px;
   }
 }
+
+.subtle-button {
+  background-color: $limewhite;
+  font-family: mukta;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  padding: 0 7px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: background 0.25s;
+
+  &:active {
+    background-color: $cyan;
+  }
+}

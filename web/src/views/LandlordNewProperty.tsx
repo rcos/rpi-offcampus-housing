@@ -62,6 +62,19 @@ const LandlordNewProperty = () => {
   }
 
   useEffect(() => {
+    if (user && user.user) {
+      if (!user.user.phone_number) {
+        history.push({
+          pathname: '/verify/phone-number',
+          state: {
+            redirect: '/landlord/new-property'
+          }
+        })
+      }
+    }
+  }, [user])
+
+  useEffect(() => {
 
     if (verifiedAddress && verifiedAddress.verifyAddress) {
       console.log(`Verify address:`)
@@ -110,6 +123,18 @@ const LandlordNewProperty = () => {
   }, [ownershipData])
   
   const submitPropertyRegistration = () => {
+    // if the landlord doesn't have a phone number, don't submit
+    if (user && user.user) {
+      if (!user.user.phone_number) {
+        history.push({
+          pathname: '/verify/phone-number',
+          state: {
+            redirect: '/landlord/new-property'
+          }
+        })
+      }
+    }
+
     if (!propertyInfoValid()) {
       console.error(`Property information is invalid`)
       setFormError({

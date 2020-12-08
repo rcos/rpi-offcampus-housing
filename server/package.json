@@ -52,6 +52,7 @@
     "reflect-metadata": "^0.1.13",
     "resize-image-buffer": "^1.0.0",
     "ssri": ">=5.2.2",
+    "twilio": "^3.53.0",
     "type-graphql": "^1.1.1",
     "usps-webtools": "^1.0.3"
   },

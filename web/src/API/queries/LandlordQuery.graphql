@@ -10,6 +10,15 @@ mutation CreateLandlord(
   }
 }
 
+mutation UpdatePhoneNumber(
+  $landlord_id: String!,
+  $phone_number: String!
+) {
+  updatePhoneNumber(landlord_id:$landlord_id,phone_number:$phone_number) {
+    ...LandlordAPIResponseFields
+  }
+}
+
 fragment LandlordAPIResponseFields on LandlordAPIResponse {
   success
   error
