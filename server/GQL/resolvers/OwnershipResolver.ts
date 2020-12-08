@@ -1,5 +1,5 @@
-import {Resolver, Mutation, Arg, Args, Query, Field} from 'type-graphql'
-import {DocumentType, prop} from "@typegoose/typegoose"
+import {Resolver, Mutation, Arg, Args, Query} from 'type-graphql'
+import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
 import {Ownership, 
@@ -13,7 +13,7 @@ import {Ownership,
 import {Property, PropertyModel} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {Student, StudentModel} from '../entities/Student'
-import util from 'util'
+// import util from 'util'
 
 const ObjectId = mongoose.Types.ObjectId
 
