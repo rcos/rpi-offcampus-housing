@@ -39,14 +39,17 @@ class PhoneTracker {
 
         this.numbers[number] = {
             expires_on: new Date().getTime() + seconds(30),
-            verification_number: PhoneTracker.generateVerificationNumber ()
+            verification_number: code_
         }
 
         Twilio.sendSMS(verifySMSString(code_), number)
     }
 
     testValidity (number: string, verify_code: string): boolean {
+        console.log(`Test Validity`)
         if (!Object.prototype.hasOwnProperty.call(this.numbers, number)) return false;
+
+        console.log(this.numbers[number].verification_number)
         return this.numbers[number].verification_number == verify_code;
     }
 
@@ -88,6 +91,7 @@ smsRouter.post('/init-phone-verification', phoneVerificationMiddleware, (req: an
 
     let phone_number: string = req.body.phone_number;
     (req.phone_tracker as PhoneTracker).handleNumber(phone_number);
+    console.log(chalk.bgGreen(`✔ Successfully initialized phone verification for ${req.body.phone_number}`))
     res.json({
         success: true,
         data: {}
@@ -98,6 +102,14 @@ smsRouter.post('/verify-phone', phoneVerificationMiddleware, (req: any, res: exp
     (req.phone_tracker as PhoneTracker).clearNumbers()
 
     console.log(chalk.bgBlue(`👉 Verify Phone`))
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'phone_number')
+    || !Object.prototype.hasOwnProperty.call(req.body, 'verify_code')) {
+        console.log(chalk.bgRed(`❌ Missing phone number or verify code.`))
+        res.json({
+            success: false
+        })
+        return;
+    }
     let phone_number: string = req.body.phone_number;
     let verify_code: string = req.body.verify_code;
     if (!(req.phone_tracker as PhoneTracker).testValidity(phone_number, verify_code)) {

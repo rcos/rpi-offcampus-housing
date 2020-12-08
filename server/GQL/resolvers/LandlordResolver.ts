@@ -84,4 +84,32 @@ export class LandlordResolver {
     }
 
   }
+
+  @Mutation(() => LandlordAPIResponse)
+  async updatePhoneNumber(
+    @Arg("landlord_id") landlord_id: string,
+    @Arg("phone_number") phone_number: string
+  ): Promise<LandlordAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 updatePhoneNumber()`))
+    if (!ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: Landlord id ${landlord_id} is not a valid object id`))
+      return {
+        success: false,
+        error: "Invalid landlord id"
+      }
+    }
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(landlord_id) as DocumentType<Landlord>
+    landlord_.phone_number = phone_number
+
+    let updated_landlord: DocumentType<Landlord> = await landlord_.save() as DocumentType<Landlord>
+    
+    console.log(chalk.bgGreen(`✔ Successfully updated phone number!`))
+    return {
+      success: true,
+      data: updated_landlord
+    }
+
+  }
 }

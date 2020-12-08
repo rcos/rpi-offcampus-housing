@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react'
 import {FiAlertTriangle} from 'react-icons/fi'
 import {HiX} from 'react-icons/hi'
 import {useSelector} from 'react-redux'
-import {useHistory} from 'react-router'
+import {useHistory, useLocation} from 'react-router'
 
+import {useUpdatePhoneNumberMutation} from '../API/queries/types/graphqlFragmentTypes'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import Centered from '../components/toolbox/layout/Centered'
 import Input, {numbersOnly, maxLen, $and} from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
+import smsAPI from '../API/SMS_API'
 /**
  * PhoneVerifyView
  * @desc Allow landlord to verify their phone number using
@@ -23,9 +25,22 @@ const PhoneVerifyView = () => {
     const [onTwilioPortion, setOnTwilioPortion] = useState<boolean>(false)
     const [phoneNumber, setPhoneNumber] = useState<{country_code: string, phone_number: string}>({
         country_code: "+1",
-        phone_number: "1920194812"
+        phone_number: ""
     })
+    const [confirmCode, setConfirmCode] = useState<string>("")
+    const [error, setError] = useState<{hasError: boolean, message: string}>({
+        hasError: false,
+        message: ''
+    })
+    const [UpdatePhoneNumber, {data: updatePhoneNumberResult}] = useUpdatePhoneNumberMutation()
     const history = useHistory()
+    const location = useLocation()
+
+    useEffect(() => {
+        if (!location || !location.state || !(location.state as any).redirect) {
+            history.push('/')
+        }
+    }, [])
 
     useEffect(() => {
         if (user && user.user) {
@@ -34,6 +49,83 @@ const PhoneVerifyView = () => {
             }
         }
     }, [user])
+
+    useEffect(() => {
+        if (updatePhoneNumberResult
+            && updatePhoneNumberResult.updatePhoneNumber) {
+                
+                if (updatePhoneNumberResult.updatePhoneNumber.error) {
+                    setError({
+                        hasError: true,
+                        message: updatePhoneNumberResult.updatePhoneNumber.error
+                    })
+                }
+                else if (updatePhoneNumberResult.updatePhoneNumber.data) {
+                    // history.push((location.state as any).redirect)
+                    window.location.reload()
+                }
+        }
+    }, [updatePhoneNumberResult])
+
+    const backtrack = () => {
+        // go back to the phone number portion
+        setError({hasError: false, message: ''})
+        setOnTwilioPortion(false)
+    }
+
+    const verify = () => {
+        let phone_number_ = `${phoneNumber.country_code}${phoneNumber.phone_number}`
+        smsAPI.verifyPhone(phone_number_, confirmCode)
+        .then(res => {
+            console.log(`Verify Phone`)
+            console.log(res)
+            if (res.data.success) {
+
+                // update their phone number
+                UpdatePhoneNumber({
+                    variables: {
+                        phone_number: phone_number_,
+                        landlord_id: user && user.user ? user.user._id : ''
+                    }
+                })
+            }
+            else {
+                setError({
+                    hasError: true,
+                    message: 'Invalid confirmation code'
+                })
+            }
+        })
+    }
+
+    const resendVerification = () => {
+        let phone_number_ = `${phoneNumber.country_code}${phoneNumber.phone_number}`
+        smsAPI.initPhoneVerification(phone_number_)
+    }
+
+    const initVerification = () => {
+        if (phoneNumber.country_code.length == 0 || phoneNumber.phone_number.length == 0) {
+            setError({
+                hasError: true,
+                message: 'Enter your phone number'
+            })
+            return;
+        }
+        let phone_number_ = `${phoneNumber.country_code}${phoneNumber.phone_number}`
+        smsAPI.initPhoneVerification(phone_number_)
+        .then(res => {
+            if (res.data.success) {
+                setError({hasError: false, message: ''})
+                setOnTwilioPortion(true)
+            }
+            else {
+                setError({
+                    message: `Problem occurred sending SMS. Please try again.`,
+                    hasError: true
+                })
+            }
+        })
+    }
 
     return (<Centered width={400} height={500}>
         <div>
@@ -62,7 +154,8 @@ const PhoneVerifyView = () => {
                         float: 'right',
                         position: 'relative',
                         top: '3px'
-                    }}>
+                    }}
+                        onClick={() => backtrack()}>
                         new number
                     </div>
                 </div>
@@ -75,10 +168,12 @@ const PhoneVerifyView = () => {
                         label="confirm code"
                         inputFilters={[$and(numbersOnly, maxLen(6))]}
                         autoFocus={true}
+                        onChange={(val: string) => setConfirmCode(val)}
                     />
-                    <div className="error-line error"><span className="icon-holder">
-                        <HiX /></span>Invalid code
-                    </div>
+                    {!error.hasError && <div style={{marginBottom: '10px'}} />}
+                    {error.hasError && <div className="error-line error"><span className="icon-holder">
+                        <HiX /></span>{error.message}
+                    </div>}
                     
                     <div style={{
                         width: '100px',
@@ -87,6 +182,7 @@ const PhoneVerifyView = () => {
                         <Button 
                             text="Verify"
                             background="#99E1D9"
+                            onClick={verify}
                         />
                     </div>
                     <div style={{
@@ -97,6 +193,7 @@ const PhoneVerifyView = () => {
                         <Button 
                             text="Resend"
                             background="#E4E4E4"
+                            onClick={resendVerification}
                         />
                     </div>
 
@@ -130,9 +227,13 @@ const PhoneVerifyView = () => {
                 <div style={{display: 'flex', marginTop: `10px`}}>
                     <div style={{width: `115px`, minWidth: `115px`, marginRight: `10px`}}>
                         <Input 
-                            initial="+1"
+                            initial={phoneNumber.country_code}
                             label="Country Code"
                             inputFilters={[countryCode]}
+                            onChange={(val: string) => {
+                                phoneNumber.country_code = val
+                                setPhoneNumber(phoneNumber)
+                            }}
                         />
                     </div>
                     <div style={{flexGrow: 1}}>
@@ -140,15 +241,26 @@ const PhoneVerifyView = () => {
                             label="Phone Number"
                             inputFilters={[$and(numbersOnly, maxLen(10))]}
                             autoFocus={true}
+                            onChange={(val: string) => {
+                                phoneNumber.phone_number = val
+                                setPhoneNumber(phoneNumber)
+                            }}
                         />
                     </div>
                 </div>
+
+                {error.hasError &&
+                    <div className="error-line error"><span className="icon-holder">
+                        <HiX /></span>{error.message}
+                    </div>
+                }
 
                 {/* Send Test */}
                 <div style={{width: `200px`, float: `right`, marginTop: `10px`}}>
                     <Button 
                         text="Send"
                         background="#99E1D9"
+                        onClick={initVerification}
                     />
                 </div>
             </div>}
