@@ -90,6 +90,13 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         if (textareaRef.current) textareaRef.current.value = ""
     }
 
+    const getStatus = (): string => {
+        if (ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
+            return ownershipDocData.getOwnership.data.status
+        }
+        return '';
+    }
+
     const hasConflicts = (): boolean => {
         return (ownershipConflicts && ownershipConflicts.getOwnershipConflicts
         && ownershipConflicts.getOwnershipConflicts.data
@@ -124,10 +131,40 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
             && ownershipDocData.getOwnership.data.property_doc && <div ref={containerRef}>
                 {/* Property Information */}
                 <div style={{
-                    fontFamily: 'mukta',
-                    fontSize: '1.3rem'
+                    display: 'flex'
                 }}>
-                    {ownershipDocData!.getOwnership!.data!.property_doc!.location}
+                    <div style={{
+                        fontFamily: 'mukta',
+                        fontSize: '1.3rem',
+                        flexGrow: 1
+                    }}>
+                        {ownershipDocData!.getOwnership!.data!.property_doc!.location}
+                    </div>
+                    <div style={{
+                        minWidth: '300px',
+                        display: 'flex',
+                        flexDirection: 'row-reverse'
+                    }}>
+                        {(getStatus() == "in-review") && <div 
+                            style={{
+                                width: "100px"
+                            }}>
+                            <Button 
+                                text="Approve"
+                                background="#99E1D9"
+                            />
+                        </div>}
+                        {(getStatus() == "in-review") && <div 
+                            style={{
+                                width: "100px",
+                                marginRight: '8px'
+                            }}>
+                            <Button 
+                                text="Decline"
+                                background="#99E1D9"
+                            />
+                        </div>}
+                    </div>
                 </div>
 
                 {/* Show Landlord Contact */}

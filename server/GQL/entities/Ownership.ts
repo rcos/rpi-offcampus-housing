@@ -71,7 +71,7 @@ export class Ownership {
 
   @Field(type => String)
   @prop({type: String})
-  status: "in-review" | "confirmed";
+  status: "in-review" | "confirmed" | "declined";
 
   @Field(type => [OwnershipDocument])
   @prop({type: OwnershipDocument})

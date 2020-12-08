@@ -374,6 +374,46 @@ export class OwnershipResolver {
     }
 
   }
+
+  /**
+   * changeOwnershipStatus ()
+   * @desc Change the status of an ownership documnet between
+   * 'in-review', 'confirmed' or 'declined'
+   * 
+   * @param ownership_id: string => The id of the ownership document to change the status of 
+   * @param new_status: string => The new status to set the document to
+   */
+  @Mutation(() => OwnershipAPIResponse)
+  async changeOwnershipStatus(
+    @Arg("ownership_id") ownership_id: string,
+    @Arg("new_status") new_status: 'in-review' | 'confirmed' | 'declined'
+  ): Promise<OwnershipAPIResponse>
+  {
+    console.log(chalk.bgBlue(`👉 changeOwnershipStatus()`))
+
+    if (!ObjectId.isValid(ownership_id)) {
+      console.log(chalk.bgRed(`❌ Error: ownership id is not a valid object id`));
+      return {
+        success: false,
+        error: 'Invalid ownership_id'
+      }
+    }
+
+    let ownership_doc: DocumentType<Ownership> = await OwnershipModel.findById(ownership_id) as DocumentType<Ownership>;
+    if (!ownership_doc) {
+      console.log(chalk.bgRed(`❌ Error: No ownership document with the id ${ownership_id}`))
+      return { success: false, error: 'No ownership found' }
+    }
+
+    let old_status: string = ownership_doc.status;
+    if (ownership_doc.status != new_status) {
+      ownership_doc.status = new_status;
+      ownership_doc = await ownership_doc.save() as DocumentType<Ownership>
+    }
+
+    console.log(chalk.bgGreen(`✅ Successfully changed status of ownership ${ownership_id} from ${old_status} to ${new_status}`))
+    return {success: true, data: ownership_doc}
+  }
 }
 
 const fillNamesForConfirmationActivities = async (ownership_: DocumentType<Ownership>): Promise<DocumentType<Ownership>> => {
