@@ -2203,3 +2203,23 @@ body {
     }
   }
 }
+
+.feedback-submitted {
+  display: flex;
+
+  .icon-area {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 48px;
+    font-size: 1.7rem;
+    color: #55c98b;
+  }
+
+  .text-area {
+    font-size: 1.3rem;
+    font-family: khumbh-sans;
+    height: 40px;
+    line-height: 40px;
+  }
+}

@@ -1,9 +1,8 @@
-import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
+import {prop, getModelForClass} from "@typegoose/typegoose"
 import {Field, ObjectType, ArgsType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
 import {Property} from './Property'
 import {Landlord} from './Landlord'
-import {ObjectId} from "mongodb"
 
 @ObjectType({description: "Ownership Confirmation Activity"})
 export class ConfirmationActivity {

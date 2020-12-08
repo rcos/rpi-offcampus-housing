@@ -38,6 +38,21 @@ type ConfirmationActivity {
   user_type: String!
 }
 
+"""Feedback submission entry"""
+type Feedback {
+  date_submitted: String!
+  message: String!
+  submitter_id: String!
+  tags: [String!]!
+  user_type: String!
+}
+
+type FeedbackAPIResponse {
+  data: Feedback
+  error: String
+  success: Boolean!
+}
+
 """Institution Model"""
 type Institution {
   _id: ID!
@@ -104,6 +119,7 @@ type Mutation {
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
+  submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 
