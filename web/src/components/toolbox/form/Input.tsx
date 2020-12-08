@@ -8,9 +8,11 @@ interface InputInterface {
   icon?: any
   validators?: ((arg0: string) => boolean) []
   inputFilters?: ((arg0: string) => (string | null))[]
+  initial?: string
+  autoFocus?: boolean
 }
 
-const Input = ({label, type, onChange, icon, validators, inputFilters}: InputInterface) => {
+const Input = ({label, initial, type, autoFocus, onChange, icon, validators, inputFilters}: InputInterface) => {
 
   const inputRef = useRef<HTMLInputElement>(null)
   const focusSpring = useSpring(0, {stiffness: 120, damping: 20})
@@ -21,6 +23,7 @@ const Input = ({label, type, onChange, icon, validators, inputFilters}: InputInt
   const scaleTransform = useTransform(focusSpring, [0, 1], [1, 0.8], {clamp: false})
   const translateTrasnform = useTransform(focusSpring, [0, 1], [0, -6], {clamp: false})
 
+  const [setInitial, setSetInitial] = useState<boolean>(true)
   const [focused, setFocused] = useState(false)
   const [value, setValue] = useState<string>("")
 
@@ -30,6 +33,34 @@ const Input = ({label, type, onChange, icon, validators, inputFilters}: InputInt
       inputRef.current.focus ()
     }
   }
+
+  // set initial value on load
+  useEffect(() => {
+
+    if (initial) {
+      setValue(initial)
+    }
+
+  }, [])
+
+  useEffect(() => {
+
+    if (inputRef.current) {
+
+      // set the initial
+      if (initial && setInitial && initial != "") {
+        inputRef.current.value = initial
+        setFocused(true)
+        setSetInitial(false)
+      }
+
+      // set autoFocus
+      if (autoFocus) {
+        inputRef.current.focus()
+        setFocused(true)
+      }
+    }
+  }, [inputRef])
 
   useEffect(() => {
     if (onChange) onChange(value)
@@ -110,6 +141,13 @@ export const alnumOnly = (val: string): string | null => {
 export const noSpaces = (val: string): string | null => {
   if (val.includes(' ')) return null;
   return val;
+}
+
+export const maxLen = (max_len: number): (val:string) => string | null => {
+  return (val: string): string | null => {
+    if (val.length > max_len) return null;
+    return val;
+  }
 }
 
 export const $or = (fn_1: (arg0: string) => (string | null), fn_2: (arg0: string) => (string | null) )
