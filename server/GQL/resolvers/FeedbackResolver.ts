@@ -27,10 +27,11 @@ export class FeedbackResolver {
         @Arg("submitter_id") submitter_id: string,
         @Arg("user_type") user_type: string,
         @Arg("message") message: string,
-        @Arg("tags") tags: string[]): Promise<FeedbackAPIResponse>
+        @Arg("tags", type => [String]) tags: string[]): Promise<FeedbackAPIResponse>
         {
 
             console.log(chalk.bgBlue(`👉 submitFeedback()`))
+            console.log(`user type => ${user_type}`)
 
             if (user_type != 'landlord' && user_type != 'student') {
                 console.log(chalk.bgRed(`❌ Error: User type must be landlord or student.`))
@@ -65,5 +66,4 @@ export class FeedbackResolver {
             }
 
         }
-})
 }

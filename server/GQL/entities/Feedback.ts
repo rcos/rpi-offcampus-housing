@@ -26,5 +26,7 @@ export class Feedback {
     tags: string[];
 }
 
+@ObjectType()
 export class FeedbackAPIResponse extends APIResult(Feedback) {}
+
 export const FeedbackModel = getModelForClass(Feedback)

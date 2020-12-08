@@ -84,6 +84,7 @@ import * as http from "http";
 import {StudentResolver, 
   OwnershipResolver, 
   LandlordResolver, 
+  FeedbackResolver,
   InstitutionResolver, 
   PropertyResolver} from "./GQL/resolvers"
 import { ObjectIdScalar } from "./GQL/entities";
@@ -92,7 +93,12 @@ import {ObjectId} from 'mongodb'
 const StartServer = async (): Promise<http.Server> => {
 
   const schema = await buildSchema ({
-    resolvers: [StudentResolver, OwnershipResolver, LandlordResolver, InstitutionResolver, PropertyResolver],
+    resolvers: [StudentResolver, 
+      OwnershipResolver, 
+      LandlordResolver, 
+      InstitutionResolver, 
+      PropertyResolver,
+      FeedbackResolver],
     emitSchemaFile: true,
     validate: true,
     scalarsMap: [{type: ObjectId, scalar: ObjectIdScalar}]

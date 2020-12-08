@@ -8,7 +8,7 @@ import AuthAPI from '../API/AuthAPI'
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiTerminal, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
 import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
@@ -16,6 +16,7 @@ import {useMediaQuery} from 'react-responsive';
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {Student} from '../API/queries/types/graphqlFragmentTypes'
+import {useSubmitFeedbackMutation} from '../API/queries/types/graphqlFragmentTypes'
 
 interface IFeedbackInfo {
   bug: boolean
@@ -30,19 +31,16 @@ interface PageLinkInfo {
   name: string
 }
 
-const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
-  
-  // TODO implement
-}
-
 const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolean}) => {
 
+  const [SubmitFeedback, {data: submissionData}] = useSubmitFeedbackMutation()
   const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
   // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false)
 
   const setHeight = () => {
     // set the height
@@ -53,6 +51,31 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     let height_ = viewportHeight - bounding.top - 20
     containerRef.current.style.height = `${height_}px`
   }
+
+  useEffect(() => {
+    if (submissionData) {
+      setFeedbackSubmitted(true)
+    }
+  },[submissionData])
+
+  useEffect(() => {
+    let u_1: any = null;
+    let u_2: any = null;
+    if (feedbackSubmitted) {
+      // hide popup in 3 seconds
+      u_1 = setTimeout(() => {
+        setShowFeedbackPopup(false)
+      }, 1500)
+      u_2 = setTimeout(() => {
+        setFeedbackSubmitted(false)
+      }, 2500)
+    }
+
+    return () => {
+      if (u_1 != null) clearTimeout(u_1)
+      if (u_2 != null) clearTimeout(u_2)
+    }
+  }, [feedbackSubmitted])
 
   useEffect(() => {
     setHeight ()
@@ -141,24 +164,6 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     }
   }, [user])
 
-  // const pageLinks = {
-  //   home: {
-  //     target: '/feed',
-  //     icon: <HiOutlineNewspaper />,
-  //     name: "Feed"
-  //   },
-  //   search: {
-  //     target: '/search',
-  //     icon: <BiSearch />,
-  //     name: 'Search'
-  //   },
-  //   collection: {
-  //     target: '/collection',
-  //     icon: <BiCollection />,
-  //     name: 'Collection'
-  //   }
-  // }
-
   const reviewerLinks = {
     mod_console: {
       target: '/mod/console',
@@ -203,6 +208,13 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     comment: false
   })
 
+  const getFeedbackTags = (): string[] => {
+    let tags_ = [];
+    if (feedbackInfo.bug) tags_.push('bug')
+    if (feedbackInfo.feature) tags_.push('feature')
+    if (feedbackInfo.comment) tags_.push('comment')
+    return tags_
+  }
   const submitFeedback = () => {
 
     // at least 1 tag must be selected
@@ -211,16 +223,14 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
       return;
     }
 
-    _submitFeedback_(feedbackInfo)
-    .then(res => {
-      console.log(`Res 2`)
-      console.log(res)
+    SubmitFeedback({
+      variables: {
+        submitter_id: user && user.user ? user.user._id : '',
+        user_type: user && user.type ? user.type : '',
+        message: feedbackInfo.feedback_message,
+        tags: getFeedbackTags()
+      }
     })
-    .catch(err => {
-      console.log(`Err 2`)
-      console.log(err)
-    })
-
   }
 
   const initFeedback = () => {
@@ -231,6 +241,16 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     show: showFeedbackPopup,
     popup: (<div className="popup-container">
       <div className="title">Feedback</div>
+      {feedbackSubmitted && <div className="feedback-submitted"
+        style={{
+          padding: `10px 5px`
+        }}
+      >
+        <div className="icon-area"><HiCheckCircle /></div><div className="text-area">
+          Thanks for the feedback!
+        </div>
+      </div>}
+      {!feedbackSubmitted && <div>
       <div className="body">
 
         <div>
@@ -283,6 +303,7 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
           />
         </div>
       </div>
+      </div>}
     </div>)
   })
 
