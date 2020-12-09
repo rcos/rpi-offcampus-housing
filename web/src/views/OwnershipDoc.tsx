@@ -417,7 +417,9 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         fontSize: `0.8rem`,
                         padding: `3px 8px`
                     }}>
-                        {ownershipDoc.confirmation_activity.length == 0 &&
+                        {ownershipDoc.confirmation_activity.length == 0 
+                        && ownershipDoc.status_change_history.length == 0 
+                        &&
                         <div style={{
                             fontStyle: `italic`,
                             position: `absolute`,
@@ -441,7 +443,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                                         marginRight: '5px',
                                         fontWeight: 600
                                     }}>{getTimeInfo(status_change.date_changed)}</span>
-                                    Status changed from {getStatusString(status_change.changed_from)} to {getStatusString(status_change.changed_to)}
+                                    <span style={{textDecoration:'underline'}}>{status_change.status_changer_full_name}</span> changed the status from
+                                    from {getStatusString(status_change.changed_from)} to {getStatusString(status_change.changed_to)}
                                 </div>)
                             }
                             else {
