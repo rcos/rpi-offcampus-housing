@@ -2240,3 +2240,50 @@ body {
     background-color: $cyan;
   }
 }
+
+.status-color {
+
+  &.in-review {
+    color: #c96c20;
+    .circle_ {
+      background-color: #c96c20;
+    }
+  }
+
+  &.declined {
+    color: #d64949;
+    .circle_ {
+      background-color: #d64949;
+    }
+  }
+
+  &.confirmed {
+    color: #3fba78;
+    .circle_ {
+      background-color: #3fba78;
+    }
+  }
+
+  .circle_ {
+    width: 8px;
+    height: 8px;
+    background-color: #64aae3;
+    border-radius: 100px;
+    display: inline-block;
+    margin-right: 5px;
+  }
+}
+
+.ownership-status-change-message {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  .icon_ {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+    top: 2px;
+  }
+  font-family: khumbh-sans;
+  color: #3fba78;
+  font-style: italic;
+}

@@ -4,6 +4,8 @@ import {APIResult} from "."
 import {Property} from './Property'
 import {Landlord} from './Landlord'
 
+export type StatusType = "in-review" | "confirmed" | "declined"
+
 @ObjectType({description: "Ownership Confirmation Activity"})
 export class ConfirmationActivity {
 
@@ -44,6 +46,35 @@ export class OwnershipDocument {
   date_uploaded: string;
 }
 
+@ObjectType({description: "Describes a status change in an ownership"})
+export class StatusChangeInfo {
+
+  @Field(type => String)
+  @prop({type: String})
+  status_changer_user_id: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  status_changer_user_type: 'landlord' | 'student';
+
+  @Field(type => String)
+  @prop({type: String})
+  date_changed: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  changed_from: StatusType;
+
+  @Field(type => String)
+  @prop({type: String})
+  changed_to: StatusType;
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  status_changer_full_name?: string;
+
+}
+
 @ObjectType({description: "Property Ownership Document Information"})
 export class Ownership {
   @Field(() => ID)
@@ -71,7 +102,7 @@ export class Ownership {
 
   @Field(type => String)
   @prop({type: String})
-  status: "in-review" | "confirmed";
+  status: StatusType;
 
   @Field(type => [OwnershipDocument])
   @prop({type: OwnershipDocument})
@@ -80,6 +111,10 @@ export class Ownership {
   @Field(type => [ConfirmationActivity])
   @prop({type: [ConfirmationActivity]})
   confirmation_activity: ConfirmationActivity[];
+
+  @Field(type => [StatusChangeInfo])
+  @prop({type: [StatusChangeInfo]})
+  status_change_history: StatusChangeInfo[]
 }
 
 @ObjectType({description: "Property Ownership Collection"})

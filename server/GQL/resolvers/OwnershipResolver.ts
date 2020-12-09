@@ -9,6 +9,8 @@ import {Ownership,
   OwnershipDocumentInput,
   ConfirmationActivity,
   AddOwnershipArgs,
+  StatusChangeInfo,
+  StatusType,
   OwnershipCollection} from '../entities/Ownership'
 import {Property, PropertyModel} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
@@ -54,7 +56,7 @@ export class OwnershipResolver {
     // get the property information and the landlord information
     ownership_.landlord_doc = await LandlordModel.findById(ownership_.landlord_id) as DocumentType<Landlord>
     ownership_.property_doc = await PropertyModel.findById(ownership_.property_id) as DocumentType<Property>
-    ownership_ = await fillNamesForConfirmationActivities(ownership_)
+    ownership_ = await fillNamesForOwnershipMetadata(ownership_)
 
     console.log(chalk.bgGreen(`✔ Successfully retrieved ownership data`))
     return {
@@ -366,7 +368,7 @@ export class OwnershipResolver {
     let updated_ownership: DocumentType<Ownership> = await ownership_doc.save() as DocumentType<Ownership>
 
     // update the fullnames.
-    updated_ownership = await fillNamesForConfirmationActivities(updated_ownership)
+    updated_ownership = await fillNamesForOwnershipMetadata(updated_ownership)
 
     return {
       success: true,
@@ -374,11 +376,79 @@ export class OwnershipResolver {
     }
 
   }
+
+  /**
+   * changeOwnershipStatus ()
+   * @desc Change the status of an ownership documnet between
+   * 'in-review', 'confirmed' or 'declined'
+   * 
+   * @param ownership_id: string => The id of the ownership document to change the status of 
+   * @param new_status: string => The new status to set the document to
+   */
+  @Mutation(() => OwnershipAPIResponse)
+  async changeOwnershipStatus(
+    @Arg("ownership_id") ownership_id: string,
+    @Arg("new_status") new_status: 'in-review' | 'confirmed' | 'declined',
+    @Arg("status_changer_user_id") status_changer_user_id: string,
+    @Arg("status_changer_user_type") status_changer_user_type: 'landlord' | 'student',
+    @Arg("with_landlord") with_landlord: boolean,
+    @Arg("with_property") with_property: boolean
+  ): Promise<OwnershipAPIResponse>
+  {
+    console.log(chalk.bgBlue(`👉 changeOwnershipStatus()`))
+
+    if (!ObjectId.isValid(ownership_id)) {
+      console.log(chalk.bgRed(`❌ Error: ownership id is not a valid object id`));
+      return {
+        success: false,
+        error: 'Invalid ownership_id'
+      }
+    }
+
+    let ownership_doc: DocumentType<Ownership> = await OwnershipModel.findById(ownership_id) as DocumentType<Ownership>;
+    if (!ownership_doc) {
+      console.log(chalk.bgRed(`❌ Error: No ownership document with the id ${ownership_id}`))
+      return { success: false, error: 'No ownership found' }
+    }
+
+    let old_status: StatusType = ownership_doc.status;
+    if (ownership_doc.status != new_status) {
+      ownership_doc.status = new_status;
+
+      let status_change_info: StatusChangeInfo = new StatusChangeInfo()
+      status_change_info.status_changer_user_id = status_changer_user_id
+      status_change_info.status_changer_user_type = status_changer_user_type
+      status_change_info.date_changed = new Date().toISOString()
+      status_change_info.changed_from = old_status;
+      status_change_info.changed_to = new_status;
+
+      ownership_doc.status_change_history.push(status_change_info)
+
+      ownership_doc = await ownership_doc.save() as DocumentType<Ownership>
+    }
+
+    // get the landlord & property information
+    if (with_landlord) {
+      ownership_doc.landlord_doc = await LandlordModel.findById(ownership_doc.landlord_id) as DocumentType<Landlord>
+    }
+    if (with_property) {
+      ownership_doc.property_doc = await PropertyModel.findById(ownership_doc.property_id) as DocumentType<Property>
+    }
+
+    console.log(chalk.bgGreen(`✅ Successfully changed status of ownership ${ownership_id} from ${old_status} to ${new_status}`))
+    return {success: true, data: ownership_doc}
+  }
 }
 
-const fillNamesForConfirmationActivities = async (ownership_: DocumentType<Ownership>): Promise<DocumentType<Ownership>> => {
+/**
+ * Given the ownership document, store the names for each entry in the confirmation_activity
+ * and status_change_history within their corresponding documents.
+ * @param ownership_ 
+ */
+const fillNamesForOwnershipMetadata = async (ownership_: DocumentType<Ownership>): Promise<DocumentType<Ownership>> => {
   let name_map: {student: {[key: string]: string}, landlord: {[key: string]: string}} = {student: {}, landlord: {}}
 
+  // check confirmation activity first
   for (let i = 0; i < ownership_.confirmation_activity.length; ++i) {
 
     if (ownership_.confirmation_activity[i].user_type == 'student') {
@@ -394,6 +464,27 @@ const fillNamesForConfirmationActivities = async (ownership_: DocumentType<Owner
         name_map.landlord[ownership_.confirmation_activity[i].user_id] = `${landlord_doc.first_name} ${landlord_doc.last_name}`
       }
       ownership_.confirmation_activity[i].full_name = name_map.landlord[ownership_.confirmation_activity[i].user_id]
+    }
+
+  }
+
+  // check status change history
+  for(let i = 0; i < ownership_.status_change_history.length; ++i) {
+
+    if (ownership_.status_change_history[i].status_changer_user_type == 'student') {
+      if (!Object.keys(name_map.student).includes(ownership_.status_change_history[i].status_changer_user_id)) {
+        let student_doc: DocumentType<Student> = await StudentModel.findById(ownership_.status_change_history[i].status_changer_user_id) as DocumentType<Student>
+        name_map.student[ownership_.status_change_history[i].status_changer_user_id] = `${student_doc.first_name} ${student_doc.last_name}`
+      }
+      ownership_.status_change_history[i].status_changer_full_name = name_map.student[ownership_.status_change_history[i].status_changer_user_id]
+    }
+
+    else if (ownership_.status_change_history[i].status_changer_user_type == 'landlord') {
+      if (!Object.keys(name_map.landlord).includes(ownership_.status_change_history[i].status_changer_user_id)) {
+        let landlord_doc: DocumentType<Landlord> = await LandlordModel.findById(ownership_.status_change_history[i].status_changer_user_id) as DocumentType<Landlord>
+        name_map.landlord[ownership_.status_change_history[i].status_changer_user_id] = `${landlord_doc.first_name} ${landlord_doc.last_name}`
+      }
+      ownership_.status_change_history[i].status_changer_full_name = name_map.landlord[ownership_.status_change_history[i].status_changer_user_id]
     }
 
   }

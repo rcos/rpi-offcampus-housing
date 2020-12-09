@@ -116,6 +116,7 @@ type Mutation {
   addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
+  changeOwnershipStatus(new_status: String!, ownership_id: String!, status_changer_user_id: String!, status_changer_user_type: String!, with_landlord: Boolean!, with_property: Boolean!): OwnershipAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
@@ -135,6 +136,7 @@ type Ownership {
   property_doc: Property
   property_id: String
   status: String!
+  status_change_history: [StatusChangeInfo!]!
 }
 
 type OwnershipAPIResponse {
@@ -229,6 +231,16 @@ type Query {
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
   searchProperties(searchOptions: PropertySearchInput!): PropertyListAPIResponse!
   verifyAddress(address_1: String!, address_2: String!, city: String!, state: String!, zip: String!): AddressVerificationAPIResponse!
+}
+
+"""Describes a status change in an ownership"""
+type StatusChangeInfo {
+  changed_from: String!
+  changed_to: String!
+  date_changed: String!
+  status_changer_full_name: String
+  status_changer_user_id: String!
+  status_changer_user_type: String!
 }
 
 """Student model"""

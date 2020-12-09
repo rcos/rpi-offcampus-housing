@@ -51,6 +51,26 @@ mutation AddOwnershipDocuments (
   }
 }
 
+mutation ChangeOwnershipStatus (
+  $ownership_id: String!,
+  $new_status: String!,
+  $status_changer_user_id: String!,
+  $status_changer_user_type: String!,
+  $with_landlord: Boolean!,
+  $with_property: Boolean!
+) {
+  changeOwnershipStatus(
+    ownership_id:$ownership_id,
+    new_status:$new_status,
+    status_changer_user_id:$status_changer_user_id,
+    status_changer_user_type:$status_changer_user_type,
+    with_landlord:$with_landlord,
+    with_property:$with_property
+  ) {
+    ...OwnershipAPIResponseFields
+  }
+}
+
 mutation CreateOwnership(
   $landlord_id: String!,
   $address_line: String!,
@@ -100,6 +120,9 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
     confirmation_activity {
       ...confirmationActivityFields
     }
+    status_change_history {
+      ...statusChangeInfoFields
+    }
   }
 }
 
@@ -132,6 +155,12 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
       ownership_documents {
         ...ownershipDocumentFields
       }
+      confirmation_activity {
+        ...confirmationActivityFields
+      }
+      status_change_history {
+        ...statusChangeInfoFields
+      }
     }
   }
 }
@@ -148,4 +177,13 @@ fragment confirmationActivityFields on ConfirmationActivity {
   message
   date_submitted
   full_name
+}
+
+fragment statusChangeInfoFields on StatusChangeInfo {
+  status_changer_user_id
+  status_changer_user_type
+  date_changed
+  changed_from
+  changed_to
+  status_changer_full_name
 }
