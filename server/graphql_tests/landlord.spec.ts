@@ -31,6 +31,7 @@ describe("get landlord", () => {
             }
           }
         }
+        
       `,
       variables: { id: expected_landlord._id },
     });
