@@ -390,7 +390,9 @@ export class OwnershipResolver {
     @Arg("ownership_id") ownership_id: string,
     @Arg("new_status") new_status: 'in-review' | 'confirmed' | 'declined',
     @Arg("status_changer_user_id") status_changer_user_id: string,
-    @Arg("status_changer_user_type") status_changer_user_type: 'landlord' | 'student'
+    @Arg("status_changer_user_type") status_changer_user_type: 'landlord' | 'student',
+    @Arg("with_landlord") with_landlord: boolean,
+    @Arg("with_property") with_property: boolean
   ): Promise<OwnershipAPIResponse>
   {
     console.log(chalk.bgBlue(`👉 changeOwnershipStatus()`))
@@ -423,6 +425,14 @@ export class OwnershipResolver {
       ownership_doc.status_change_history.push(status_change_info)
 
       ownership_doc = await ownership_doc.save() as DocumentType<Ownership>
+    }
+
+    // get the landlord & property information
+    if (with_landlord) {
+      ownership_doc.landlord_doc = await LandlordModel.findById(ownership_doc.landlord_id) as DocumentType<Landlord>
+    }
+    if (with_property) {
+      ownership_doc.property_doc = await PropertyModel.findById(ownership_doc.property_id) as DocumentType<Property>
     }
 
     console.log(chalk.bgGreen(`✅ Successfully changed status of ownership ${ownership_id} from ${old_status} to ${new_status}`))

@@ -116,7 +116,7 @@ type Mutation {
   addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
-  changeOwnershipStatus(new_status: String!, ownership_id: String!, status_changer_user_id: String!, status_changer_user_type: String!): OwnershipAPIResponse!
+  changeOwnershipStatus(new_status: String!, ownership_id: String!, status_changer_user_id: String!, status_changer_user_type: String!, with_landlord: Boolean!, with_property: Boolean!): OwnershipAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!

@@ -55,13 +55,17 @@ mutation ChangeOwnershipStatus (
   $ownership_id: String!,
   $new_status: String!,
   $status_changer_user_id: String!,
-  $status_changer_user_type: String!
+  $status_changer_user_type: String!,
+  $with_landlord: Boolean!,
+  $with_property: Boolean!
 ) {
   changeOwnershipStatus(
     ownership_id:$ownership_id,
     new_status:$new_status,
     status_changer_user_id:$status_changer_user_id,
-    status_changer_user_type:$status_changer_user_type
+    status_changer_user_type:$status_changer_user_type,
+    with_landlord:$with_landlord,
+    with_property:$with_property
   ) {
     ...OwnershipAPIResponseFields
   }

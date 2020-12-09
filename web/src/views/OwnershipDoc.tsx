@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import ViewWrapper from '../components/ViewWrapper'
 import {useSelector} from 'react-redux'
 
+import ContextMenu, {TripleDotButton} from '../components/toolbox/misc/ContextMenu'
 import {useContainerRef} from '../components/hooks/useContainerRefHook'
 import {
     useGetOwnershipLazyQuery,
@@ -15,6 +16,7 @@ import {
 import {HiClipboard, HiOutlineArrowNarrowRight, HiCheck, HiPhone} from 'react-icons/hi'
 import {BsBoxArrowInUpRight} from 'react-icons/bs'
 import {FiAlertTriangle} from 'react-icons/fi'
+import {ImReply, ImForward} from 'react-icons/im'
 import SortableList from '../components/toolbox/layout/SortableList'
 import Button from '../components/toolbox/form/Button'
 import {objectURI} from '../API/S3API'
@@ -29,8 +31,9 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const containerRef = useRef<HTMLDivElement>(null)
     useContainerRef({ ref_: containerRef })
     const textareaRef = useRef<HTMLTextAreaElement>(null)
-
     const headerRef = useRef<HTMLDivElement>(null)
+
+    const [ownershipDoc, setOwnershipDoc] = useState<Ownership | null>(null)
     const [GetOwnership, {data: ownershipDocData}] = useGetOwnershipLazyQuery({
         fetchPolicy: 'no-cache',
         variables: {
@@ -59,16 +62,21 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }, [ownershipConflicts])
 
     useEffect(() => {
+        console.log(`Changed status!`)
         console.log(ownershipStatusChangeResponse)
-        GetOwnership()
+        if (ownershipStatusChangeResponse && ownershipStatusChangeResponse.changeOwnershipStatus
+            && ownershipStatusChangeResponse.changeOwnershipStatus.data) {
+                setOwnershipDoc(ownershipStatusChangeResponse.changeOwnershipStatus.data)
+            }
+        // GetOwnership()
     }, [ownershipStatusChangeResponse])
 
     useEffect(() => {
         if (confirmationActivityResponse 
             && confirmationActivityResponse.addOwnershipConfirmationActivity
             && confirmationActivityResponse.addOwnershipConfirmationActivity.data
-            && ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
-                ownershipDocData.getOwnership.data.confirmation_activity = confirmationActivityResponse.addOwnershipConfirmationActivity.data.confirmation_activity
+            && ownershipDoc) {
+                ownershipDoc.confirmation_activity = confirmationActivityResponse.addOwnershipConfirmationActivity.data.confirmation_activity
                 forceUpdate()
 
                 if (confirmActivityRef.current) {
@@ -87,13 +95,17 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 top: confirmActivityRef.current.scrollHeight
             })
         }
+
+        if (ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
+            setOwnershipDoc(ownershipDocData.getOwnership.data)
+        }
     }, [ownershipDocData])
 
     const submitActivityUpdate = () => {
         if (activityUpdateValue.length == 0) return;
         AddConfirmationActivity({
             variables: {
-                ownership_id: ownershipDocData && ownershipDocData.getOwnership.data ? ownershipDocData.getOwnership.data._id : '',
+                ownership_id:ownershipDoc ? ownershipDoc._id : '',
                 user_id: user && user.user ? user.user._id : '',
                 user_type: user && user.type ? user.type : '',
                 message: activityUpdateValue,
@@ -104,9 +116,22 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         if (textareaRef.current) textareaRef.current.value = ""
     }
 
+    const getPhoneNumber = (): string => {
+        if (ownershipDoc && ownershipDoc.landlord_doc && ownershipDoc.landlord_doc.phone_number) {
+                let phone_number: string = ownershipDoc.landlord_doc.phone_number.trim()
+                if (phone_number.length < 3) return phone_number;
+
+                console.log(`Phone Number: ${phone_number}`)
+                if (phone_number[0] == '+') phone_number = phone_number.substring(1)
+                return `+${phone_number[0]} (${phone_number.substring(1, 4)}) ${phone_number.substring(4, 7)} ${phone_number.substring(7)}`
+
+        }
+        return ''
+    }
+
     const getStatus = (): string => {
-        if (ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
-            return ownershipDocData.getOwnership.data.status
+        if (ownershipDoc) {
+            return ownershipDoc.status
         }
         return '';
     }
@@ -153,7 +178,9 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 ownership_id,
                 new_status,
                 status_changer_user_id: user && user.user ? user.user._id : '',
-                status_changer_user_type: user && user.type ? user.type : ''
+                status_changer_user_type: user && user.type ? user.type : '',
+                with_landlord: true,
+                with_property: true
             }
         })
     }
@@ -161,10 +188,10 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const getStatusAndConfirmation = (): (ConfirmationActivity | StatusChangeInfo)[] => {
         let info_: (ConfirmationActivity | StatusChangeInfo)[] = [];
 
-        if (ownershipDocData && ownershipDocData.getOwnership && ownershipDocData.getOwnership.data) {
+        if (ownershipDoc) {
             info_ = [
-                ...ownershipDocData.getOwnership.data.status_change_history,
-                ...ownershipDocData.getOwnership.data.confirmation_activity
+                ...ownershipDoc.status_change_history,
+                ...ownershipDoc.confirmation_activity
             ]
             // sort from least to most recent
             info_.sort((a: ConfirmationActivity | StatusChangeInfo, b: ConfirmationActivity | StatusChangeInfo): number => {
@@ -186,18 +213,14 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 <div className="title-area">Ownership Form</div>
             </div>
 
-            {!ownershipDocData && <div>LOADING PLACEHOLDER</div>}
+            {!ownershipDoc && <div>LOADING PLACEHOLDER</div>}
 
-            {ownershipDocData &&
-            (!ownershipDocData.getOwnership.data 
-            || !ownershipDocData.getOwnership.data.landlord_doc
-            || !ownershipDocData.getOwnership.data.property_doc)
+            {ownershipDoc &&
+            (!ownershipDoc.landlord_doc
+            || !ownershipDoc.property_doc)
             && <div>Error Loading...</div>}
 
-            {ownershipDocData 
-            && ownershipDocData.getOwnership.data
-            && ownershipDocData.getOwnership.data.landlord_doc
-            && ownershipDocData.getOwnership.data.property_doc && <div ref={containerRef}>
+            {ownershipDoc && ownershipDoc.landlord_doc && ownershipDoc.property_doc && <div ref={containerRef}>
                 {/* Property Information */}
                 <div style={{
                     display: 'flex'
@@ -207,7 +230,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         fontSize: '1.3rem',
                         flexGrow: 1
                     }}>
-                        {ownershipDocData!.getOwnership!.data!.property_doc!.location}
+                        {ownershipDoc.property_doc!.location}
                     </div>
                     <div style={{
                         minWidth: '300px',
@@ -235,6 +258,38 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                                 onClick={() => {changeStatus('decline')}}
                             />
                         </div>}
+                        {getStatus() == 'confirmed' && <div>
+                            <ContextMenu 
+                                position="top right"
+                                menuItems={[
+                                    {
+                                        label: "decline",
+                                        icon: <ImReply/>,
+                                        onClick: () => {changeStatus('decline')}
+                                    }, {
+                                        label: "re-review",
+                                        icon: <ImReply/>,
+                                        onClick: () => {changeStatus('set-to-review')}
+                                    }
+                                ]}
+                            >{TripleDotButton}</ContextMenu>    
+                        </div>}
+                        {getStatus() == 'declined' && <div>
+                            <ContextMenu 
+                                position="top right"
+                                menuItems={[
+                                    {
+                                        label: "approve",
+                                        icon: <ImForward/>,
+                                        onClick: () => {changeStatus('approve')}
+                                    }, {
+                                        label: "re-review",
+                                        icon: <ImForward/>,
+                                        onClick: () => {changeStatus('set-to-review')}
+                                    }
+                                ]}
+                            >{TripleDotButton}</ContextMenu>    
+                        </div>}
                     </div>
                 </div>
 
@@ -244,14 +299,14 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                     fontSize: '0.8rem'
                 }}>
                     <div style={{marginRight: '20px'}}>
-                        Landlord: {ownershipDocData!.getOwnership!.data!.landlord_doc!.first_name} {ownershipDocData!.getOwnership!.data!.landlord_doc!.last_name}
+                        Landlord: {ownershipDoc.landlord_doc!.first_name} {ownershipDoc.landlord_doc!.last_name}
                     </div>
                     <div style={{display: 'flex', marginRight: '20px'}}>
                         <div style={{
                             width: `30px`, 
                             textAlign: 'center'
                             }}><HiPhone /></div>
-                        <div>(504) 800 0000</div>
+                        <div>{getPhoneNumber ()}</div>
                     </div>
                         <div className={`status-color ${getStatus()}`}>
                             <div className="circle_"/>
@@ -262,7 +317,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                 <div style={{marginTop: '10px'}}>
                     <div className="submenu-title">Uploaded Documents</div>
                     <div>
-                        {ownershipDocData!.getOwnership!.data!.ownership_documents.length == 0 &&
+                        {ownershipDoc.ownership_documents.length == 0 &&
                         <div style={{
                             height: '200px',
                             position: 'relative'
@@ -278,8 +333,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                                 No documents uploaded
                             </div>
                         </div>}
-                        {ownershipDocData!.getOwnership!.data!.ownership_documents.length > 0 
-                        && ownershipDocData!.getOwnership!.data!.ownership_documents.map((ownership_doc: any, i) => {
+                        {ownershipDoc.ownership_documents.length > 0 
+                        && ownershipDoc.ownership_documents.map((ownership_doc: any, i) => {
                             return (<DocumentThumbPreview key={i} s3_key={ownership_doc.s3_doc_key} />)
                         })}
                     </div>
@@ -362,7 +417,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         fontSize: `0.8rem`,
                         padding: `3px 8px`
                     }}>
-                        {ownershipDocData!.getOwnership!.data!.confirmation_activity.length == 0 &&
+                        {ownershipDoc.confirmation_activity.length == 0 &&
                         <div style={{
                             fontStyle: `italic`,
                             position: `absolute`,
@@ -373,24 +428,6 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             No activity on record
                         </div>}
 
-                        {/* {ownershipDocData!.getOwnership!.data!.confirmation_activity.length > 0 && 
-                            ownershipDocData!.getOwnership!.data!.confirmation_activity
-                            .sort((a: ConfirmationActivity, b: ConfirmationActivity): number => new Date(a.date_submitted) > new Date(b.date_submitted)? 1 : -1)
-                            .map((entry: ConfirmationActivity, i: number) => {
-                            return (<div key={i}>
-                                <span style={{
-                                    marginRight: '5px'
-                                }}>{getTimeInfo(entry.date_submitted)}</span>
-                                <span style={{
-                                fontWeight: 600,
-                                marginRight: '5px',
-                                fontFamily: 'khumbh-sans',
-                                cursor: 'pointer',
-                                fontSize: '0.7rem',
-                                letterSpacing: `0.5px`
-                            }}>{entry.full_name? entry.full_name : entry.user_id}</span> {entry.message}</div>)
-                            })
-                        } */}
                         {getStatusAndConfirmation().map((entry: ConfirmationActivity | StatusChangeInfo, i: number) => {
 
                             // Show status change

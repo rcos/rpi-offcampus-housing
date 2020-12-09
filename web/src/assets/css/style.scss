@@ -2250,7 +2250,7 @@ body {
     }
   }
 
- & .declined {
+  &.declined {
     color: #d64949;
     .circle_ {
       background-color: #d64949;

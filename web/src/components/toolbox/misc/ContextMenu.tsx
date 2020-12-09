@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import {BsThreeDotsVertical} from "react-icons/bs"
 
 interface IContextMenu {
   children: any
@@ -101,5 +102,7 @@ const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu
     </motion.div>
   </div>)
 }
+
+export const TripleDotButton = <div className="icon-button" style={{position: 'relative'}}><BsThreeDotsVertical /></div>
 
 export default ContextMenu
