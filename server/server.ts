@@ -113,6 +113,7 @@ const StartServer = async (): Promise<http.Server> => {
   return app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
   
+    /*
     if (process.env.USING_MOCHA !== "true") {
       connectMongo()
         .then(() => {
@@ -123,7 +124,7 @@ const StartServer = async (): Promise<http.Server> => {
           console.error(err);
           process.exit(1);
         });
-    }
+    }*/
   });
 }
 
