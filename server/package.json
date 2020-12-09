@@ -8,7 +8,7 @@
     "dev-server": "cross-env NODE_ENV=development npm run server",
     "newman": "node_modules/.bin/newman run",
     "gen-test-data": "tsc && node -e \"require('./build/test_data/seed.js').writeData({directory:'../../test_data'});\"",
-    "mocha": "mocha --file graphql_tests/mocha_globals.ts -r ts-node/register graphql_tests/**/*.spec.ts",
+    "mocha": "nyc mocha --file graphql_tests/mocha_globals.ts -r ts-node/register graphql_tests/**/*.spec.ts",
     "test": "cross-env NODE_ENV=test npm run mocha",
     "tdd-server": "cross-env-shell NODE_ENV=development nodemon -e ts,json --exec \"npm run mocha || true\""
   },
@@ -70,6 +70,7 @@
     "newman": "^5.2.0",
     "nodemon": "^2.0.4",
     "npx": "^10.2.2",
+    "nyc": "^15.1.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   }

@@ -12,6 +12,8 @@ import { IProperty } from "../schemas/property.schema";
 import { IReview } from "../schemas/review.schema";
 import { IStudent } from "../schemas/student.schema";
 
+// import { Landlord } from '../GQL/entities/Landlord'
+
 // defaults
 const DEFAULT_OUT_DIRECTORY = ".";
 const DEFAULT_OUT_STUDENTS_FILE = "students.json";
@@ -78,7 +80,7 @@ const getRandomProfile = (isStudent?: boolean): Profile => {
     email: isStudent
       ? `${getRcsId(first_name, last_name)}@rpi.edu`
       : faker.internet.email(first_name, last_name),
-    phone_number: faker.phone.phoneNumber("(###) ### - ####"),
+    phone_number: faker.phone.phoneNumber("+1##########"),
   };
 };
 
@@ -259,11 +261,9 @@ const generateData = ({
       (property) => property._id.$oid === studentReview.property_id.$oid
     );
 
-    if (reviewedProperty === undefined) {
-      return;
+    if (reviewedProperty != undefined) {
+      reviewedProperty.reviews.push(studentReview._id);
     }
-
-    reviewedProperty.reviews.push(studentReview._id);
   });
 
   return {
