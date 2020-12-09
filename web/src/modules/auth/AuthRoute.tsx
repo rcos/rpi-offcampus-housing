@@ -32,16 +32,27 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
         return AccessLevels.LANDLORD;
       }
       if (auth.type === "student") {
-        return AccessLevels.STUDENT;
+        let level_ = AccessLevels.STUDENT;
+        if (auth.user && (auth.user as Student).elevated_privileges ) {
+          let privileges = (auth.user as Student).elevated_privileges!
+          for (let i = 0; i < privileges.length; ++i) {
+            switch (privileges[i]) {
+              case "ownership_reviewer":
+                level_ = level_ | AccessLevels.OWNERSHIP_REVIEWER
+            }
+          }
+        }
+
+        return level_
       }
     }
     return AccessLevels.UNAUTH
   }
   
   const defaultRoute = (user_type: number): string => {
-    if (user_type === AccessLevels.STUDENT) return '/search'
-    if (user_type === AccessLevels.LANDLORD) return '/landlord/dashboard'
-    if (user_type === AccessLevels.UNAUTH) return '/'
+    if ((user_type & AccessLevels.STUDENT) != 0) return '/search'
+    if ((user_type & AccessLevels.LANDLORD) != 0) return '/landlord/properties'
+    if ((user_type & AccessLevels.UNAUTH) != 0) return '/'
     return '/'
   }
 
@@ -116,6 +127,18 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     console.log(institution)
   }, [institution])
 
+  const hasAccess = (access_flag: number): boolean => ( accessLevel & access_flag ) != 0
+
+  /**
+   * @desc Given the access parameters of the route in accessLevel,
+   * determine based on the value of getUserType, whether the user has
+   * all the possible permissions to access this page
+   */
+  const canAccess = (): boolean => {
+    let user_perm_flags = getUserType(auth)
+    return (accessLevel & user_perm_flags) != 0
+  }
+
   return (<Route {...rest} render={(props) => {
 
     // if this route is set for any user level (no restriction)
@@ -125,41 +148,16 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       // If I am authenticated, I can access components with accessLevel of authenticated user
       if (auth.isAuthenticated) {
 
-        if (accessLevel === AccessLevels.UNAUTH) return <Redirect to={defaultRoute(getUserType(auth))} />
-
-        /*
-        If we try to access a route only allowed to students, as a student, allow it.
-        If we are not a student, redirect us to the landlord route
-        */
-        else if (accessLevel === AccessLevels.STUDENT) {
-          if (auth.user !== null && auth.type && auth.type === "student") {
-            return <Component {...props} />
-          }
-          else return <Redirect to={defaultRoute(getUserType(auth))} />
+        
+        if (canAccess()) {
+          return <Component {...props} />
         }
-
-        else if (accessLevel === AccessLevels.LANDLORD) {
-          if (auth.user !== undefined && auth.type && auth.type === "landlord") {
-            return <Component {...props} />
-          }
-          else return <Redirect to={defaultRoute(getUserType(auth))} />
-        }
-
-        else if (accessLevel === AccessLevels.STUDENT_AND_LANDLORD) {
-          if (auth.user !== undefined && auth.type && 
-          ( auth.type === "landlord" || auth.type === "student")) {
-            return <Component {...props} />
-          }
-          else return <Redirect to={defaultRoute(getUserType(auth))} />
-        }
-
-        // default case
-        else return <Component {...props} />
+        else return (<Redirect to={defaultRoute(getUserType(auth))} />);
 
       }
       else {
 
-        if (accessLevel === AccessLevels.UNAUTH) return <Component {...props} />
+        if (hasAccess(AccessLevels.UNAUTH)) return <Component {...props} />
         else return <Redirect to={defaultRoute(getUserType(auth))} />
 
       }

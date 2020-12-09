@@ -51,26 +51,9 @@ app.use("/auth", LocalAuthRouter);
 import { awsRouter } from "./vendors/aws_s3";
 app.use("/vendors/aws_s3", awsRouter);
 
-// API routes
-// import StudentGET from "./API/Student/student.get";
-// import StudentPUT from "./API/Student/student.put";
-// import LandlordGET from "./API/Landlord/landlord.get";
-// import LandlordPUT from "./API/Landlord/landlord.put";
-// import ReviewGET from "./API/Review/review.get";
-// import ReviewPUT from "./API/Review/review.put";
-// import PropertyGET from "./API/Property/property.get";
-// import PropertyPUT from "./API/Property/property.put";
-// import SearchGET from "./API/Search/search.get";
-
-// app.use("/api/students", StudentGET);
-// app.use("/api/students", StudentPUT);
-// app.use("/api/landlords", LandlordGET);
-// app.use("/api/landlords", LandlordPUT);
-// app.use("/api/reviews", ReviewGET);
-// app.use("/api/reviews", ReviewPUT);
-// app.use("/api/properties", PropertyGET);
-// app.use("/api/properties", PropertyPUT);
-// app.use("/api/search", SearchGET);
+// SendGrid
+import sgMail from '@sendgrid/mail'
+sgMail.setApiKey (process.env.SENDGRID_API_KEY as string)
 
 const connectMongo = () =>
   // connect to MongoDB via mongoose
@@ -94,32 +77,35 @@ const connectMongo = () =>
     )
   );
 
-import "reflect-metadata";
-import { ApolloServer } from "apollo-server-express";
+// Twilio Router
+import smsRouter from './routers/twilio_smsVerify'
+app.use('/vendor/twilio', smsRouter)
+
+import "reflect-metadata"
+import { ApolloServer } from "apollo-server-express"
 import { buildSchema } from "type-graphql";
 import * as http from "http";
-import {
-  StudentResolver,
-  OwnershipResolver,
-  LandlordResolver,
-  InstitutionResolver,
-  PropertyResolver,
-} from "./GQL/resolvers";
+import {StudentResolver, 
+  OwnershipResolver, 
+  LandlordResolver, 
+  FeedbackResolver,
+  InstitutionResolver, 
+  PropertyResolver} from "./GQL/resolvers"
 import { ObjectIdScalar } from "./GQL/entities";
-import { ObjectId } from "mongodb";
+import {ObjectId} from 'mongodb'
 
 const StartServer = async (): Promise<{
   server: http.Server;
   apolloServer: ApolloServer;
 }> => {
-  const schema = await buildSchema({
-    resolvers: [
-      StudentResolver,
-      OwnershipResolver,
-      LandlordResolver,
-      InstitutionResolver,
+
+  const schema = await buildSchema ({
+    resolvers: [StudentResolver, 
+      OwnershipResolver, 
+      LandlordResolver, 
+      InstitutionResolver, 
       PropertyResolver,
-    ],
+      FeedbackResolver],
     emitSchemaFile: true,
     validate: true,
     scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],

@@ -3,6 +3,21 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+"""Response from USPS Address Verify API"""
+type AddressVerification {
+  address_1: String!
+  address_2: String!
+  city: String!
+  state: String!
+  zip: String!
+}
+
+type AddressVerificationAPIResponse {
+  data: AddressVerification
+  error: String
+  success: Boolean!
+}
+
 """Cas Auth Information"""
 type CasAuthInfo {
   cas_id: String
@@ -12,6 +27,30 @@ type CasAuthInfo {
 input CollectionFetchInput {
   count: Int!
   offset: Int!
+}
+
+"""Ownership Confirmation Activity"""
+type ConfirmationActivity {
+  date_submitted: String!
+  full_name: String
+  message: String!
+  user_id: String!
+  user_type: String!
+}
+
+"""Feedback submission entry"""
+type Feedback {
+  date_submitted: String!
+  message: String!
+  submitter_id: String!
+  tags: [String!]!
+  user_type: String!
+}
+
+type FeedbackAPIResponse {
+  data: Feedback
+  error: String
+  success: Boolean!
 }
 
 """Institution Model"""
@@ -53,7 +92,7 @@ type Landlord {
   email: String!
   first_name: String!
   last_name: String!
-  password: String!
+  password: String
   phone_number: String
   type: String
 }
@@ -74,20 +113,26 @@ input LandlordInput {
 }
 
 type Mutation {
+  addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
-  createOwnershipReview(address_line: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
+  createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
+  submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
+  updatePhoneNumber(landlord_id: String!, phone_number: String!): LandlordAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 
 """Property Ownership Document Information"""
 type Ownership {
   _id: ID!
+  confirmation_activity: [ConfirmationActivity!]!
   date_submitted: String!
+  landlord_doc: Landlord
   landlord_id: String!
   ownership_documents: [OwnershipDocument!]!
+  property_doc: Property
   property_id: String
   status: String!
 }
@@ -176,17 +221,21 @@ type Query {
   getLandlord(_id: String!): LandlordAPIResponse!
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
   getOwnership(_id: String!): OwnershipAPIResponse!
+  getOwnershipConflicts(ownership_id: String!): OwnershipCollectionAPIResponse!
   getOwnershipsForLandlord(landlord_id: String!): OwnershipCollectionAPIResponse!
+  getOwnershipsInReview: OwnershipCollectionAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
   searchProperties(searchOptions: PropertySearchInput!): PropertyListAPIResponse!
+  verifyAddress(address_1: String!, address_2: String!, city: String!, state: String!, zip: String!): AddressVerificationAPIResponse!
 }
 
 """Student model"""
 type Student {
   _id: ID!
   auth_info: CasAuthInfo
+  elevated_privileges: [String!]
   email: String!
   first_name: String!
   last_name: String!

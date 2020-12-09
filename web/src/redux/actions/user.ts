@@ -50,7 +50,8 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
               cas_id: user_.user.auth_info.cas_id,
               institution_id: user_.user.auth_info.institution_id
             },
-            saved_collection: user_.user.saved_collection
+            saved_collection: user_.user.saved_collection,
+            elevated_privileges: user_.user.elevated_privileges
           }
     
           let student_auth: StudentInfo = {

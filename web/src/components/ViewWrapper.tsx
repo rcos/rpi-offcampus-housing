@@ -2,16 +2,21 @@ import React, {useState, useEffect, useRef, ChangeEvent} from 'react'
 import Centered from './toolbox/layout/Centered'
 
 import Navbar from './AuthNavbar'
+import LandlordNavbar from './LandlordAuthNavbar'
 import AuthAPI from '../API/AuthAPI'
 
 import Button from '../components/toolbox/form/Button'
 import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
-import { HiOutlineNewspaper, HiLogout, HiOutlineChatAlt } from 'react-icons/hi';
+import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt } from 'react-icons/hi';
+import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory } from 'react-router-dom';
 import {useMediaQuery} from 'react-responsive';
-import axios from 'axios';
+import {useSelector} from 'react-redux'
+import {ReduxState} from '../redux/reducers/all_reducers'
+import {Student} from '../API/queries/types/graphqlFragmentTypes'
+import {useSubmitFeedbackMutation} from '../API/queries/types/graphqlFragmentTypes'
 
 interface IFeedbackInfo {
   bug: boolean
@@ -20,18 +25,22 @@ interface IFeedbackInfo {
   feedback_message: string
 }
 
-const _submitFeedback_ = async (data: IFeedbackInfo): Promise<any> => {
-  
-  // TODO implement
+interface PageLinkInfo {
+  target: string,
+  icon: any,
+  name: string
 }
 
-const ViewWrapper = ({children}: {children: any}) => {
+const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolean}) => {
 
+  const [SubmitFeedback, {data: submissionData}] = useSubmitFeedbackMutation()
+  const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
   const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
   const history = useHistory()
   // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false)
 
   const setHeight = () => {
     // set the height
@@ -42,6 +51,31 @@ const ViewWrapper = ({children}: {children: any}) => {
     let height_ = viewportHeight - bounding.top - 20
     containerRef.current.style.height = `${height_}px`
   }
+
+  useEffect(() => {
+    if (submissionData) {
+      setFeedbackSubmitted(true)
+    }
+  },[submissionData])
+
+  useEffect(() => {
+    let u_1: any = null;
+    let u_2: any = null;
+    if (feedbackSubmitted) {
+      // hide popup in 3 seconds
+      u_1 = setTimeout(() => {
+        setShowFeedbackPopup(false)
+      }, 1500)
+      u_2 = setTimeout(() => {
+        setFeedbackSubmitted(false)
+      }, 2500)
+    }
+
+    return () => {
+      if (u_1 != null) clearTimeout(u_1)
+      if (u_2 != null) clearTimeout(u_2)
+    }
+  }, [feedbackSubmitted])
 
   useEffect(() => {
     setHeight ()
@@ -88,22 +122,68 @@ const ViewWrapper = ({children}: {children: any}) => {
     }
   }
 
-  const pageLinks = {
-    home: {
-      target: '/feed',
-      icon: <HiOutlineNewspaper />,
-      name: "Feed"
-    },
-    search: {
-      target: '/search',
-      icon: <BiSearch />,
-      name: 'Search'
-    },
-    collection: {
-      target: '/collection',
-      icon: <BiCollection />,
-      name: 'Collection'
+  const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
+
+  useEffect(() => {
+    if (user){
+      
+      if (user.type && user.type == "student") {
+        setPageLinks({
+          home: {
+            target: '/feed',
+            icon: <HiOutlineNewspaper />,
+            name: "Feed"
+          },
+          search: {
+            target: '/search',
+            icon: <BiSearch />,
+            name: 'Search'
+          },
+          collection: {
+            target: '/collection',
+            icon: <BiCollection />,
+            name: 'Collection'
+          }
+        })
+      }
+
+      else if (user.type && user.type == "landlord") {
+        setPageLinks({
+          properties: {
+            target: '/landlord/properties',
+            icon: <HiOutlineHome />,
+            name: "Properties"
+          },
+          leases: {
+            target: '/landlord/leases',
+            icon: <FiFileText />,
+            name: "Leases"
+          }
+        })
+      }
     }
+  }, [user])
+
+  const reviewerLinks = {
+    mod_console: {
+      target: '/mod/console',
+      icon: <HiTerminal />,
+      name: "Mod Console"
+    },
+    ownerships: {
+      target: '/ownership/review',
+      icon: <HiClipboard />,
+      name: "Ownerships"
+    }
+  }
+
+  const isOwnershipReviewer = (): boolean => {
+    if (user && user.type && user.type == "student" && user.user && user.user.elevated_privileges) {
+      return user.user.elevated_privileges.includes("ownership_reviewer")
+    }
+    else {
+    }
+    return false;
   }
 
   const logout = () => {
@@ -128,6 +208,13 @@ const ViewWrapper = ({children}: {children: any}) => {
     comment: false
   })
 
+  const getFeedbackTags = (): string[] => {
+    let tags_ = [];
+    if (feedbackInfo.bug) tags_.push('bug')
+    if (feedbackInfo.feature) tags_.push('feature')
+    if (feedbackInfo.comment) tags_.push('comment')
+    return tags_
+  }
   const submitFeedback = () => {
 
     // at least 1 tag must be selected
@@ -136,16 +223,14 @@ const ViewWrapper = ({children}: {children: any}) => {
       return;
     }
 
-    _submitFeedback_(feedbackInfo)
-    .then(res => {
-      console.log(`Res 2`)
-      console.log(res)
+    SubmitFeedback({
+      variables: {
+        submitter_id: user && user.user ? user.user._id : '',
+        user_type: user && user.type ? user.type : '',
+        message: feedbackInfo.feedback_message,
+        tags: getFeedbackTags()
+      }
     })
-    .catch(err => {
-      console.log(`Err 2`)
-      console.log(err)
-    })
-
   }
 
   const initFeedback = () => {
@@ -156,6 +241,16 @@ const ViewWrapper = ({children}: {children: any}) => {
     show: showFeedbackPopup,
     popup: (<div className="popup-container">
       <div className="title">Feedback</div>
+      {feedbackSubmitted && <div className="feedback-submitted"
+        style={{
+          padding: `10px 5px`
+        }}
+      >
+        <div className="icon-area"><HiCheckCircle /></div><div className="text-area">
+          Thanks for the feedback!
+        </div>
+      </div>}
+      {!feedbackSubmitted && <div>
       <div className="body">
 
         <div>
@@ -208,16 +303,18 @@ const ViewWrapper = ({children}: {children: any}) => {
           />
         </div>
       </div>
+      </div>}
     </div>)
   })
 
   return (<Centered height="100%" horizontalBuffer={isTablet? 150 : 400}>
     <React.Fragment>
       <div>
-        <Navbar />
+        {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
+        {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />}
       </div>
       <div className="app-view-area" ref={containerRef}>
-        <div className="user-navbar">
+        {showNavbar != false && <div className="user-navbar">
 
           {Object.keys(pageLinks).map((page_: string, index: number) => {
 
@@ -229,6 +326,22 @@ const ViewWrapper = ({children}: {children: any}) => {
               </div>)
 
           })}
+
+          {isOwnershipReviewer() &&
+            <div>
+              <div className="submenu-title">moderator</div>
+              {Object.keys(reviewerLinks).map((page_: string, index: number) => {
+
+              return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((reviewerLinks as any)[page_].target)}>
+                <div className={`icon-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                  <div className="icon-holder">{(reviewerLinks as any)[page_].icon}</div>
+                  <div className="link-desc">{(reviewerLinks as any)[page_].name}</div>
+                </div>
+              </div>)
+
+              })}
+            </div>
+          }
 
           {/* Footer Buttons */}
           <div className="bottom-area">
@@ -246,7 +359,7 @@ const ViewWrapper = ({children}: {children: any}) => {
           </div>
 
 
-        </div>
+        </div>}
         <div className="content-area">
           {children}
         </div>

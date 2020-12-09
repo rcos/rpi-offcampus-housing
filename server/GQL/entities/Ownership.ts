@@ -1,7 +1,32 @@
-import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
+import {prop, getModelForClass} from "@typegoose/typegoose"
 import {Field, ObjectType, ArgsType, ID, InputType, Int} from "type-graphql"
 import {APIResult} from "."
-import {ObjectId} from "mongodb"
+import {Property} from './Property'
+import {Landlord} from './Landlord'
+
+@ObjectType({description: "Ownership Confirmation Activity"})
+export class ConfirmationActivity {
+
+  @Field(type => String)
+  @prop({type: String})
+  user_id: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  user_type: 'landlord' | 'student';
+
+  @Field(type => String)
+  @prop({type: String})
+  message: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  date_submitted: string;
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  full_name?: string;
+}
 
 @ObjectType({description: "Ownership Document Information"})
 export class OwnershipDocument {
@@ -28,9 +53,17 @@ export class Ownership {
   @prop({type: String})
   property_id: string;
 
+  @Field(type => Property, {nullable: true})
+  @prop({type: Property})
+  property_doc?: Property;
+
   @Field(type => String)
   @prop({type: String})
   landlord_id: string;
+
+  @Field(type => Landlord, {nullable: true})
+  @prop({type: Landlord})
+  landlord_doc?: Landlord;
 
   @Field(type => String)
   @prop({type: String})
@@ -43,6 +76,10 @@ export class Ownership {
   @Field(type => [OwnershipDocument])
   @prop({type: OwnershipDocument})
   ownership_documents: OwnershipDocument[]
+
+  @Field(type => [ConfirmationActivity])
+  @prop({type: [ConfirmationActivity]})
+  confirmation_activity: ConfirmationActivity[];
 }
 
 @ObjectType({description: "Property Ownership Collection"})

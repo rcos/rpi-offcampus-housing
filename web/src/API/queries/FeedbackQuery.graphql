@@ -1,0 +1,27 @@
+mutation SubmitFeedback (
+    $submitter_id: String!,
+    $user_type: String!,
+    $message: String!,
+    $tags: [String!]!
+) {
+    submitFeedback(
+        submitter_id:$submitter_id,
+        user_type:$user_type,
+        message:$message,
+        tags:$tags
+    ) {
+        ...FeedbackAPIResponseFields
+    }
+}
+
+fragment FeedbackAPIResponseFields on FeedbackAPIResponse {
+    success
+    error
+    data {
+        submitter_id
+        user_type
+        message
+        date_submitted
+        tags
+    }
+}

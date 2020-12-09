@@ -23,9 +23,9 @@ export class Landlord {
   @prop()
   phone_number: string;
 
-  @Field()
-  @prop()
-  password: string;
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  password?: string;
   
   @Field(type => String, {nullable: true})
   @prop({type: String})

@@ -55,6 +55,10 @@ export class Student {
   @Field(type => String, {nullable: true})
   @prop({type: String})
   type?: String;
+
+  @Field(type => [String], {nullable: true})
+  @prop({type: String})
+  elevated_privileges?: string[]
 }
 
 @InputType()

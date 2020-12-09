@@ -126,18 +126,18 @@ const StudentLoginView = () => {
                 }
               })
               return {
-                "recent": [
-                  institutionData && institutionData.getInstitution.data ? institutionData.getInstitution.data.name : ""
-                ]
+                ...(institutionData && institutionData.getInstitution.data ? {"recent": [
+                  institutionData.getInstitution.data.name
+                ]} : {})
               }
             }
 
             else {
               return {
                 "institutions": (matchedInstitutions as string[]).filter((_name_: string) => matchesName(_name_.toLowerCase(), x.toLowerCase())),
-                "recent": [
-                  institutionData && institutionData.getInstitution.data ? institutionData.getInstitution.data.name : ""
-                ]
+                ...(institutionData && institutionData.getInstitution.data ? {"recent": [
+                  institutionData.getInstitution.data.name
+                ]} : {})
               }
             }
           }}

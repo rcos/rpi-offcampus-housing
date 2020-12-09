@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import chalk from 'chalk'
 import bcrypt from 'bcrypt'
 const ObjectId = mongoose.Types.ObjectId
+import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
 
 @Resolver()
 export class LandlordResolver {
@@ -71,9 +72,43 @@ export class LandlordResolver {
         password: hashed_password
       })
 
+      // Email
+      SendGrid.sendMail({
+        to: email,
+        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION
+      })
+
       let saved_landlord: DocumentType<Landlord> = await new_landlord.save() as DocumentType<Landlord>
       console.log(console.log(chalk.bgGreen(`✔ Successfully created a new landlord (${first_name} ${last_name})`)))
       return { success: true, data: saved_landlord }
+    }
+
+  }
+
+  @Mutation(() => LandlordAPIResponse)
+  async updatePhoneNumber(
+    @Arg("landlord_id") landlord_id: string,
+    @Arg("phone_number") phone_number: string
+  ): Promise<LandlordAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 updatePhoneNumber()`))
+    if (!ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: Landlord id ${landlord_id} is not a valid object id`))
+      return {
+        success: false,
+        error: "Invalid landlord id"
+      }
+    }
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(landlord_id) as DocumentType<Landlord>
+    landlord_.phone_number = phone_number
+
+    let updated_landlord: DocumentType<Landlord> = await landlord_.save() as DocumentType<Landlord>
+    
+    console.log(chalk.bgGreen(`✔ Successfully updated phone number!`))
+    return {
+      success: true,
+      data: updated_landlord
     }
 
   }
