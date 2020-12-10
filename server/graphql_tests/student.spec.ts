@@ -127,7 +127,7 @@ describe("🧪 Add property to student's collection", () => {
          // assertions
          expect(response.data, "Data response is undefined.").to.not.be.undefined;
          expect(response.data!.addPropertyToStudentCollection.success, "Mutation was successfully when it should have failed").to.be.false;
-         expect(response.data!.addPropertyToStudentCollection.data, "StudentCollection data was returned when it should have been undefined").to.be.undefined;
+         expect(response.data!.addPropertyToStudentCollection.data, "StudentCollection data was returned when it should have been undefined").to.be.null;
          expect(response.data!.addPropertyToStudentCollection.error).to.not.be.undefined;
     })
 })
