@@ -2,6 +2,7 @@ import chai from "chai";
 import "mocha";
 import * as _ from "lodash";
 
+import bcrypt from 'bcrypt';
 import faker from 'faker';
 import { gql } from "apollo-server-express";
 import { apolloServerTestClient } from "./mocha_globals";
@@ -61,5 +62,48 @@ describe("🧪 updatePhoneNumber", () => {
     expect(response.data!.updatePhoneNumber.success, "Updating landlord phone number was nut successful").to.be.true;
     expect(response.data!.updatePhoneNumber.data, "Updating landlord phoen number yielded null data").to.not.be.null;
     expect(response.data!.updatePhoneNumber.data!.phone_number, "New phone number was not updated for landlord  ").to.equal(new_phone_number);
+  })
+})
+
+describe("🧪 createLandlord", () => {
+  it("Should create a new landlord", async () => {
+    const {mutate} = apolloServerTestClient;
+
+    let new_landlord: 
+    {first_name: string, last_name: string, email: string, password: string};
+    do {
+      let f_name = faker.name.firstName (), l_name = faker.name.lastName ();
+      new_landlord = {
+        first_name: f_name,
+        last_name: l_name,
+        email: `/\\fake_offcmpus_email@+${faker.internet.email(f_name, l_name)}`,
+        password: faker.internet.password()
+      };
+    } while (TestData.landlords.find((landlord_: Landlord) => landlord_.email == new_landlord.email) != undefined)
+
+    // Create the landlord
+    const response = await mutate<{createLandlord: LandlordAPIResponse}>({
+      mutation: gql`
+        mutation CreateLandlord($first_name: String!, $last_name: String!, $email: String!, $passwird: String!) {
+          createLandlord(new_landlord:{first_name:$first_name, last_name:$last_name, email: $email, password: $password}) {
+            success, error, data { _id, first_name, last_name, email, password }
+          }
+        }
+      `,
+      variables: {
+        first_name: new_landlord.first_name, last_name: new_landlord.last_name,
+        email: new_landlord.email, password: new_landlord.password}
+    });
+
+    // Test checks
+    expect(response.data, "Create landlord response yielded undefined response").to.not.be.undefined;
+    expect(response.data!.createLandlord.error, "Create landlord response returned an error").to.be.null;
+    expect(response.data!.createLandlord.success, "Creating landlord was unsuccessful").to.be.true;
+    expect(response.data!.createLandlord.data, "No data returned from creating landlord").to.not.be.null;
+    expect(response.data!.createLandlord.data!.first_name, "The created lanslord's first name is wrong").to.equal(new_landlord.first_name);
+    expect(response.data!.createLandlord.data!.last_name, "The created lanslord's last name is wrong").to.equal(new_landlord.last_name);
+    expect(response.data!.createLandlord.data!.email, "The created lanslord's email is wrong").to.equal(new_landlord.email);
+    let passwords_match: boolean = await bcrypt.compare(new_landlord.password, response.data!.createLandlord.data!.password!);
+    expect(passwords_match, "The new landlord's hashed password is incorrect").to.be.true;
   })
 })
