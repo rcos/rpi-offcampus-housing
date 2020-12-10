@@ -6,7 +6,10 @@ import { gql } from "apollo-server-express";
 import { apolloServerTestClient } from "./mocha_globals";
 
 import * as TestData from "../test_data/data";
-import {Student, StudentAPIResponse} from '../GQL/entities/Student';
+import {Student, 
+    StudentAPIResponse, 
+    PropertyCollectionEntriesAPIResponse,
+    PropertyCollectionEntries} from '../GQL/entities/Student';
 import {Property} from '../GQL/entities/Property';
 const { expect } = chai;
 
@@ -32,7 +35,7 @@ describe("Save property for student", () => {
 
         // initiate the AddCollection mutation
         const response = await mutate<{
-            addPropertyToStudentCollection: StudentAPIResponse
+            addPropertyToStudentCollection: PropertyCollectionEntriesAPIResponse
          }>({
              mutation: gql`
                 mutation AddCollection($student_id: String!, $property_id: String!) {
@@ -40,8 +43,9 @@ describe("Save property for student", () => {
                         success
                         error
                         data {
-                            _id
-                            saved_collection
+                            collection_entries {
+                                _id
+                            }
                         }
                     }
             }
@@ -58,9 +62,11 @@ describe("Save property for student", () => {
          expect(response.data != null, "Data response is null.").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.success, "Mutation response is not a success").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.data != null, "Student data in response is undefined").to.be.true;
-         let updated_student: Student = response.data!.addPropertyToStudentCollection.data!;
-         expect(updated_student._id == expected_student._id, "Student returned is not the same as the student requested").to.be.true;
-         expect(updated_student.saved_collection.includes(property_to_add._id), "Property was not added to the student's collection").to.be.true;
+         let new_collection: Partial<Property>[] = response.data!.addPropertyToStudentCollection.data!.collection_entries;
+         expect(new_collection
+            .map((collection_: Partial<Property>) => collection_._id).includes(property_to_add._id),
+            "Property was not added to the student's collection")
+            .to.be.true;
     })
     // const expected_student 
 })
