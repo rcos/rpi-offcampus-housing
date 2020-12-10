@@ -59,7 +59,7 @@ describe("🧪 Add property to student's collection", () => {
          expect(response.data != undefined, "Data response is undefined.").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.success, "Mutation response is not a success").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.data, "Student data in response is undefined").to.not.be.undefined;
-         expect(response.data!.addPropertyToStudentCollection.error, "Error was returned when none should have").to.be.undefined;
+         expect(response.data!.addPropertyToStudentCollection.error, "Error was returned when none should have").to.be.null;
          let new_collection: Partial<Property>[] = response.data!.addPropertyToStudentCollection.data!.collection_entries;
          expect(new_collection
             .map((collection_: Partial<Property>) => collection_._id).includes(property_to_add._id),
@@ -125,7 +125,7 @@ describe("🧪 Add property to student's collection", () => {
          })
 
          // assertions
-         expect(response.data == undefined, "Data response is undefined.").to.be.true;
+         expect(response.data, "Data response is undefined.").to.not.be.undefined;
          expect(response.data!.addPropertyToStudentCollection.success, "Mutation was successfully when it should have failed").to.be.false;
          expect(response.data!.addPropertyToStudentCollection.data, "StudentCollection data was returned when it should have been undefined").to.be.undefined;
          expect(response.data!.addPropertyToStudentCollection.error).to.not.be.undefined;
