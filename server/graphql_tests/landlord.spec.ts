@@ -106,4 +106,31 @@ describe("🧪 createLandlord", () => {
     let passwords_match: boolean = await bcrypt.compare(new_landlord.password, response.data!.createLandlord.data!.password!);
     expect(passwords_match, "The new landlord's hashed password is incorrect").to.be.true;
   })
+
+  it("Should try to create a landlord that already exists", async () => {
+    const {mutate} = apolloServerTestClient;
+
+    let new_landlord = TestData.randomSample<Landlord>({of: TestData.landlords})
+
+    // Create the landlord
+    const response = await mutate<{createLandlord: LandlordAPIResponse}>({
+      mutation: gql`
+        mutation CreateLandlord($first_name: String!, $last_name: String!, $email: String!, $password: String!) {
+          createLandlord(new_landlord:{first_name:$first_name, last_name:$last_name, email: $email, password: $password}) {
+            success, error, data { _id, first_name, last_name, email, password }
+          }
+        }
+      `,
+      variables: {
+        first_name: new_landlord.first_name, last_name: new_landlord.last_name,
+        email: new_landlord.email, password: new_landlord.password}
+    });
+
+    // Test checks
+    expect(response.data, "Create landlord response yielded undefined response").to.not.be.undefined;
+    expect(response.data!.createLandlord.error, "Create existing landlord response did NOT return an error, when it is expecting an error")
+    .to.not.be.null;
+    expect(response.data!.createLandlord.success, "Creating existing landlord was successful, when it should have failed").to.be.false;
+    expect(response.data!.createLandlord.data, "Data was returned when none sohuld have").to.be.null;
+  })
 })
