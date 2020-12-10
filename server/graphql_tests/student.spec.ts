@@ -19,8 +19,8 @@ const { expect } = chai;
 
 
 describe("🧪 addPropertyToStudentCollection", () => {
-    const {mutate} = apolloServerTestClient;
     it("Add a property not in their collection to their collection", async() => {
+        const {mutate} = apolloServerTestClient;
         
         let expected_student: Student = TestData.randomSample<Student>({of: TestData.students});
         // find a property that is not in the student's collection yet
@@ -67,6 +67,7 @@ describe("🧪 addPropertyToStudentCollection", () => {
     })
     
     it("Add a property that is already in their collection to their collection", async() => {
+        const {mutate} = apolloServerTestClient;
         
         let expected_student: Student = TestData.randomSample<Student>({of: TestData.students});
         // find a property that is not in the student's collection yet
@@ -130,9 +131,8 @@ describe("🧪 addPropertyToStudentCollection", () => {
 })
 
 describe("🧪 removePropertyFromStudentCollection", () => {
-    
-    const {mutate} = apolloServerTestClient;
     it("Remove a property, which is in the student's collection, from their collection", async() => {
+        const {mutate} = apolloServerTestClient;
 
         // Setup 
         let expected_student: Student = TestData.randomSample<Student>({of: TestData.students});
