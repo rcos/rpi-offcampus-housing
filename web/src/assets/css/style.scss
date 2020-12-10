@@ -8,6 +8,7 @@ $cyanDark: #79b5ae;
 $lightgrey: #E4E4E4;
 $navyLight: #E1E6EA;
 $navyVeryLight: #F6F7F9;
+$navy: #3B4353;
 
 // transition animation
 .page-enter {
@@ -2343,12 +2344,12 @@ body {
           position: absolute;
           width: 200px;
           background-color: #FAFCFD;
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+          box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1);
           right: -200px;
           bottom: 0px;
           border-radius: 3px;
           font-family: sans-serif;
-          padding-bottom: 5px;
+          padding: 0 5px 5px;
 
           .header {
             height: 25px;
@@ -2375,6 +2376,10 @@ body {
 
               &:hover {
                 background-color: $navyVeryLight;
+              }
+
+              &:active {
+                background-color: $navyLight;
               }
 
               .ctrl-icon-area {
@@ -2610,4 +2615,62 @@ body {
 
 body {
   background-color: #F6F9FB;
+}
+
+.form-input-slider {
+  height: 6px;
+  width: 100%;
+  background-color: $navy;
+  border-radius: 10px;
+  position: relative;
+
+  .slider-ctrl {
+    width: 8px;
+    height: 8px;
+    background-color: $navy;
+    border: 2px solid white;
+    border-radius: 10px;
+    transform: translateY(-3px) translateX(-6px) scale(1);
+    transition: transform 0.15s;
+    transform-origin: center;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+
+    .text-bubble {
+      position: absolute;
+      left: 0;
+      bottom: 15px;
+      transform: translateX(calc(-50% + 4px)) rotateZ(-45deg);
+      --translate-x: calc(-50% + 4px);
+      font-family: sans-serif;
+      font-size: 0.7rem;
+      background-color: $navy;
+      border-radius: 3px;
+      color: white;
+      padding: 5px 8px;
+      z-index: 6;
+      white-space: nowrap;
+
+      .triangle-ptr {
+        position: absolute;
+        border-left: 4px solid rgba(0, 0, 0, 0);
+        border-right: 4px solid rgba(0, 0, 0, 0);
+        border-top: 4px solid $navy;
+        border-bottom: 4px solid rgba(0, 0, 0, 0);
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -6.5px;
+        z-index: 3;
+      }
+    }
+  }
+}
+
+.comment-bubble-2 {
+  position: absolute;
+  background-color: $navy;
+  color: white;
+  font-size: 0.7rem;
+  font-family: sans-serif;
 }

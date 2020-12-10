@@ -451,7 +451,12 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
 
     </motion.div>
 
-    <Centered height="100%" horizontalBuffer={isTablet? 150 : 600}>
+    {/* <Centered height="100%" horizontalBuffer={isTablet? 150 : 600}> */}
+    <div style={{
+      width: `1200px`,
+      border: `1px solid orange`,
+      margin: `0 auto`
+    }}>
       <React.Fragment>
         <div style={{marginTop: '60px'}}></div>
         {false && <div style={{border: `1px solid black`}}>
@@ -510,7 +515,8 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
           </div>
         </div>
       </React.Fragment>
-    </Centered>
+      </div>
+    {/* </Centered> */}
 
 
   </React.Fragment>)
