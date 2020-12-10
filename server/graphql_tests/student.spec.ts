@@ -167,7 +167,6 @@ describe("🧪 removePropertyFromStudentCollection", () => {
 
         // Setup 
         let expected_student: Student = TestData.randomSample<Student>({of: TestData.students});
-
         let property_to_add: Property;
         do {
             property_to_add = TestData.randomSample<Property>({of: TestData.properties});
@@ -197,5 +196,45 @@ describe("🧪 removePropertyFromStudentCollection", () => {
         .to.not.include(property_to_add._id);
         
 
+    })
+})
+
+
+describe("🧪 updateStudent", () => {
+    it("Remove a property, which is NOT in the student's collection, from their collection", async() => {
+        const {mutate} = apolloServerTestClient;
+
+        let initial_student: Student = TestData.randomSample<Student>({of: TestData.students});
+        let new_first_name = initial_student.first_name + "_updated";
+        let new_last_name = initial_student.last_name + "_updated";
+        let new_email = initial_student.email + "_updated";
+
+        expect(initial_student.first_name).to.not.eq(new_first_name);
+        expect(initial_student.last_name).to.not.eq(new_last_name);
+        expect(initial_student.email).to.not.eq(new_email);
+
+        let response = await mutate<{updateStudent: StudentAPIResponse}>({
+            mutation: gql`
+            mutation UpdateStudentInfo($_id: String!, $new_first_name: String, $new_last_name: $String, $new_email: String){
+                updateStudent(_id:$_id, new_student:{first_name: $new_first_name, last_name: $new_last_name, email: $new_email}){
+                    success, error, data {first_name, last_name, email}
+                }
+            }`,
+            variables: { _id: initial_student._id, new_first_name, new_last_name, new_email }
+        })
+
+        expect(response.data, "Update student yielded undefined response").to.not.be.undefined;
+        expect(response.data!.updateStudent.error, "Error was returned when none was expected").to.be.null;
+        expect(response.data!.updateStudent.success, "Update student was unsuccessful").to.be.true;
+        expect(response.data!.updateStudent.data, "Update student data is null").to.not.be.null;
+        
+        // check new information
+        expect(response.data!.updateStudent.data!.first_name).to.not.eq(initial_student.first_name);
+        expect(response.data!.updateStudent.data!.last_name).to.not.eq(initial_student.last_name);
+        expect(response.data!.updateStudent.data!.email).to.not.eq(initial_student.email);
+
+        expect(response.data!.updateStudent.data!.first_name).to.eq(new_first_name);
+        expect(response.data!.updateStudent.data!.last_name).to.eq(new_last_name);
+        expect(response.data!.updateStudent.data!.email).to.eq(new_email);
     })
 })
