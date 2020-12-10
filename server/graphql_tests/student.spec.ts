@@ -17,12 +17,9 @@ const { expect } = chai;
  * Student Resolver Tests
 */
 
-/**
- * addPropertyToStudentCollection()::TEST_1
- * @desc Add an existing property to the collection.
- */
-describe("Save property for student", () => {
-    it("should add a property to the student collection", async() => {
+
+describe("🧪 Add property to student's collection", () => {
+    it("Add a property not in their collection to their collection", async() => {
         
         const {mutate} = apolloServerTestClient;
         
@@ -33,6 +30,8 @@ describe("Save property for student", () => {
             property_to_add = TestData.randomSample<Property>({of: TestData.properties});
         } while (expected_student.saved_collection.includes( property_to_add._id ))
 
+        // expect(expected_student.saved_collection, "Initial student already has the property we want to add to their collection")
+        //     .to.not.include(property_to_add._id)
         // initiate the AddCollection mutation
         const response = await mutate<{
             addPropertyToStudentCollection: PropertyCollectionEntriesAPIResponse
@@ -67,15 +66,8 @@ describe("Save property for student", () => {
             "Property was not added to the student's collection")
             .to.be.true;
     })
-    // const expected_student 
-})
-
-/**
- * addPropertyToStudentCollection()::TEST_1
- * @desc Add an existing property to the collection.
- */
-describe("Save already-saved property for student", () => {
-    it("should add a property that's already in the student's collection, to their colection", async() => {
+    
+    it("Add a property that is already in their collection to their collection", async() => {
         
         const {mutate} = apolloServerTestClient;
         
@@ -138,5 +130,4 @@ describe("Save already-saved property for student", () => {
          expect(response.data!.addPropertyToStudentCollection.data, "StudentCollection data was returned when it should have been undefined").to.be.undefined;
          expect(response.data!.addPropertyToStudentCollection.error).to.not.be.undefined;
     })
-    // const expected_student 
 })
