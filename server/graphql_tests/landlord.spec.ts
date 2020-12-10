@@ -84,7 +84,7 @@ describe("🧪 createLandlord", () => {
     // Create the landlord
     const response = await mutate<{createLandlord: LandlordAPIResponse}>({
       mutation: gql`
-        mutation CreateLandlord($first_name: String!, $last_name: String!, $email: String!, $passwird: String!) {
+        mutation CreateLandlord($first_name: String!, $last_name: String!, $email: String!, $password: String!) {
           createLandlord(new_landlord:{first_name:$first_name, last_name:$last_name, email: $email, password: $password}) {
             success, error, data { _id, first_name, last_name, email, password }
           }
