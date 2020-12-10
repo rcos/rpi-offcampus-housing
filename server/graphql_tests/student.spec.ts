@@ -162,7 +162,7 @@ describe("🧪 removePropertyFromStudentCollection", () => {
         expect(response.data!.addPropertyToStudentCollection.error, "Error occurred in initial collection add").to.be.null;
         expect(response.data!.addPropertyToStudentCollection.success, "Initial collection add was unsuccessful").to.be.true;
         expect(response.data!.addPropertyToStudentCollection.data, "Initial collection add yielded null data").to.not.be.null;
-        expect(response.data!.addPropertyToStudentCollection, "Initial collection add did not add the property to collection").to.include(property_to_add._id);
+        expect(response.data!.addPropertyToStudentCollection.data!.collection_entries, "Initial collection add did not add the property to collection").to.include(property_to_add._id);
 
         // Mutate & Test
         {
