@@ -53,6 +53,8 @@ describe("Save property for student", () => {
          })
 
          // assertions
+         console.log("Response");
+         console.log(response);
          expect(response.data != null, "Data response is null.").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.success, "Mutation response is not a success").to.be.true;
          expect(response.data!.addPropertyToStudentCollection.data != null, "Student data in response is undefined").to.be.true;
