@@ -12,6 +12,9 @@
     "test": "cross-env NODE_ENV=test npm run mocha",
     "tdd-server": "cross-env-shell NODE_ENV=development nodemon -e ts,json --exec \"npm run mocha || true\""
   },
+  "nyc": {
+    "include": "GQL/*"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
