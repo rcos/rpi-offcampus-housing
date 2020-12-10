@@ -1,6 +1,5 @@
 import chai from "chai";
 import "mocha";
-import * as _ from "lodash";
 
 import { gql } from "apollo-server-express";
 import { apolloServerTestClient } from "./mocha_globals";
@@ -8,8 +7,7 @@ import { apolloServerTestClient } from "./mocha_globals";
 import * as TestData from "../test_data/data";
 import {Student, 
     StudentAPIResponse, 
-    PropertyCollectionEntriesAPIResponse,
-    PropertyCollectionEntries} from '../GQL/entities/Student';
+    PropertyCollectionEntriesAPIResponse} from '../GQL/entities/Student';
 import {Property} from '../GQL/entities/Property';
 const { expect } = chai;
 

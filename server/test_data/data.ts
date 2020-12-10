@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-import { Student as _Student_, Property as _Property_, /*StudentReview*/, Landlord as _Landlord_ } from "./seed";
+import { Student as _Student_, Property as _Property_, /*StudentReview,*/ Landlord as _Landlord_ } from "./seed";
 import {Student} from '../GQL/entities/Student'
 import {Property} from '../GQL/entities/Property'
 import {Landlord} from '../GQL/entities/Landlord'
