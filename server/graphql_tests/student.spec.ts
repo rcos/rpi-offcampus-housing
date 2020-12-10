@@ -215,7 +215,7 @@ describe("🧪 updateStudent", () => {
 
         let response = await mutate<{updateStudent: StudentAPIResponse}>({
             mutation: gql`
-            mutation UpdateStudentInfo($_id: String!, $new_first_name: String, $new_last_name: $String, $new_email: String){
+            mutation UpdateStudentInfo($_id: String!, $new_first_name: String, $new_last_name: String, $new_email: String){
                 updateStudent(_id:$_id, new_student:{first_name: $new_first_name, last_name: $new_last_name, email: $new_email}){
                     success, error, data {first_name, last_name, email}
                 }
