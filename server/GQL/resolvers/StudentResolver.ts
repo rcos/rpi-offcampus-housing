@@ -200,11 +200,7 @@ export class StudentResolver {
       }
     }
 
-    let new_collection_ids = updated_student_doc.saved_collection.map((_id) => {
-      return {
-        _id: _id
-      }
-    })
+    let new_collection_ids = updated_student_doc.saved_collection.map((_id) => ({ _id: _id}))
     console.log(chalk.bgGreen(`✔ Successfully removed property from student's collection!`))
     return {
       success: true, 

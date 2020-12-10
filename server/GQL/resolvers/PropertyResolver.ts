@@ -14,12 +14,15 @@ import chalk from 'chalk'
 const ObjectId = mongoose.Types.ObjectId
 
 // setup usps webtools api
-let USPS = require('usps-webtools')
-const usps = new USPS({
-  server: 'http://production.shippingapis.com/ShippingAPI.dll',
-  userId: (process.env.USPS_USER_ID as string),
-  ttl: 10000 //TTL in milliseconds for request
-});
+let usps: null | any = null
+if (process.env.USPS_USER_ID as string) {
+  let USPS = require('usps-webtools')
+  usps = new USPS({
+    server: 'http://production.shippingapis.com/ShippingAPI.dll',
+    userId: (process.env.USPS_USER_ID as string),
+    ttl: 10000 //TTL in milliseconds for request
+  });
+}
 
 
 @Resolver()
@@ -131,14 +134,4 @@ export class PropertyResolver {
     })
 
   }
-
-  // usps.verify({
-  //   street1: '2227 14 street',
-  //   street2: '',
-  //   city: 'Troy',
-  //   state: 'NY',
-  //   zip: '12180'
-  // }, function(err: any, address: any) {
-  //   console.log(err, address);
-  // });
 }
