@@ -161,4 +161,41 @@ describe("🧪 removePropertyFromStudentCollection", () => {
         }
 
     })
+
+    it("Remove a property, which is NOT in the student's collection, from their collection", async() => {
+        const {mutate} = apolloServerTestClient;
+
+        // Setup 
+        let expected_student: Student = TestData.randomSample<Student>({of: TestData.students});
+
+        let property_to_add: Property;
+        do {
+            property_to_add = TestData.randomSample<Property>({of: TestData.properties});
+        } while (expected_student.saved_collection.includes( property_to_add._id ))
+
+        expect(expected_student.saved_collection, "Initial student already has the property we want to add to their collection")
+        .to.not.include(property_to_add._id)
+
+        // Mutate & Test
+        let response = await mutate<{removePropertyFromStudentCollection: PropertyCollectionEntriesAPIResponse}>({
+            mutation: gql`
+            mutation RemoveFromCollection($student_id: String!, $property_id: String!) {
+                removePropertyFromStudentCollection(student_id:$student_id, property_id:$property_id) {
+                    success, error, data { collection_entries { _id } } } }`,
+            variables: {
+                student_id: expected_student._id,
+                property_id: property_to_add._id
+            }
+                
+        })
+
+        expect(response.data, "Remove from collection yielded undfined response").to.not.be.undefined;
+        expect(response.data!.removePropertyFromStudentCollection.error, "Remove from collection yielded error").to.be.null;
+        expect(response.data!.removePropertyFromStudentCollection.success, "Removing from collection was unsuccessful").to.be.true;
+        expect(response.data!.removePropertyFromStudentCollection.data, "Removing from collection yielded null data").to.not.be.null;
+        expect(response.data!.removePropertyFromStudentCollection.data!.collection_entries, "Remove from collection did not remove the property from collection")
+        .to.not.include(property_to_add._id);
+        
+
+    })
 })
