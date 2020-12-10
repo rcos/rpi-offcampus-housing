@@ -8,11 +8,6 @@ import { ObjectID } from "mongodb";
 import mongoose from 'mongoose';
 import bcrypt from "bcrypt";
 
-import { ILandlord } from "../schemas/landlord.schema";
-import { IProperty } from "../schemas/property.schema";
-import { IReview } from "../schemas/review.schema";
-import { IStudent } from "../schemas/student.schema";
-
 // defaults
 const DEFAULT_OUT_DIRECTORY = ".";
 const DEFAULT_OUT_STUDENTS_FILE = "students.json";
@@ -40,6 +35,10 @@ type Student = Omit<_Student_, "_id"> & {
 type Property = Omit<_Property_, "_id" | "landlord"> & {
   _id:MongoObjectID
   landlord: MongoObjectID
+}
+
+type Landlord = Omit<_Landlord_, "_id"> & {
+  _id: MongoObjectID
 }
 
 class OIDFactory {
@@ -105,6 +104,24 @@ const generateProperty = (): Property => {
   }
 }
 const generateProperties = (n: number) => objectFactory(n, generateProperty)
+
+/**
+ * generateLandlord
+ * @desc Create a new ladlord object with mock data
+ */
+const generateLandlord = (): Landlord => {
+  let _fname: string = faker.name.firstName();
+  let _lname: string = faker.name.lastName();
+  return {
+    _id: {$oid: OIDFactory.generateObjectID('landlord')},
+    first_name: _fname,
+    last_name: _lname,
+    email: `/\\fake_offcmpus_email@+${faker.internet.email(_fname, _lname)}`,
+    phone_number: faker.phone.phoneNumber("+1##########"),
+    password: bcrypt.hashSync(faker.internet.password(), 1)
+  }
+}
+const gnerateLandlords = (n: number) => objectFactory(n, generateLandlord)
 
 /////////////////////////////////////////////////////////
 
@@ -193,6 +210,7 @@ const writeData = async (props?: WriteDataProps & Partial<SeedProps>) => {
 export {
   Student,
   Property,
+  Landlord,
   writeData
 }
 
