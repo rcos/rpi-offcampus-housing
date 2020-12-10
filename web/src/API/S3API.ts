@@ -3,7 +3,12 @@ import {backendPath} from '../config'
 import urlencode from 'urlencode'
 import API from './API'
 
-export const objectURI = (s3_key: string): string => backendPath(`/vendors/aws_s3/get-object/${urlencode(s3_key)}`)
+interface ImageSizeProps {
+  width: number
+  height: number
+}
+export const objectURI = (s3_key: string, size: ImageSizeProps | undefined = undefined): string => 
+  backendPath(`/vendors/aws_s3/get-object/${urlencode(s3_key)}${ size == undefined ? '' : `?width=${size.width}&height=${size.height}` }`)
 
 interface IUploadObjectsConfig {
   restricted: boolean

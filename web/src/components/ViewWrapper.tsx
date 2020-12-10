@@ -12,7 +12,7 @@ import {RiCheckLine, RiBugLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
 import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, 
   HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt,
-  HiOutlineChevronLeft } from 'react-icons/hi';
+  HiOutlineChevronLeft, HiOutlineChevronRight, HiCog } from 'react-icons/hi';
 import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { useHistory, Link } from 'react-router-dom';
@@ -21,6 +21,7 @@ import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {Student} from '../API/queries/types/graphqlFragmentTypes'
 import {useSubmitFeedbackMutation} from '../API/queries/types/graphqlFragmentTypes'
+import {objectURI} from '../API/S3API'
 
 interface IFeedbackInfo {
   bug: boolean
@@ -312,13 +313,26 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     </div>)
   })
 
+  const institution = useSelector((state: ReduxState) => state.institution)
+  const getSchoolThumbSource = (): string => {
+    console.log(`getSchoolThumbSource()`)
+    if ((user && user.type && user.type != "student") || institution == null) return '';
+    return objectURI(institution.s3_thumb_key, {width: 60, height: 60})
+  }
+  const [userControlVisible, setUserControlVisible] = useState<boolean>(false) 
+
   // collapsed menu logic
   const menuCollapseInitSpring = useSpring(menuCollapsed ? 0 : 1)
   const menuLabelHeightTransform = useTransform(menuCollapseInitSpring, (x: number) => `${x * 30}px`)
+  const menuSubtitleOpacityTransform = useTransform(menuCollapseInitSpring, [0, 1], [0, 0.5])
 
   const menuCollapseIntermediate = useSpring(menuCollapsed ? 0 : 1)
   const menuWidthCollapseTransform = useTransform(menuCollapseIntermediate, [0, 1], [60, 200])
+  const userControlSettingsCollapsed = useTransform(menuCollapseIntermediate, [0, 1], [1, 0])
 
+  /**
+   * menuCollapsed effector
+   */
   useEffect(() => {
     if (menuCollapsed) {
       menuCollapseInitSpring.set(0)
@@ -354,37 +368,86 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
       </div>
 
       {/* Menu Area */}
-      <motion.div className="menu-label" style={{
-        opacity: menuCollapseInitSpring,
-        height: menuLabelHeightTransform
-      }}>menu</motion.div>
-      <div className={`collapse-separator ${menuCollapsed ? 'collapsed' : ''}`} />
+      <div className="top-bottom-menu-separator">
+        <div className="top-area">
+          <motion.div className="menu-label" style={{
+            opacity: menuSubtitleOpacityTransform,
+            height: menuLabelHeightTransform
+          }}>menu</motion.div>
+          <div className={`collapse-separator ${menuCollapsed ? 'collapsed' : ''}`} />
 
-      {Object.keys(pageLinks).map((page_: any, index: number) => 
-      (<Link to={pageLinks[page_].target} key={index}>
-        <div className={`menu-link ${window.location.pathname.toLowerCase() === pageLinks[page_].target.toLowerCase() ? 'active' : ''}`}>
-          <div className={`icon ${menuCollapsed ? 'collapsed' : ''}`}>{pageLinks[page_].icon}</div>
-          <motion.div className="text" style={{opacity: menuCollapseInitSpring}}>{pageLinks[page_].name}</motion.div>
-      </div>
-      </Link>))}
-
-    {isOwnershipReviewer() &&
-      <React.Fragment>
-        <motion.div className="menu-label" style={{
-          opacity: menuCollapseInitSpring,
-          height: menuLabelHeightTransform
-        }}>moderator</motion.div>
-        <div className={`collapse-separator ${menuCollapsed ? 'collapsed' : ''}`} />
-      
-        {Object.keys(reviewerLinks).map((page_: any, index: number) => 
-        (<Link to={(reviewerLinks as any)[page_].target} key={index}>
-          <div className={`menu-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-            <div className={`icon ${menuCollapsed ? 'collapsed' : ''}`}>{(reviewerLinks as any)[page_].icon}</div>
-            <motion.div className="text" style={{opacity: menuCollapseInitSpring}}>{(reviewerLinks as any)[page_].name}</motion.div>
+          {Object.keys(pageLinks).map((page_: any, index: number) => 
+          (<Link to={pageLinks[page_].target} key={index}>
+            <div className={`menu-link ${window.location.pathname.toLowerCase() === pageLinks[page_].target.toLowerCase() ? 'active' : ''}`}>
+              <div className={`icon ${menuCollapsed ? 'collapsed' : ''}`}>{pageLinks[page_].icon}</div>
+              <motion.div className="text" style={{opacity: menuCollapseInitSpring}}>{pageLinks[page_].name}</motion.div>
           </div>
-        </Link>))}
-      </React.Fragment>
-    }
+          </Link>))}
+
+        {isOwnershipReviewer() &&
+          <React.Fragment>
+            <motion.div className="menu-label" style={{
+              opacity: menuSubtitleOpacityTransform,
+              height: menuLabelHeightTransform
+            }}>moderator</motion.div>
+            <div className={`collapse-separator ${menuCollapsed ? 'collapsed' : ''}`} />
+          
+            {Object.keys(reviewerLinks).map((page_: any, index: number) => 
+            (<Link to={(reviewerLinks as any)[page_].target} key={index}>
+              <div className={`menu-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
+                <div className={`icon ${menuCollapsed ? 'collapsed' : ''}`}>{(reviewerLinks as any)[page_].icon}</div>
+                <motion.div className="text" style={{opacity: menuCollapseInitSpring}}>{(reviewerLinks as any)[page_].name}</motion.div>
+              </div>
+            </Link>))}
+
+
+          </React.Fragment>
+        }
+
+      </div>
+      <div className="bottom-area">
+        <div className={`user-control ${menuCollapsed ? 'collapsed' : ''}`}>
+        {user && user.type && user.type == "student" && <div 
+        className={`photo-thumb ${menuCollapsed ? 'collapsed' : ''}`}
+        onClick={() => setUserControlVisible(!userControlVisible)}>
+          <img src={getSchoolThumbSource()} width="100%" />
+          <motion.div className="user-settings" style={{
+            opacity: userControlSettingsCollapsed
+          }}><HiCog /></motion.div>
+        </div>}
+          <motion.div onClick={() => setUserControlVisible(!userControlVisible)} className="text-area" style={{
+            opacity: menuCollapseInitSpring
+          }}>
+            {user && user.user && `${user.user.first_name} ${user.user.last_name}`}
+              <div className="arrow-icon"><HiOutlineChevronRight /></div>
+            </motion.div>
+
+            {userControlVisible && <div className="user-control-menu">
+              <div className="header">User Control</div><div className="control-menu">
+
+                {/* Settings */}
+                <div className="ctrl-menu-item">
+                  <div className="ctrl-icon-area"><HiCog/></div>
+                  <div className="ctrl-text-area">Settings</div>
+                </div>
+
+                {/* Feedback */}
+                <div className="ctrl-menu-item" onClick={initFeedback}>
+                  <div className="ctrl-icon-area"><HiOutlineChatAlt/></div>
+                  <div className="ctrl-text-area">Feedback</div>
+                </div>
+
+                {/* Logout */}
+                <div className="ctrl-menu-item" onClick={logout}>
+                  <div className="ctrl-icon-area"><HiLogout /></div>
+                  <div className="ctrl-text-area">Logout</div>
+                </div>
+              </div>
+            </div>}
+        </div>
+      </div>
+
+    </div>
 
     </motion.div>
 

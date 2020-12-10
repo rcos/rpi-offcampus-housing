@@ -6,6 +6,8 @@ $purple: #957FEF;
 $cyan: #99E1D9;
 $cyanDark: #79b5ae;
 $lightgrey: #E4E4E4;
+$navyLight: #E1E6EA;
+$navyVeryLight: #F6F7F9;
 
 // transition animation
 .page-enter {
@@ -2310,6 +2312,166 @@ body {
     }
   }
 
+  .top-bottom-menu-separator {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    .top-area {
+      flex-grow: 1;
+    }
+
+    .bottom-area {
+      .user-control {
+        margin: 0 10px;
+        display: flex;
+        height: 30px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        position: relative;
+        transition: height 0.15s;
+
+        &.collapsed {
+          height: 40px;
+        }
+
+        .user-control-menu {
+          position: absolute;
+          width: 200px;
+          background-color: #FAFCFD;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+          right: -200px;
+          bottom: 0px;
+          border-radius: 3px;
+          font-family: sans-serif;
+          padding-bottom: 5px;
+
+          .header {
+            height: 25px;
+            line-height: 25px;
+            padding: 0 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+          }
+
+          .control-menu {
+            box-sizing: border-box;
+            font-size: 0.7rem;
+            z-index: 6;
+            
+            .ctrl-menu-item {
+              display: flex;
+              margin: 0 0px 4px;
+              border-radius: 3px;
+              background-color: rgba(0, 0, 0, 0);
+              height: 20px;
+              line-height: 20px;
+              padding: 0 10px;
+              transition: background 0.25s;
+
+              &:hover {
+                background-color: $navyVeryLight;
+              }
+
+              .ctrl-icon-area {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+                text-align: center;
+                line-height: 25px;
+              }
+
+              .ctrl-text-area {
+
+              }
+            }
+          }
+        }
+
+        .photo-thumb {
+          width: 30px;
+          height: 30px;
+          min-width: 30px;
+          max-width: 30px;
+          border: 1px solid $navyLight;
+          box-sizing: border-box;
+          margin-right: 10px;
+          border-radius: 3px;
+          position: relative;
+          transition: width 0.15s, height 0.15s;
+          position: relative;
+
+          &.collapsed {
+            min-width: 40px;
+            max-width: 40px;
+            min-height: 40px;
+            max-height: 40px;
+          }
+
+          .user-settings {
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            line-height: 35px;
+            background-color: rgba(0, 0, 0, 0);
+            border-radius: 10px;
+            position: absolute;
+            color: rgba(0, 0, 0, 0.3);
+            bottom: 0;
+            right: 0;
+            transform: translateX(50%) translateY(50%);
+            font-size: 20px;
+          }
+        }
+
+        .text-area {
+          box-sizing: border-box;
+          height: 30px;
+          border-radius: 3px;
+          flex-grow: 1;
+          position: relative;
+          font-size: 0.8rem;
+          line-height: 30px;
+          padding: 0 8px;
+          background-color: rgba(0, 0, 0, 0);
+          transition: background 0.25s;
+          font-weight: 600;
+          font-family: sans-serif;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          .arrow-icon {
+            position: absolute;
+            right: 0px;
+            transform: translateX(-6px);
+            top: 0px;
+            height: 30px;
+            box-sizing: border-box;
+            line-height: 35px;
+            font-size: 0.75rem;
+            color: $navyLight;
+            transition: transform 0.15s, color 0.15s;
+          }
+        }
+
+        &:hover {
+          .text-area {
+            background-color: $navyVeryLight;
+            .arrow-icon {
+              transform: translateX(-3px);
+              color: rgba(0, 0, 0, 0.25);
+            }
+          }
+        }
+      }
+    }
+  }
+
   .logo-line {
     height: 60px;
     display: flex;
@@ -2373,7 +2535,6 @@ body {
     font-size: 0.7rem;
     letter-spacing: 1px;
     padding: 0 10px;
-    opacity: 0.8;
   }
 
   .collapse-separator {
