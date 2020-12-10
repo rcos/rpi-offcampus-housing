@@ -38,16 +38,7 @@ describe("🧪 addPropertyToStudentCollection", () => {
              mutation: gql`
                 mutation AddCollection($student_id: String!, $property_id: String!) {
                     addPropertyToStudentCollection(student_id:$student_id,property_id:$property_id) {
-                        success
-                        error
-                        data {
-                            collection_entries {
-                                _id
-                            }
-                        }
-                    }
-            }
-             `,
+                        success, error, data { collection_entries { _id } } } }`,
              variables: {
                 student_id: expected_student._id,
                 property_id: property_to_add._id
@@ -83,16 +74,7 @@ describe("🧪 addPropertyToStudentCollection", () => {
              mutation: gql`
                 mutation AddCollection($student_id: String!, $property_id: String!) {
                     addPropertyToStudentCollection(student_id:$student_id,property_id:$property_id) {
-                        success
-                        error
-                        data {
-                            collection_entries {
-                                _id
-                            }
-                        }
-                    }
-            }
-             `,
+                        success, error, data { collection_entries { _id } } } }`,
              variables: {
                 student_id: expected_student._id,
                 property_id: property_to_add._id
@@ -106,16 +88,7 @@ describe("🧪 addPropertyToStudentCollection", () => {
              mutation: gql`
                 mutation AddCollection($student_id: String!, $property_id: String!) {
                     addPropertyToStudentCollection(student_id:$student_id,property_id:$property_id) {
-                        success
-                        error
-                        data {
-                            collection_entries {
-                                _id
-                            }
-                        }
-                    }
-            }
-             `,
+                        success, error, data { collection_entries { _id } } } }`,
              variables: {
                 student_id: expected_student._id,
                 property_id: property_to_add._id
