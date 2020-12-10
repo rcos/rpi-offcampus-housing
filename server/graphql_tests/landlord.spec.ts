@@ -9,6 +9,7 @@ import * as TestData from "../test_data/data";
 
 const { expect } = chai;
 
+/*
 describe("get landlord", () => {
   it("should get first and last name", async () => {
     const { query, mutate } = apolloServerTestClient;
@@ -42,3 +43,5 @@ describe("get landlord", () => {
     );
   });
 });
+
+*/

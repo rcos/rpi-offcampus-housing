@@ -13,8 +13,6 @@ import { IProperty } from "../schemas/property.schema";
 import { IReview } from "../schemas/review.schema";
 import { IStudent } from "../schemas/student.schema";
 
-// import { Landlord } from '../GQL/entities/Landlord'
-
 // defaults
 const DEFAULT_OUT_DIRECTORY = ".";
 const DEFAULT_OUT_STUDENTS_FILE = "students.json";
@@ -30,13 +28,19 @@ const DEFAULT_SEED = 1;
 // helper models
 import {Student as _Student_} from '../GQL/entities/Student'
 import {Landlord as _Landlord_} from '../GQL/entities/Landlord'
+import {Property as _Property_} from '../GQL/entities/Property'
 
-// type MongoObjectID = {
-//   $oid: ObjectID;
-// };
-type Student = Omit<_Student_, "_id"> & {
-  _id: mongoose.Types.ObjectId;
+type MongoObjectID = {
+  $oid: ObjectID;
 };
+type Student = Omit<_Student_, "_id"> & {
+  _id: MongoObjectID;
+};
+
+type Property = Omit<_Property_, "_id" | "landlord"> & {
+  _id:MongoObjectID
+  landlord: MongoObjectID
+}
 
 class OIDFactory {
   static id_memory: {[key: string]: mongoose.Types.ObjectId[]} = {};
@@ -73,7 +77,7 @@ const generateStudent = (): Student => {
   let _fname: string = faker.name.firstName();
   let _lname: string = faker.name.lastName();
   let mock_student: Student = {
-    _id: OIDFactory.generateObjectID('student'),
+    _id: {$oid: OIDFactory.generateObjectID('student')},
     first_name: _fname,
     last_name: _lname,
     email: faker.internet.email(_fname, _lname),
@@ -88,23 +92,41 @@ const generateStudent = (): Student => {
 }
 const generateStudents = (n: number) => objectFactory(n, generateStudent);
 
+/**
+ * generateProperty
+ * @desc Create a new property object with mock data
+ */
+const generateProperty = (): Property => {
+  return {
+    _id: {$oid: OIDFactory.generateObjectID('property')},
+    landlord: {$oid: OIDFactory.generateObjectID('landlord')},
+    sq_ft: 0,
+    location: `${faker.address.streetAddress()} ${faker.address.city()} ${faker.address.state()} ${faker.address.zipCode()}`
+  }
+}
+const generateProperties = (n: number) => objectFactory(n, generateProperty)
+
 /////////////////////////////////////////////////////////
 
 type GenerateDataProps = {
   numStudents: number;
+  numProperties: number;
 } & Partial<SeedProps>;
 const generateData = ({
   seed,
-  numStudents
+  numStudents,
+  numProperties
 }: GenerateDataProps) => {
   if (seed !== undefined) {
     seedGenerator({ seed });
   }
 
   const students = generateStudents(numStudents);
+  const properties = generateProperties(numProperties);
 
   return {
-    students
+    students,
+    properties
   };
 };
 
@@ -132,8 +154,9 @@ const writeData = async (props?: WriteDataProps & Partial<SeedProps>) => {
     directory ?? DEFAULT_OUT_DIRECTORY
   );
 
-  const { students } = generateData({
-    numStudents: DEFAULT_NUM_STUDENTS
+  const { students, properties } = generateData({
+    numStudents: DEFAULT_NUM_STUDENTS,
+    numProperties: DEFAULT_NUM_PROPERTIES,
     ...generateDataProps,
   });
 
@@ -145,6 +168,10 @@ const writeData = async (props?: WriteDataProps & Partial<SeedProps>) => {
     writeFileAsync(
       path.resolve(directoryPath, DEFAULT_OUT_STUDENTS_FILE),
       JSON.stringify(students)
+    ),
+    writeFileAsync(
+      path.resolve(directoryPath, DEFAULT_OUT_PROPERTIES_FILE),
+      JSON.stringify(properties)
     )
     /*
     writeFileAsync(
@@ -162,6 +189,12 @@ const writeData = async (props?: WriteDataProps & Partial<SeedProps>) => {
     */
   ]);
 };
+
+export {
+  Student,
+  Property,
+  writeData
+}
 
 
 // need to do this way so stringify is valid
