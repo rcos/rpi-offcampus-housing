@@ -80,7 +80,7 @@ const generateStudent = (): Student => {
     _id: {$oid: OIDFactory.generateObjectID('student')},
     first_name: _fname,
     last_name: _lname,
-    email: faker.internet.email(_fname, _lname),
+    email:`/\\fake_offcmpus_email@+${faker.internet.email(_fname, _lname)}`,
     phone_number: faker.phone.phoneNumber("+1##########"),
     saved_collection: [],
     auth_info: {
