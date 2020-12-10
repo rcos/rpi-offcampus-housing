@@ -46,7 +46,7 @@ describe("🧪 updatePhoneNumber", () => {
 
     const response = await mutate<{updatePhoneNumber: LandlordAPIResponse}>({
       mutation: gql`
-        mutation UpdatePhoneNumber($landlord_id: String!, $phone_number: $String!) {
+        mutation UpdatePhoneNumber($landlord_id: String!, $phone_number: String!) {
           updatePhoneNumber(landlord_id:$landlord_id, phone_number:$phone_number) {
             success, error, data { phone_number, _id }
           }}`,
@@ -60,6 +60,6 @@ describe("🧪 updatePhoneNumber", () => {
     expect(response.data!.updatePhoneNumber.error, "Updating landlord phone number yielded error").to.be.null;
     expect(response.data!.updatePhoneNumber.success, "Updating landlord phone number was nut successful").to.be.true;
     expect(response.data!.updatePhoneNumber.data, "Updating landlord phoen number yielded null data").to.not.be.null;
-    expect(response.data!.updatePhoneNumber.data!.phone_number, "New phone number was not updated for landlord").to.equal(new_phone_number);
+    expect(response.data!.updatePhoneNumber.data!.phone_number, "New phone number was not updated for landlord  ").to.equal(new_phone_number);
   })
 })
