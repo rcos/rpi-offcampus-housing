@@ -1,14 +1,4 @@
-$pink: #E0777D;
-$black: #1E2019;
-$grey: #6a6b67;
-$limewhite: #ebf5f1;
-$purple: #957FEF;
-$cyan: #99E1D9;
-$cyanDark: #79b5ae;
-$lightgrey: #E4E4E4;
-$navyLight: #E1E6EA;
-$navyVeryLight: #F6F7F9;
-$navy: #3B4353;
+@import "colors";
 
 // transition animation
 .page-enter {
@@ -291,60 +281,51 @@ body {
 }
 
 .app-button {
-  height: 30px;
-  line-height: 32px;
+  outline: 1px solid transparent;
   color: white;
-  padding: 0 12px;
-  border-radius: 3px;
+  padding: 9px 20px;
+  border-radius: 5px;
   border: none;
   cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.25s;
+  font-weight: 100;
+  transition: box-shadow 0.15s, transform 0.15s;
   transition-timing-function: ease-in-out;
   position: relative;
-  transform: scale(1);
+  text-align: center;
 
-  &.left-icon {padding-left: 42px;}
-  &.right-icon {padding-right: 42px;}
-
-  &:active {
-    transform: scale(0.98);
-  }
-
+  .button-holder {
+    margin: 0 auto;
+    
   .text-area {
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 1.2px;
+    text-transform: capitalize;
+    font-size: 0.9rem;
+    letter-spacing: 0.4px;
     display: inline-block;
     vertical-align: middle;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
   }
 
   .icon-area {
-    width: 30px;
-    line-height: 38px;
     box-sizing: border-box;
     text-align: center;
     display: inline-block;
     vertical-align: middle;
-    background-color: rgba(0, 0, 0, 0.05);
-    position: absolute;
-    top: -0px;
-    bottom: -0px;
     font-size: 1rem;
+    transform: translateY(3px);
 
     &.left {
-      margin-right: 20px;
-      left: 0px;
+
     }
     &.right {
-      margin-left: 20px;
-      right: 0px;
+
     }
+  }
   }
 }
 
 .input-field {
-  border: 1px solid $black;
+  border: 1px solid $navy;
   height: 42px;
   border-radius: 2px;
   position: relative;
@@ -360,14 +341,15 @@ body {
     position: absolute;
     height: 40px;
     line-height: 40px;
-    color: $black;
+    color: $navy;
     top: 0;
     left: 10px;
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    text-transform: capitalize;
+    letter-spacing: 1px;
     transform-origin: top left;
+    font-family: sans-serif;
 
     transition: height 0.25s, 
       line-height 0.25s, 
@@ -383,7 +365,7 @@ body {
     }
 
     &.focused {
-      color: #4fa197;
+      color: $navy;
     }
   }
 
@@ -397,7 +379,7 @@ body {
     transition: color 0.25s;
     // border: 1px solid red;
     &.focused {
-      color: #4fa197;
+      color: $navy;
     }
   }
 
@@ -427,10 +409,11 @@ body {
 
 .dropdown-wrapper {
   z-index: 1;
+  background-color: white;
   .dropdown{
-    border-left: 1px solid $black;
-    border-right: 1px solid $black;
-    border-bottom: 1px solid $black;
+    border-left: 1px solid $navy;
+    border-right: 1px solid $navy;
+    border-bottom: 1px solid $navy;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
     position: absolute;
@@ -462,9 +445,13 @@ body {
       transition: background 0.25s;
       letter-spacing: 1.1px;
       position: relative;
+      top: -1px;
+      margin-left: 1px;
+      margin-right: 1px;
+      box-sizing: border-box;
 
       &:hover, &.hover {
-        background-color: $limewhite;
+        background-color: $navyVeryLight;
       }
 
       &.hover {
@@ -787,7 +774,7 @@ body {
     font-size: 0.8rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: white;
+    background-color: #F6F9FB;
     padding: 0 10px;
   }
 }
@@ -2623,12 +2610,25 @@ body {
       position: absolute;
       z-index: 100;
       background-color: red;
-      right: 0;
+      right: -10px;
       top: 0;
+    }
+  }
 
-      &.raw {
-        right: -100px;
-      }
+  .left-no-attachment-ctrl{
+    width: 0px;
+    position: absolute;
+    right: 0px;
+    border: 1px solid green;
+
+    .content-start-indicator {
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      z-index: 100;
+      background-color: red;
+      right: -50px;
+      top: 0;
     }
   }
 }

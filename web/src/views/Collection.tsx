@@ -228,7 +228,8 @@ const CollectionEntry = ({data}: ICollectionEntry) => {
         text="View"
         icon={<BiRightArrowAlt />}
         iconLocation="right"
-        background="#99E1D9"
+        textColor="white"
+        background="#96b5b1"
       />
     </div>
   </div>)

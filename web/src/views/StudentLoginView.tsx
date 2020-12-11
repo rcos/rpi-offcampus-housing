@@ -2,20 +2,21 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import Centered from '../components/toolbox/layout/Centered'
 import Button from '../components/toolbox/form/Button'
-import {BiLogIn} from 'react-icons/bi'
 import {backendPath} from '../config'
 import SuggestionInput from '../components/toolbox/form/SuggestionInput'
 // @ts-ignore
 import urlencode from 'urlencode'
 import {BiBookAlt} from 'react-icons/bi'
-import CommentBubble from '../components/toolbox/misc/CommentBubble'
-import {objectURI} from '../API/S3API'
 import { useGetInstitutionsLazyQuery, useGetInstitutionLazyQuery, GetInstitutionQuery } from '../API/queries/types/graphqlFragmentTypes'
 import Cookies from 'universal-cookie'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import Logo from '../components/Logo'
+import {useHistory} from 'react-router'
+import Error from '../components/toolbox/form/Error'
 
 const StudentLoginView = () => {
 
+  const history = useHistory()
   const cookies = new Cookies()
 
   const handleInstitutionLogin = (institution_name: string | null) => {
@@ -102,13 +103,20 @@ const StudentLoginView = () => {
   return (<Centered width={400} height={lastInstitution == null? 300 : 500}>
 
     <div>
+        <div style={{
+          width: '40px', 
+        height: '40px',
+        cursor: 'pointer'
+        }}
+        onClick={() => history.push('/')}>
+          <Logo />
+        </div>
 
-      <CommentBubble 
-        message={_error.error ? _error.error : "No error"}
-        show={_error.error != null}
-        header="Error"
-        color="red"
-      />
+        {_error.error != null && 
+        <Error 
+          message={_error.error}
+          type="error"
+        />}
 
       <div className="padded upper">
         <SuggestionInput 
@@ -146,8 +154,7 @@ const StudentLoginView = () => {
       <div className="padded upper" style={{minWidth: `100px`, width: `50%`, float: 'right'}}>
         <Button 
           text="Continue"
-          icon={<BiLogIn/>}
-          background="#E0777D"
+          background="#3B4353"
           textColor="white"
           iconLocation="right"
           onClick={() => {

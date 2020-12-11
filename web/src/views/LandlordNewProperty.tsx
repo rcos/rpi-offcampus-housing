@@ -9,7 +9,7 @@ import {
 } from '../API/queries/types/graphqlFragmentTypes'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {BiHomeAlt} from 'react-icons/bi'
-import {HiArrowRight, HiX} from 'react-icons/hi'
+import {HiX} from 'react-icons/hi'
 import Input, {noSpaces, $and, $or, numbersOnly, alnumOnly} from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import CommentBubble from '../components/toolbox/misc/CommentBubble'
@@ -285,7 +285,6 @@ const LandlordNewProperty = () => {
             submitPropertyRegistration ()
           }}
           text="Next"
-          icon={<HiArrowRight />}
           iconLocation="right"
           background="#63db97"
         />

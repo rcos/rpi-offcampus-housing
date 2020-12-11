@@ -456,17 +456,18 @@ const ViewWrapper = ({children,
 
     </div>
 
-    {left_attachment && left_attachment_width &&
+    {(left_attachment && left_attachment_width)?
       <div className="left-attachment-ctrl" style={{
         width: `${left_attachment_width}px`,
         right: `${-1 * (left_attachment_width + 50)}px`
       }}>{left_attachment}
         <div className="content-start-indicator" ref={contentStartRef} />
       </div>
+      : <div className="left-no-attachment-ctrl">
+          <div className="content-start-indicator"
+        ref={contentStartRef} />
+      </div>
     }
-    {!(left_attachment && left_attachment_width) && 
-    <div className="content-start-indicator raw"
-      ref={contentStartRef} />}
 
     </motion.div>
 

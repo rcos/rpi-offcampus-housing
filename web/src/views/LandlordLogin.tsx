@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 
-import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import LandlordAPI from '../API/LandlordAPI'
 import Centered from '../components/toolbox/layout/Centered'
 import Logo from '../components/Logo'
 import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
-import {FiLogIn} from 'react-icons/fi'
 import { BsAt } from "react-icons/bs";
 import { BiKey } from "react-icons/bi";
 import {useMediaQuery} from 'react-responsive'
+import Error from '../components/toolbox/form/Error'
 
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUser} from '../redux/actions/user'
@@ -101,14 +100,6 @@ const LandlordLogin = () => {
     <div>
 
       {/* Error Area */}
-      <CommentBubble 
-        header="Error"
-        message={formError.message}
-        show={formError.hasError}
-        color="red"
-        action="dismiss"
-        onActionClick={clearError}
-      />
 
       {/* Header */}
       <div className="padded upper" style={{display: 'flex'}}>
@@ -124,6 +115,12 @@ const LandlordLogin = () => {
           Landlord Login
         </div>
       </div>
+
+      {formError.hasError && 
+      <Error 
+        message={formError.message}
+        type='error'
+      />}
 
       <div className="padded upper">
         <Input 
@@ -148,8 +145,7 @@ const LandlordLogin = () => {
             text="Login"
             onClick={handleLogin}
             textColor="white"
-            background="#E0777D"
-            icon={<FiLogIn />}
+            background="#96b5b1"
             iconLocation="right"
           />}
         />
@@ -170,7 +166,7 @@ const LandlordLogin = () => {
           right={<Button 
             text="Sign Up"
             textColor="white"
-            background="#1E2019"
+            background="#3B4353"
             onClick={() => history.push('/landlord/register')}
           />}
         />

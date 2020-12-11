@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react'
 import {useHistory} from 'react-router'
 import {useMediaQuery} from 'react-responsive'
 
-import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import Centered from '../components/toolbox/layout/Centered'
 import Logo from '../components/Logo'
 import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
-import {FiLogIn} from 'react-icons/fi'
-import LandlordAPI from '../API/LandlordAPI'
-import {BiCheck} from 'react-icons/bi'
 import {useCreateLandlordMutation} from '../API/queries/types/graphqlFragmentTypes'
+import Error from '../components/toolbox/form/Error'
 
 interface IFormError {
   message: string
@@ -172,16 +169,6 @@ const LandlordRegister = () => {
   return (<Centered width={isMobile ? 300 : 400} height={600}>
     <div>
 
-      {/* Error area */}
-      <CommentBubble 
-        header="Error"
-        message={formError.message}
-        action="dismiss"
-        color="red"
-        show={formError.hasError}
-        onActionClick={clearError}
-      />
-
       {/* Header */}
       <div style={{display: 'flex'}} className="padded upper">
         <div style={{width: '40px', height: '40px'}}>
@@ -196,6 +183,13 @@ const LandlordRegister = () => {
           Landlord Register
         </div>
       </div>
+
+      {/* Error area */}
+      {formError.hasError && 
+      <Error 
+        type="error"
+        message={formError.message}
+      />}
 
       <div className="padded upper">
         <Input 
@@ -248,8 +242,7 @@ const LandlordRegister = () => {
           right={<Button 
             text="Complete"
             textColor="white"
-            background="#E0777D"
-            icon={<BiCheck/>}
+            background="#96b5b1"
             iconLocation="right"
             onClick={handleRegistrationCompletion}
           />}
@@ -271,8 +264,7 @@ const LandlordRegister = () => {
           right={<Button 
             text="Login"
             textColor="white"
-            background="#1E2019"
-            icon={<FiLogIn />}
+            background="#3B4353"
             iconLocation="right"
             onClick={() => history.push('/landlord/login')}
           />}
