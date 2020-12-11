@@ -9,43 +9,32 @@ import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
 const SearchView = () => {
 
-    const [dimenstionUpdate, setDimensionUpdate] = useState<any>(0)
-    const dimenstionChangeInformer = (val: any) => setDimensionUpdate(val)
     const containerRef = useRef<HTMLDivElement>(null)
     const leftContainerRef = useRef<HTMLDivElement>(null)
-    const [leftFilterProps, setLeftFilterProps] = useState<{
-        left: number, width: number
-    }>({left: 0, width: 0})
-
+    const [leftFilterWidth, setLeftFilterWidth] = useState<number>(400)
+    const [contentStart, setContentStart] = useState<number>(0)
 
     useEffect(() => {
-        updateFilterProps();
-        window.addEventListener(`resize`, updateFilterProps)
+        updateFilterWidth ()
+        window.addEventListener(`resize`, updateFilterWidth)
 
         return () => {
-            window.removeEventListener(`resize`, updateFilterProps)
+            window.removeEventListener(`resize`, updateFilterWidth)
         }
-    }, [dimenstionUpdate])
+    }, [])
 
-    const updateFilterProps = () => {
-        if (containerRef.current) {
-            let bounds: DOMRect = containerRef.current.getBoundingClientRect();
-            setLeftFilterProps({
-                left: bounds.left,
-                width: (bounds.width / 2) - 10
-            })
-
-            if (leftContainerRef.current) {
-                leftContainerRef.current.style.left = `${bounds.left}px`
-                leftContainerRef.current.style.width = `${(bounds.width / 2) - 10}px`
-            }
-        }
+    const updateFilterWidth = () => {
+        // filter width should be x% of the page width
+        let w_ = document.documentElement.getBoundingClientRect().width;
+        setLeftFilterWidth(w_ * 0.32)
     }
 
-    const getDimensionUpdate = () => Math.floor(dimenstionUpdate)
-
-    return (<ViewWrapper dimenstionChangeInformer={dimenstionChangeInformer}>
-        <div className="search-container" ref={containerRef}>
+    return (<ViewWrapper
+        left_attachment_width={leftFilterWidth}
+        onContentStart={(val: number) => {
+            setContentStart(val)
+        }}
+        left_attachment={<div className="filter-map-attachment">
 
             {/* Left Side */}
             <div className="left-side_" ref={leftContainerRef} style={{
@@ -62,7 +51,6 @@ const SearchView = () => {
                         <div className="input-label_">Price Per Room</div>
                         <Slider 
                             range={{start: 300, end: 1200}}
-                            forceUpdate={leftFilterProps}
                             toStr={(val: any): string => {return `$${(val as number).toFixed(2)}`}}
                         />
                     </div>
@@ -73,12 +61,11 @@ const SearchView = () => {
                     }}>
                     <div className="input-label_">Lease Period</div>
                         <RangeSlider 
+                            forceUpdate={leftFilterWidth}
                             range={{start: 300, end: 1200}}
-                            forceUpdate={leftFilterProps}
                             onChange={(new_ratio: number) => {
                                 console.log(new_ratio)
                             }}
-                            updateDimensionTrigger={getDimensionUpdate()}
                             toStr={(val: any): string => {return `$${(val as number).toFixed(2)}`}}
                         />
                     </div>
@@ -137,6 +124,13 @@ const SearchView = () => {
                     </MapContainer>
                 </div>
             </div>
+
+        </div>}
+    >
+        <div className="search-container" ref={containerRef} style={{
+            position: 'relative',
+            left: `${0}px`
+        }}>
 
             {/* Right Side */}
             <div className="right-side_">

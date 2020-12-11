@@ -11,7 +11,7 @@ const NotFound = () => {
   
   const goHome = () => history.push('/')
 
-  return (<ViewWrapper showNavbar={false}>
+  return (<ViewWrapper>
     <div>
       <div
       style={{

@@ -51,8 +51,10 @@ const Slider = ({ range, forceUpdate, toStr, onChange }: SliderProps) => {
     }
 
     const moveSlider = (e: MouseEvent) => {
-        let new_val = Math.max(Math.min(e.clientX - sliderBounds.left, sliderBounds.right - sliderBounds.left), 0)
-        sliderValueRef.current = new_val / (sliderBounds.right - sliderBounds.left);
+        if (!sliderContainerRef.current) return;
+        let sliderBounds_ = sliderContainerRef.current.getBoundingClientRect();
+        let new_val = Math.max(Math.min(e.clientX - sliderBounds_.left, sliderBounds_.right - sliderBounds_.left), 0)
+        sliderValueRef.current = new_val / (sliderBounds_.right - sliderBounds_.left);
         setSliderX(new_val)
     }
 

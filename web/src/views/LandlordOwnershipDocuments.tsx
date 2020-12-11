@@ -124,11 +124,25 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
 
     // file uploader
     const handleFileUpload = (e: any) => {
-      if (e.path.length == 0) {
+
+      if (Object.prototype.hasOwnProperty.call(e, 'path') && e.path.length == 0) {
         console.error(`Event path is empty`)
         return;
       }
-      let files_ = e.path[0].files
+
+
+      let files_ = Object.prototype.hasOwnProperty.call(e, 'path') ? e.path[0].files : null
+      // for firefox..
+      if (files_ == null) {
+        console.log(`Retrieved from target.`)
+        files_ = e.target.files
+      }
+
+      if (files_ == null) {
+        console.error(`No files found..`)
+        return;
+      }
+
       if (Object.keys(files_).length == 0) {
         console.error(`Files is empty..`)
         return;

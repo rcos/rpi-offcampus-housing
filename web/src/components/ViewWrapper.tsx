@@ -1,25 +1,19 @@
 import React, {useState, useEffect, useRef, ChangeEvent} from 'react'
 import {useSpring, useTransform, motion} from 'framer-motion'
-import Centered from './toolbox/layout/Centered'
 
-import Navbar from './AuthNavbar'
-import LandlordNavbar from './LandlordAuthNavbar'
 import AuthAPI from '../API/AuthAPI'
 
-import Logo from '../components/Logo'
 import Button from '../components/toolbox/form/Button'
-import {RiCheckLine, RiBugLine} from 'react-icons/ri'
+import {RiCheckLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
 import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, 
   HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt,
   HiOutlineChevronLeft, HiOutlineChevronRight, HiCog } from 'react-icons/hi';
 import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
-import { useHistory, Link } from 'react-router-dom';
-import {useMediaQuery} from 'react-responsive';
+import { Link } from 'react-router-dom';
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
-import {Student} from '../API/queries/types/graphqlFragmentTypes'
 import {useSubmitFeedbackMutation} from '../API/queries/types/graphqlFragmentTypes'
 import {objectURI} from '../API/S3API'
 
@@ -36,15 +30,23 @@ interface PageLinkInfo {
   name: string
 }
 
-const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children: any, dimenstionChangeInformer?: (arg0: any) => void, showNavbar?: boolean}) => {
+interface ViewWrapperProps {
+  children: any
+  left_attachment?: any
+  left_attachment_width?: number
+  onContentStart?: (val: number) => void
+}
 
+const ViewWrapper = ({children, 
+  left_attachment, 
+  left_attachment_width,
+  onContentStart}: ViewWrapperProps) => {
+
+  const contentStartRef = useRef<HTMLDivElement>(null)
   const [SubmitFeedback, {data: submissionData}] = useSubmitFeedbackMutation()
   const user = useSelector((state: ReduxState) => state.user)
   const containerRef = useRef<HTMLDivElement>(null)
-  const isTablet = useMediaQuery({ query: '(max-width: 1000px)' })
-  const history = useHistory()
   // const [viewWidth, setViewWidth] = useState<number>(1400)
-  const [navbarMinMode, setNavbarMinMode] = useState<boolean>(false)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false)
   const [menuCollapsed, setMenuCollapsed] = useState<boolean>(false)
 
@@ -100,33 +102,6 @@ const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children
       clearTimeout(t_4)
     }
   }, [containerRef])
-
-  useEffect(() => {
-    const handleResize = (e:any) => {
-      let w = e.target.innerWidth
-      updateViewWidth(w)
-    }
-
-    updateViewWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  const updateViewWidth = (new_width: number) => {
-    // if (new_width >= 1400) setViewWidth(1400)
-    // else if (new_width > 1200 && new_width < 1400) setViewWidth(1200)
-    // else if (new_width < 1200) setViewWidth(new_width - 100)
-
-    if (new_width > 1000) {
-      setNavbarMinMode(true)
-    }
-    else {
-      setNavbarMinMode(false)
-    }
-  }
 
   const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
 
@@ -330,6 +305,11 @@ const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children
   const menuWidthCollapseTransform = useTransform(menuCollapseIntermediate, [0, 1], [60, 200])
   const userControlSettingsCollapsed = useTransform(menuCollapseIntermediate, [0, 1], [1, 0])
   const leftContainerMarginTransform = useTransform(menuCollapseIntermediate, (x: number) => {
+    if (contentStartRef.current) {
+      let bounds_ = contentStartRef.current.getBoundingClientRect();
+      console.log(`offset => ${bounds_.right}px`)
+      return `${bounds_.right}px`;
+    }
     return`${((200 - 60) * x) + 60 + 50}px`
   })
   const rightContainerMarginTransform = useTransform(menuCollapseIntermediate, [0, 1], [250, 250])
@@ -352,7 +332,6 @@ const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children
 
     let unsubMenuCollapseIntermediate = menuCollapseIntermediate.onChange((x: number) => {
       if (x == 1) menuCollapseInitSpring.set(1)
-      if (dimenstionChangeInformer) dimenstionChangeInformer(x)
     })
 
     return () => {
@@ -360,6 +339,28 @@ const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children
       unsubMenuCollapseIntermediate()
     }
   }, [menuCollapsed])
+
+  useEffect(() => {
+    const updateContentStart = () => {
+      if (contentStartRef.current) {
+        let bounds_ = contentStartRef.current.getBoundingClientRect();
+        if (onContentStart) {
+          onContentStart(bounds_.right)
+        }
+      }
+    }
+
+    updateContentStart()
+    window.addEventListener(`resize`, updateContentStart)
+    return () => {
+      window.removeEventListener(`resize`, updateContentStart)
+    }
+  }, [contentStartRef])
+
+  useEffect(() => {
+    menuCollapseIntermediate.set(menuCollapsed ? 0.000000000001 : 9.999999999999);
+    // menuCollapseIntermediate.set(menuCollapsed ? 0 : 1);
+  }, [])
 
   return (<React.Fragment>
 
@@ -455,68 +456,34 @@ const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children
 
     </div>
 
+    {left_attachment && left_attachment_width &&
+      <div className="left-attachment-ctrl" style={{
+        width: `${left_attachment_width}px`,
+        right: `${-1 * (left_attachment_width + 50)}px`
+      }}>{left_attachment}
+        <div className="content-start-indicator" ref={contentStartRef} />
+      </div>
+    }
+    {!(left_attachment && left_attachment_width) && 
+    <div className="content-start-indicator raw"
+      ref={contentStartRef} />}
+
     </motion.div>
 
     {/* <Centered height="100%" horizontalBuffer={isTablet? 150 : 600}> */}
     <motion.div style={{
       marginLeft: leftContainerMarginTransform,
       marginRight: rightContainerMarginTransform,
-      border: `1px solid orange`,
+      // border: `1px solid orange`,
       margin: `0 auto`
     }}>
       <React.Fragment>
-        <div style={{marginTop: '60px'}}></div>
+        <div style={{marginTop: '20px'}}></div>
         {false && <div style={{border: `1px solid black`}}>
           {/* {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
           {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />} */}
         </div>}
         <div className="app-view-area" ref={containerRef}>
-          {false && showNavbar != false && <div className="user-navbar">
-
-            {Object.keys(pageLinks).map((page_: string, index: number) => {
-
-                return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((pageLinks as any)[page_].target)}>
-                  <div className={`icon-link ${window.location.pathname.toLowerCase() === (pageLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-                    <div className="icon-holder">{(pageLinks as any)[page_].icon}</div>
-                    <div className="link-desc">{(pageLinks as any)[page_].name}</div>
-                  </div>
-                </div>)
-
-            })}
-
-            {isOwnershipReviewer() &&
-              <div>
-                <div className="submenu-title">moderator</div>
-                {Object.keys(reviewerLinks).map((page_: string, index: number) => {
-
-                return (<div key={index} style={{marginBottom: '10px'}} onClick={() => history.push((reviewerLinks as any)[page_].target)}>
-                  <div className={`icon-link ${window.location.pathname.toLowerCase() === (reviewerLinks as any)[page_].target.toLowerCase() ? 'active' : ''}`}>
-                    <div className="icon-holder">{(reviewerLinks as any)[page_].icon}</div>
-                    <div className="link-desc">{(reviewerLinks as any)[page_].name}</div>
-                  </div>
-                </div>)
-
-                })}
-              </div>
-            }
-
-            {/* Footer Buttons */}
-            <div className="bottom-area">
-              {/* Feedback */}
-              <div className="icon-link" onClick={initFeedback}>
-                <div className="icon-holder"><HiOutlineChatAlt /></div>
-                <div className="link-desc">Feedback</div>
-              </div>
-              
-              {/* Logout */}
-              <div className="icon-link" onClick={logout}>
-                <div className="icon-holder"><HiLogout /></div>
-                <div className="link-desc">Logout</div>
-              </div>
-            </div>
-
-
-          </div>}
           <div className="content-area">
             {children}
           </div>
