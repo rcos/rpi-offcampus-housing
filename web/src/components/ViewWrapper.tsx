@@ -36,7 +36,7 @@ interface PageLinkInfo {
   name: string
 }
 
-const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolean}) => {
+const ViewWrapper = ({children, dimenstionChangeInformer, showNavbar}: {children: any, dimenstionChangeInformer?: (arg0: any) => void, showNavbar?: boolean}) => {
 
   const [SubmitFeedback, {data: submissionData}] = useSubmitFeedbackMutation()
   const user = useSelector((state: ReduxState) => state.user)
@@ -329,6 +329,11 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
   const menuCollapseIntermediate = useSpring(menuCollapsed ? 0 : 1)
   const menuWidthCollapseTransform = useTransform(menuCollapseIntermediate, [0, 1], [60, 200])
   const userControlSettingsCollapsed = useTransform(menuCollapseIntermediate, [0, 1], [1, 0])
+  const leftContainerMarginTransform = useTransform(menuCollapseIntermediate, (x: number) => {
+    return`${((200 - 60) * x) + 60 + 50}px`
+  })
+  const rightContainerMarginTransform = useTransform(menuCollapseIntermediate, [0, 1], [250, 250])
+
 
   /**
    * menuCollapsed effector
@@ -347,6 +352,7 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
 
     let unsubMenuCollapseIntermediate = menuCollapseIntermediate.onChange((x: number) => {
       if (x == 1) menuCollapseInitSpring.set(1)
+      if (dimenstionChangeInformer) dimenstionChangeInformer(x)
     })
 
     return () => {
@@ -452,8 +458,9 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
     </motion.div>
 
     {/* <Centered height="100%" horizontalBuffer={isTablet? 150 : 600}> */}
-    <div style={{
-      width: `1200px`,
+    <motion.div style={{
+      marginLeft: leftContainerMarginTransform,
+      marginRight: rightContainerMarginTransform,
       border: `1px solid orange`,
       margin: `0 auto`
     }}>
@@ -515,7 +522,7 @@ const ViewWrapper = ({children, showNavbar}: {children: any, showNavbar?: boolea
           </div>
         </div>
       </React.Fragment>
-      </div>
+      </motion.div>
     {/* </Centered> */}
 
 

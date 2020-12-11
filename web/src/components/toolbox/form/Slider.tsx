@@ -6,12 +6,22 @@ interface SliderBounds {
     right: number
 }
 
-const Slider = () => {
+interface SliderProps {
+    onChange?: (ratio: number) => void
+    range: {start: number, end: number}
+    toStr?: (value: any) => string
+    forceUpdate?: any
+}
+
+const Slider = ({ range, forceUpdate, toStr, onChange }: SliderProps) => {
 
     const [sliderBounds, setSliderBounds] = useState<SliderBounds>({left: 0, right: 0})
     const [sliderX, setSliderX] = useState<number>(0)
     const sliderContainerRef = useRef<HTMLDivElement>(null)
     const [sliding, setSliding] = useState<boolean>(false)
+    const sliderValueRef = useRef<number>(0)
+
+    useEffect(() => {updateBounds()}, [forceUpdate])
 
     useEffect(() => {
         // initialize the slider's bounds
@@ -42,6 +52,7 @@ const Slider = () => {
 
     const moveSlider = (e: MouseEvent) => {
         let new_val = Math.max(Math.min(e.clientX - sliderBounds.left, sliderBounds.right - sliderBounds.left), 0)
+        sliderValueRef.current = new_val / (sliderBounds.right - sliderBounds.left);
         setSliderX(new_val)
     }
 
@@ -50,6 +61,10 @@ const Slider = () => {
         document.removeEventListener('mouseup', endSlide);
         setSliding(false);
         setShowBubble(false);
+
+        if (onChange) {
+            onChange(sliderValueRef.current)
+        }
     }
 
     const initBubble = () => {
@@ -60,12 +75,22 @@ const Slider = () => {
         else setShowBubble(false)
     }
 
+    const showNumberLine = () => {
+        let divisions = Math.floor((sliderBounds.right - sliderBounds.left) / 80)
+        return Array.from(new Array(divisions), (_: any, i: number) => {
+            let ratio = ((1 / divisions) * i) + (1/(2 * divisions))
+            return (<div key={i} 
+                style={{width: `${100/divisions}%`}}
+                className={`number ${i == 0 ? 'first' : ''}`}>{getValueAt(ratio)}</div>)
+        })
+    }
+
     const [showBubble, setShowBubble] = useState<boolean>(false)
     const showBubbleSpring = useSpring(0, {stiffness: 150})
     const scaleBubbleTransform = useTransform(showBubbleSpring, [0, 1], [0.5, 1])
     const rotateBubbleTransform = useTransform(showBubbleSpring, [0, 1], [-25, 0], {clamp: false})
 
-    const showPointerSpring = useSpring(0)
+    const showPointerSpring = useSpring(0, {duration: 200})
     const pointerTranslateTransform = useTransform(showPointerSpring, [0, 1], [0, -6.5])
 
     useEffect(() => {
@@ -87,6 +112,15 @@ const Slider = () => {
         }
     }, [showBubble])
 
+    const getValue = () => getValueAt(sliderValueRef.current)
+    
+
+    const getValueAt = (ratio: number) => {
+        let val_ = (range.end - range.start) * ratio
+        if (toStr) return toStr(val_)
+        return val_
+    }
+
     return (<div className="form-input-slider" ref={sliderContainerRef}>
             <div className="slider-ctrl" 
                 onMouseOver={initBubble}
@@ -101,12 +135,17 @@ const Slider = () => {
                         translateX: `var(--translate-x)`,
                         rotateZ: rotateBubbleTransform
                     }}
-                >Sample Input 123<motion.div className="triangle-ptr" 
+                >{getValue()}<motion.div className="triangle-ptr" 
                     style={{
                         bottom: pointerTranslateTransform,
                         opacity: showPointerSpring
                     }}
                 /></motion.div>
+            </div>
+
+            {/* Number Line */}
+            <div className="number-line">
+                {showNumberLine()}
             </div>
     </div>)
 }
