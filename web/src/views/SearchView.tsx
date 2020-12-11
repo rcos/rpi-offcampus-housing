@@ -4,6 +4,7 @@ import Slider from '../components/toolbox/form/Slider';
 import RangeSlider from '../components/toolbox/form/RangeSlider';
 import Counter, {positiveOnly, maxVal} from '../components/toolbox/form/Counter';
 import MoreDetails from '../components/toolbox/misc/MoreDetails'
+import {useNumberCounter} from '../components/hooks/useNumberCounter'
 
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
@@ -13,6 +14,11 @@ const SearchView = () => {
     const leftContainerRef = useRef<HTMLDivElement>(null)
     const [leftFilterWidth, setLeftFilterWidth] = useState<number>(400)
     const [contentStart, setContentStart] = useState<number>(0)
+
+    const resultsCount = useNumberCounter({
+        value: 50,
+        duration: 1000
+    })
 
     useEffect(() => {
         updateFilterWidth ()
@@ -37,6 +43,11 @@ const SearchView = () => {
         left_attachment={<div className="filter-map-attachment">
 
             {/* Left Side */}
+            <div className="section-header-2" style={{height: `30px`}}>
+                <div className="title-area">Search</div>
+                <div className="counter_">{resultsCount} Properties</div>
+            </div>
+            
             <div className="left-side_" ref={leftContainerRef} style={{
                 // left: `${leftFilterProps.left}px`,
                 // width: `${leftFilterProps.width}px`

@@ -43,22 +43,13 @@ const ViewWrapper = ({children,
   onContentStart}: ViewWrapperProps) => {
 
   const contentStartRef = useRef<HTMLDivElement>(null)
+  const contentEndRef = useRef<HTMLDivElement>(null)
   const [SubmitFeedback, {data: submissionData}] = useSubmitFeedbackMutation()
   const user = useSelector((state: ReduxState) => state.user)
-  const containerRef = useRef<HTMLDivElement>(null)
   // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false)
   const [menuCollapsed, setMenuCollapsed] = useState<boolean>(false)
-
-  const setHeight = () => {
-    // set the height
-    if (containerRef.current == null) return;
-    let bounding = containerRef.current.getBoundingClientRect()
-    let viewportHeight = document.documentElement.clientHeight
-
-    let height_ = viewportHeight - bounding.top - 20
-    containerRef.current.style.height = `${height_}px`
-  }
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false)
 
   useEffect(() => {
     if (submissionData) {
@@ -84,24 +75,6 @@ const ViewWrapper = ({children,
       if (u_2 != null) clearTimeout(u_2)
     }
   }, [feedbackSubmitted])
-
-  useEffect(() => {
-    setHeight ()
-    let t_1 = setTimeout(setHeight, 50)
-    let t_2 = setTimeout(setHeight, 100)
-    let t_3 = setTimeout(setHeight, 200)
-    let t_4 = setTimeout(setHeight, 400)
-
-    window.addEventListener('resize', setHeight)
-
-    return () => {
-      window.removeEventListener('resize', setHeight)
-      clearTimeout(t_1)
-      clearTimeout(t_2)
-      clearTimeout(t_3)
-      clearTimeout(t_4)
-    }
-  }, [containerRef])
 
   const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
 
@@ -162,16 +135,12 @@ const ViewWrapper = ({children,
     if (user && user.type && user.type == "student" && user.user && user.user.elevated_privileges) {
       return user.user.elevated_privileges.includes("ownership_reviewer")
     }
-    else {
-    }
     return false;
   }
 
   const logout = () => {
-    // TODO implement logout
     AuthAPI.logout()
     .then(res => {
-      
       // clear student auth
       window.location.reload()
     })
@@ -307,13 +276,27 @@ const ViewWrapper = ({children,
   const leftContainerMarginTransform = useTransform(menuCollapseIntermediate, (x: number) => {
     if (contentStartRef.current) {
       let bounds_ = contentStartRef.current.getBoundingClientRect();
-      console.log(`offset => ${bounds_.right}px`)
       return `${bounds_.right}px`;
     }
     return`${((200 - 60) * x) + 60 + 50}px`
   })
-  const rightContainerMarginTransform = useTransform(menuCollapseIntermediate, [0, 1], [250, 250])
 
+  // collapse sidebar logic
+  const sidebarCollapseIntermediate = useSpring(sidebarCollapsed ? 0 : 1)
+  const sidebarWidthCollapseTransform = useTransform(sidebarCollapseIntermediate, [0, 1], [0, 200])
+  const rightContainerMarginTransform = useTransform(sidebarCollapseIntermediate, (x: number) => {
+    if (contentEndRef.current) {
+      let bounds_ = contentEndRef.current.getBoundingClientRect();
+      return `${document.documentElement.clientWidth - bounds_.left}px`;
+    }
+    // return `${((200 - 60) * x) + 60 + 50}px`
+    return `0px`
+  })
+
+  useEffect(() => {
+    if (sidebarCollapsed) sidebarCollapseIntermediate.set(0)
+    else sidebarCollapseIntermediate.set(1)
+  }, [sidebarCollapsed])
 
   /**
    * menuCollapsed effector
@@ -471,6 +454,18 @@ const ViewWrapper = ({children,
 
     </motion.div>
 
+    <motion.div className="vertical-sidebar" style={{
+      width: sidebarWidthCollapseTransform
+    }}>
+      <div 
+        onClick={() => {setSidebarCollapsed(!sidebarCollapsed)}}
+        className={`menu-collapse-btn ${sidebarCollapsed? 'collapsed' : ''}`}>
+        <HiOutlineChevronLeft />
+      </div>
+      <div className="content-end-indicator" ref={contentEndRef} />
+
+    </motion.div>
+
     {/* <Centered height="100%" horizontalBuffer={isTablet? 150 : 600}> */}
     <motion.div style={{
       marginLeft: leftContainerMarginTransform,
@@ -484,7 +479,7 @@ const ViewWrapper = ({children,
           {/* {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
           {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />} */}
         </div>}
-        <div className="app-view-area" ref={containerRef}>
+        <div className="app-view-area">
           <div className="content-area">
             {children}
           </div>
