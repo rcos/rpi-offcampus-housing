@@ -51,7 +51,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   
   const defaultRoute = (user_type: number): string => {
     if ((user_type & AccessLevels.STUDENT) != 0) return '/search'
-    if ((user_type & AccessLevels.LANDLORD) != 0) return '/landlord/properties'
+    if ((user_type & AccessLevels.LANDLORD) != 0) return '/landlord/dashboard'
     if ((user_type & AccessLevels.UNAUTH) != 0) return '/'
     return '/'
   }
@@ -70,9 +70,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   const [institutionId, setInstitutionId] = useState<string | null>(null)
   const [getInstitution, {data: instutionData, loading: institutionLoading, error}] = useGetInstitutionLazyQuery({variables: {id: institutionId == null ? "" : institutionId}})
 
-  useEffect(() => {
-    console.log(`AuthRoute loaded!`)
-  }, [])
 
   useEffect(() => {
 
@@ -85,7 +82,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
     // dispatch setInstitution
     if (!institutionLoading && instutionData && instutionData.getInstitution.data && instutionData.getInstitution.success) {
-      console.log(`Calling dispatch setInstitution to: ${instutionData.getInstitution.data}`)
       dispatch(setInstitution(instutionData.getInstitution.data))
     }
 
@@ -100,9 +96,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   }, [institutionId])
 
   useEffect(() => {
-
-    console.log(`AuthRoute: USER CHANGED`)
-    console.log(user)
 
     setAuth({
       isAuthenticated: user == null ? false : user.authenticated,
@@ -121,11 +114,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     
 
   }, [user])
-
-  useEffect(() => {
-    console.log(`Institution Data:`)
-    console.log(institution)
-  }, [institution])
 
   const hasAccess = (access_flag: number): boolean => ( accessLevel & access_flag ) != 0
 

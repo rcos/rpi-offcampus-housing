@@ -3,6 +3,7 @@ import ViewWrapper from '../components/ViewWrapper'
 import {HiClipboard} from 'react-icons/hi'
 import {useGetOwnershipsInReviewQuery, Ownership} from '../API/queries/types/graphqlFragmentTypes'
 
+import {useNumberCounter} from '../components/hooks/useNumberCounter'
 import SortableList, {EntryValue} from '../components/toolbox/layout/SortableList'
 import { useHistory } from 'react-router-dom'
 
@@ -22,18 +23,18 @@ const OwnershipReview = () => {
       }
   }, [ownershipsInReviewData])
 
-  useEffect(() => {
-    console.log(`TEST`)
-    console.log(ownershipsInReview)
-  }, [ownershipsInReview])
+
+  let formCounter = useNumberCounter({
+    value: ownershipsInReview ? ownershipsInReview.length : 0,
+    duration: 800
+  })
 
   return (<ViewWrapper>
     <div>
       
-    <div className="section-header left-and-right" ref={headerRef}>
-      <div className="icon-area"><HiClipboard /></div>
+    <div className="section-header-2" ref={headerRef}>
       <div className="title-area">Ownership Forms</div>
-      <div className="app-label">{ownershipsInReview.length} forms</div>
+      <div className="counter_">{formCounter} forms</div>
     </div>
 
     {!ownershipsInReviewData && <div>Loading TODO add loading animation</div>}

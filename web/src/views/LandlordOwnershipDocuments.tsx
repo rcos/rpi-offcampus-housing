@@ -53,7 +53,6 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
   const [AddDocuments, {data: newOwnershipDocuments}] = useAddOwnershipDocumentsMutation()
 
   useEffect(() => {
-    console.log(`useEffect: New Ownership Documents`, newOwnershipDocuments)
     setUploadsInFlight([])
   }, [newOwnershipDocuments])
 
@@ -124,11 +123,24 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
 
     // file uploader
     const handleFileUpload = (e: any) => {
-      if (e.path.length == 0) {
+
+      if (Object.prototype.hasOwnProperty.call(e, 'path') && e.path.length == 0) {
         console.error(`Event path is empty`)
         return;
       }
-      let files_ = e.path[0].files
+
+
+      let files_ = Object.prototype.hasOwnProperty.call(e, 'path') ? e.path[0].files : null
+      // for firefox..
+      if (files_ == null) {
+        files_ = e.target.files
+      }
+
+      if (files_ == null) {
+        console.error(`No files found..`)
+        return;
+      }
+
       if (Object.keys(files_).length == 0) {
         console.error(`Files is empty..`)
         return;
@@ -174,7 +186,6 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
         .then((result) => {
           if (result.data && result.data.success) {
             let files_uploaded = result.data.files_uploaded
-            console.log(`Files Uploaded:`, files_uploaded)
 
             // TODO add these files to the ownership of the landlord
             AddDocuments({

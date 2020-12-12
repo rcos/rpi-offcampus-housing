@@ -17,6 +17,7 @@ import './assets/css/layout.scss'
 import './assets/css/fonts.scss'
 
 // router paths
+import SearchView_ from './views/SearchView'
 import SearchView from './views/Search'
 import LandlordLoginView from './views/LandlordLogin'
 import LandlordRegisterView from './views/LandlordRegister'
@@ -89,7 +90,7 @@ const Routes = () => {
           {/* Restricted Paths */}
             {/* Student Only  */}
             <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/student/register/complete" component={StudentRegisterComplete} />
-            <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView} />
+            <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/search" component={SearchView_} />
             <AuthRoute accessLevel={AccessLevels.STUDENT} exact path="/collection" component={CollectionView} />
 
               {/* Mod Console (Ownership Reviewer) */}
@@ -98,7 +99,7 @@ const Routes = () => {
               <AuthRoute accessLevel={AccessLevels.OWNERSHIP_REVIEWER} exact path="/ownership/review/:id" component={({match}) => (<OwnershipDoc ownership_id={match.params.id} />)} />
 
             {/* Landlord Only */}
-            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/properties" component={LandlordDashboard} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={({match}) => (<LandlordOwnershipDocuments ownership_id={match.params.id} />)} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/verify/phone-number" component={PhoneVerifyView} />

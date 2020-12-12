@@ -124,9 +124,6 @@ const AlertController = ({alertInfo}: AlertControllerInterface) => {
   const getAlertContents = (data_: any): JSX.Element[] => {
     let contents: JSX.Element[] = []
 
-    console.log(`Alert Data:`)
-    console.log(data_)
-
     if (data_ == null) return contents
     if (alertQueueIndex >= data_.length || alertQueueIndex < 0) return contents
     let data = data_.data

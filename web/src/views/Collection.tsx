@@ -92,8 +92,7 @@ const CollectionView = () => {
     <div className="collection-holder">
 
       {/* Collection Header */}
-      <div className="section-header left-and-right" ref={headerRef}>
-        <div className="icon-area"><BiCollection /></div>
+      <div className="section-header-2" ref={headerRef}>
         <div className="title-area">Your Collection</div>
       </div>
 
@@ -228,7 +227,8 @@ const CollectionEntry = ({data}: ICollectionEntry) => {
         text="View"
         icon={<BiRightArrowAlt />}
         iconLocation="right"
-        background="#99E1D9"
+        textColor="white"
+        background="#96b5b1"
       />
     </div>
   </div>)

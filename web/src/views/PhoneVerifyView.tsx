@@ -77,8 +77,6 @@ const PhoneVerifyView = () => {
         let phone_number_ = `${phoneNumber.country_code}${phoneNumber.phone_number}`
         smsAPI.verifyPhone(phone_number_, confirmCode)
         .then(res => {
-            console.log(`Verify Phone`)
-            console.log(res)
             if (res.data.success) {
 
                 // update their phone number

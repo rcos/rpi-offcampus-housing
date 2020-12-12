@@ -32,14 +32,9 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
 
 
       // user is authenticated on our server
-      console.log(`FETCH USER:::`)
-      console.log(user_)
       if (user_ && user_.authenticated && user_.user && user_.user.type) {
         
-        console.log(`TYPE: ${user_.user.type}`)
-        
         if (user_.user.type == "student") {
-          console.log(`is student`)
           let user_data: Student = {
             _id: user_.user._id,
             first_name: user_.user.first_name,
@@ -64,7 +59,6 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
         }
 
         else if (user_.user.type == "landlord") {
-          console.log(`is landlord`)
           let user_data: Landlord = {
             _id: user_.user._id,
             first_name: user_.user.first_name,
