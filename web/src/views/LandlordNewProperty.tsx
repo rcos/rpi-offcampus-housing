@@ -201,11 +201,13 @@ const LandlordNewProperty = () => {
   return (<Centered width={isMobile ? 300 : 400} height={500}>
     <div>
 
-      <div className="title-1" style={{marginBottom: '20px'}}>Property Registration</div>
+      <div className="section-header-3">
+        <div className="title-area">Property Registration</div>
+      </div>
 
       {/* First And Last Name */}
 
-      <div className="padded upper">
+      <div>
         <Input label="Primary Address Line" 
           icon={<BiHomeAlt />}
           onChange={(val) => { let reg2 = propertyInfo; reg2.address_line = val; setPropertyInfo(reg2) }}
@@ -283,7 +285,8 @@ const LandlordNewProperty = () => {
           }}
           text="Next"
           iconLocation="right"
-          background="#63db97"
+          textColor="white"
+          background="#3B4353"
         />
       </div>
 

@@ -1,13 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {useMediaQuery} from 'react-responsive'
-import {HiPlus} from 'react-icons/hi'
-import {RiSave3Line} from 'react-icons/ri'
 import {useHistory} from 'react-router'
 import {useSelector} from 'react-redux'
 
 import {OwnershipDocument} from '../API/queries/types/graphqlFragmentTypes'
-import Fixate from '../components/toolbox/layout/Fixate'
-import CommentBubble from '../components/toolbox/misc/CommentBubble'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {
   useGetOwnershipLazyQuery, 
@@ -233,20 +229,22 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
       {/* Button Area */}
       <div style={{marginBottom: '20px', width: '40%'}}>
       </div>
-      <div className="title-1" style={{marginBottom: '20px'}}>Property Ownership</div>
+      <div className="section-header-3">
+        <div className="title-area">Property Ownership</div>
+      </div>
 
       {/* Property Location */}
-      {propertyData && <div className="title-0" style={{marginBottom: '20px'}}>
+      {propertyData && <div className="title-0" style={{
+        marginBottom: '8px',
+        marginTop: `2px`,
+        textTransform: 'capitalize'
+      }}>
         {propertyData.getProperty.data ? propertyData.getProperty.data.location : '__'}
       </div>}
 
       {/* Status */}
       {ownershipData && 
-      <CommentBubble 
-        header="status"
-        message={getCommentMessage ()}
-        color={getCommentColor ()}
-      />}
+      <div className="text-on-bg">{getCommentMessage()}</div>}
 
       {/* Documents Uploaded */}
       <div style={{marginBottom: '20px'}} />
@@ -287,8 +285,10 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
     {/* document count */}
     <div className="title-1" style={{
       paddingLeft: '5px',
-      height: '50px',
-      lineHeight: '50px'
+      height: '40px',
+      lineHeight: `40px`,
+      borderBottom: `1px solid #E1E6EA`,
+      marginBottom: `5px`
       }}>
       {documents.length} {documents.length == 1 ? "Document" : "Documents"} <div
         style={{
@@ -306,9 +306,8 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
       <div className="add-docs-btn-area">
           <Button 
             text="Upload Document(s)"
-            icon={<HiPlus />}
-            iconLocation="left"
-            background="#99E1D9"
+            background="#96b5b1"
+            textColor="white"
             onClick={uploadEnabled ? chooseDocument : () => {}}
           />
       </div>}
@@ -321,9 +320,9 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
         <div>
           <Button 
             text="Upload Document(s)"
-            icon={<HiPlus />}
             iconLocation="left"
-            background="#99E1D9"
+            background="#96b5b1"
+            textColor="white"
             onClick={uploadEnabled ? chooseDocument : () => {}}
           />
         </div>

@@ -408,7 +408,7 @@ body {
 
 .dropdown-wrapper {
   z-index: 1;
-  background-color: white;
+  background-color: $navyVeryLight;
   .dropdown{
     border-left: 1px solid $navy;
     border-right: 1px solid $navy;
@@ -420,7 +420,7 @@ body {
     left: 0px;
     right: 0px;
     top: calc(100% - 1px);
-    background-color: white;
+    background-color: $navyVeryLight;
 
     .section {
       text-transform: uppercase;
@@ -440,7 +440,7 @@ body {
       line-height: 26px;
       font-size: 0.7rem;
       cursor: pointer;
-      background-color: white;
+      background-color: $navyVeryLight;
       transition: background 0.25s;
       letter-spacing: 0.8px;
       position: relative;
@@ -1208,7 +1208,8 @@ body {
 .title-1 {
   font-size: 0.85rem;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
+  font-family: sans-serif;
 }
 
 .title-0 {
@@ -1706,15 +1707,17 @@ body {
 
 .document-previews {
   width: 100%;
-  border: 1px solid black;
   position: relative;
   border-radius: 3px;
   min-height: 300px;
+  background-color: white;
+  box-shadow: 0px 3px 5px rgba(59, 67, 83, 0.05);
 
   .add-docs-btn-area {
     float: right;
     margin-right: 10px;
-    margin-top: 10px;
+    margin-top: 5px;
+    line-height: normal;
   }
 
   &.empty {
@@ -1723,6 +1726,7 @@ body {
   }
   
   .empty {
+    font-family: sans-serif;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -1738,9 +1742,10 @@ body {
     grid-column-gap: 0.2rem;
     grid-row-gap: 0.8rem;
     margin-left: 6px;
+    color: $navy;
 
     .document-entry {
-      background-color: $lightgrey;
+      background-color: $navyLight;
       width: 190px;
       height: 30px;
       position: relative;
@@ -1765,7 +1770,7 @@ body {
         transition: border 0.25s;
 
         &:hover {
-          border: 1px solid $grey;
+          border: 1px solid $navy;
         }
       }
 
@@ -1778,14 +1783,14 @@ body {
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgba(0, 0, 0, 0.1);
+          background-color: rgba(0, 0, 0, 0.03);
           overflow: hidden;
           
           div {
             position: absolute;
             width: 40px;
             height: 3px;
-            background-color: $cyanDark;
+            background-color: $navy;
             animation: document-upload-loader 5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
           }
         }
