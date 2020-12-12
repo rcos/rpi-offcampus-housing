@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ViewWrapper from '../components/ViewWrapper'
-import {HiClipboard} from 'react-icons/hi'
-import {useGetOwnershipsInReviewQuery, Ownership} from '../API/queries/types/graphqlFragmentTypes'
+import {useGetOwnershipsInReviewQuery, Ownership, Property} from '../API/queries/types/graphqlFragmentTypes'
 
 import {useNumberCounter} from '../components/hooks/useNumberCounter'
 import SortableList, {EntryValue} from '../components/toolbox/layout/SortableList'
@@ -29,6 +28,8 @@ const OwnershipReview = () => {
     duration: 800
   })
 
+  const getLocation = (property: Property) => `${property.address_line} ${property.address_line_2}, ${property.city} ${property.state}, ${property.zip}`
+
   return (<ViewWrapper>
     <div>
       
@@ -52,7 +53,7 @@ const OwnershipReview = () => {
           },
           "conflicts": "no",
           "assigned-to": "-",
-          "address": ownership_.property_doc ? ownership_.property_doc.location : '',
+          "address": ownership_.property_doc ? getLocation(ownership_.property_doc) : '',
           "documents": {
             data: ownership_.ownership_documents.length,
             toString: (data: number) => data.toString()

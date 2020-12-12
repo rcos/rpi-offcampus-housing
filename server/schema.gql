@@ -172,11 +172,15 @@ input OwnershipDocumentInput {
 """Property model"""
 type Property {
   _id: ID!
+  address_line: String!
+  address_line_2: String
+  city: String!
   landlord: String!
   landlord_doc: Landlord
-  location: String!
   sq_ft: Float!
+  state: String!
   submission_id: String
+  zip: String!
 }
 
 type PropertyAPIResponse {
@@ -224,8 +228,9 @@ type Query {
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
   getOwnership(_id: String!): OwnershipAPIResponse!
   getOwnershipConflicts(ownership_id: String!): OwnershipCollectionAPIResponse!
-  getOwnershipsForLandlord(landlord_id: String!): OwnershipCollectionAPIResponse!
+  getOwnershipsForLandlord(landlord_id: String!, with_landlord: Boolean, with_properties: Boolean): OwnershipCollectionAPIResponse!
   getOwnershipsInReview: OwnershipCollectionAPIResponse!
+  getPropertiesForLandlord(landlord_id: String!, status: String): PropertyListAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!

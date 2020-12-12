@@ -2241,7 +2241,7 @@ body {
 }
 
 .subtle-button {
-  background-color: $limewhite;
+  background-color: $navyLight;
   font-family: mukta;
   font-size: 0.75rem;
   border-radius: 3px;
@@ -3213,5 +3213,21 @@ body {
   .tab-body {
     position: relative;
     z-index: 1;
+  }
+}
+
+.no-entries {
+  width: 100%;
+  height: 150px;
+  position: relative;
+
+  .message {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: sans-serif;
+    font-style: italic;
+    font-size: 0.9rem;
   }
 }

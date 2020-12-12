@@ -144,7 +144,7 @@ const PhoneVerifyView = () => {
                     position: 'relative'
                 }}>
                     <span style={{
-                        color: `#79b5ae`
+                        color: `#96b5b1`
                     }}>
                         {phoneNumber.country_code} {phoneNumber.phone_number}
                     </span>
@@ -179,7 +179,8 @@ const PhoneVerifyView = () => {
                     }}>
                         <Button 
                             text="Verify"
-                            background="#99E1D9"
+                            background="#3B4353"
+                            textColor="white"
                             onClick={verify}
                         />
                     </div>
@@ -257,7 +258,8 @@ const PhoneVerifyView = () => {
                 <div style={{width: `200px`, float: `right`, marginTop: `10px`}}>
                     <Button 
                         text="Send"
-                        background="#99E1D9"
+                        textColor="white"
+                        background="#3B4353"
                         onClick={initVerification}
                     />
                 </div>

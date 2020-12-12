@@ -14,6 +14,15 @@ query GetProperty(
   }
 }
 
+query GetPropertiesForLandlord(
+  $landlord_id: String!,
+  $status: String
+) {
+  getPropertiesForLandlord(landlord_id:$landlord_id, status: $status) {
+    ...PropertyListAPIResponseFields
+  }
+}
+
 query VerifyAddress(
   $address_1: String!,
   $address_2: String!,
@@ -37,9 +46,13 @@ fragment PropertyAPIResponseFields on PropertyAPIResponse {
   error
   data {
     _id
-    location
     landlord
     sq_ft
+    address_line
+    address_line_2
+    city
+    state
+    zip
   }
 }
 
@@ -48,10 +61,14 @@ fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
   error
   data {
     properties {
-      location
-      sq_ft
-      landlord
       _id
+      landlord
+      sq_ft
+      address_line
+      address_line_2
+      city
+      state
+      zip
     }
   }
 }

@@ -3,7 +3,7 @@ import {useMediaQuery} from 'react-responsive'
 import {useHistory} from 'react-router'
 import {useSelector} from 'react-redux'
 
-import {OwnershipDocument} from '../API/queries/types/graphqlFragmentTypes'
+import {OwnershipDocument, Property} from '../API/queries/types/graphqlFragmentTypes'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {
   useGetOwnershipLazyQuery, 
@@ -222,6 +222,8 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
 
   }
 
+  const getLocation = (property: Property) => `${property.address_line} ${property.address_line_2}, ${property.city} ${property.state}, ${property.zip}`
+
   const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
   return (<Centered width={isMobile ? 300 : 600} height={`100%`}>
     <div style={{paddingTop: '80px'}}>
@@ -239,7 +241,7 @@ const LandlordOwnershipDocuments = ({ownership_id}:ILandlordOwnershipDocuments) 
         marginTop: `2px`,
         textTransform: 'capitalize'
       }}>
-        {propertyData.getProperty.data ? propertyData.getProperty.data.location : '__'}
+        {propertyData.getProperty.data ? getLocation(propertyData.getProperty.data) : '__'}
       </div>}
 
       {/* Status */}

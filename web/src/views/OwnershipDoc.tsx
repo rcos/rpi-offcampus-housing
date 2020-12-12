@@ -220,7 +220,11 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         fontSize: '1.3rem',
                         flexGrow: 1
                     }}>
-                        {ownershipDoc.property_doc!.location}
+                        {ownershipDoc.property_doc!.address_line}
+                        {ownershipDoc.property_doc!.address_line_2},
+                        {ownershipDoc.property_doc!.city}
+                        {ownershipDoc.property_doc!.state}
+                        {ownershipDoc.property_doc!.zip}
                     </div>
                     <div style={{
                         minWidth: '300px',

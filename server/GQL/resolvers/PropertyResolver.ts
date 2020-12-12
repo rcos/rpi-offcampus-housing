@@ -8,6 +8,7 @@ import {Property,
   AddressVerificationAPIResponse,
   PropertyListAPIResponse} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
+import {Ownership, OwnershipModel, StatusType} from '../entities/Ownership'
 import {DocumentType} from "@typegoose/typegoose"
 import mongoose from 'mongoose'
 import chalk from 'chalk'
@@ -93,6 +94,41 @@ export class PropertyResolver {
       }
     }
 
+  }
+
+  /**
+   * getPropertiesForLandlord()
+   * @decs Get the list of properties that this landlord owns that
+   * have there ownerships confirmed
+   * 
+   * @param landlord_id: string => The id of the landlord to get the properties of 
+   */
+  @Query(() => PropertyListAPIResponse)
+  async getPropertiesForLandlord(
+    @Arg("landlord_id") landlord_id: string,
+    @Arg("status", type => String, {nullable: true}) status: StatusType
+  ): Promise<PropertyListAPIResponse> {
+
+    console.log(chalk.bgBlue(`👉 getPropertiesForLandlord()`))
+    if (!ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: landlord_id (${landlord_id}) is not a valid objec tid.`))
+      return {
+        success: false, error: `Invalid landlord_id`
+      }
+    }
+
+    let ownerships: DocumentType<Ownership>[] = await OwnershipModel.find({landlord_id}) as DocumentType<Ownership>[]
+    let _properties: Promise<DocumentType<Property>>[] = ownerships
+      .filter((ownership: DocumentType<Ownership>) => status != null ? ownership.status == status : ownership.status == 'confirmed')
+      .map(async (ownership: DocumentType<Ownership>, i: number) => await PropertyModel.findById(ownership.property_id) as DocumentType<Property>)
+
+    let properties = []
+    for (let i = 0; i < _properties.length; ++i) properties.push(await _properties[i])
+
+    return {
+      success: true,
+      data: { properties }
+    }
   }
 
   @Query(() => AddressVerificationAPIResponse)

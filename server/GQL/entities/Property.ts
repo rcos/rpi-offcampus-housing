@@ -18,9 +18,25 @@ export class Property {
   @prop()
   landlord_doc?: Landlord;
 
-  @Field()
-  @prop()
-  location: string;
+  @Field(type => String)
+  @prop({type: String})
+  address_line: string;
+  
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  address_line_2?: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  city: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  state: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  zip: string;
 
   @Field()
   @prop()

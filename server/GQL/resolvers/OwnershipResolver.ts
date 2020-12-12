@@ -1,6 +1,6 @@
 import {Resolver, Mutation, Arg, Args, Query} from 'type-graphql'
 import {DocumentType} from "@typegoose/typegoose"
-import mongoose from 'mongoose'
+import mongoose, {DocumentQuery} from 'mongoose'
 import chalk from 'chalk'
 import {Ownership, 
   OwnershipModel, 
@@ -74,6 +74,7 @@ export class OwnershipResolver {
   async getOwnershipsInReview() : Promise<OwnershipCollectionAPIResponse>
   {
 
+    console.log(chalk.bgBlue(`👉 getOwnershipsInReview()`))
     let under_review: DocumentType<Ownership>[] = await OwnershipModel.find({status: "in-review"})
     // fill the landlord_doc parts
     for (let i = 0; i < under_review.length; ++i) {
@@ -81,6 +82,7 @@ export class OwnershipResolver {
       under_review[i].property_doc = await PropertyModel.findById(under_review[i].property_id) as DocumentType<Property>
     }
 
+    console.log(chalk.bgGreen(`✔ Successfully retrieved ownerships in review (${under_review.length} documents)`))
     return {
       success: true,
       data: {
@@ -97,7 +99,9 @@ export class OwnershipResolver {
    */
   @Query(() => OwnershipCollectionAPIResponse)
   async getOwnershipsForLandlord(
-    @Arg("landlord_id") landlord_id: string
+    @Arg("landlord_id") landlord_id: string,
+    @Arg("with_properties", type => Boolean, {nullable: true}) with_properties?: boolean,
+    @Arg("with_landlord", type => Boolean, {nullable: true}) with_landlord?: boolean
   ): Promise<OwnershipCollectionAPIResponse>
   {
 
@@ -113,15 +117,27 @@ export class OwnershipResolver {
     // find the ownerships
     let ownerships: DocumentType<Ownership>[] = await OwnershipModel.find({landlord_id}) as DocumentType<Ownership>[]
 
-    let property_docs: DocumentType<Property>[] = []
     for (let i = 0; i < ownerships.length; ++i) {
       if (!ObjectId.isValid(ownerships[i].property_id)) {
         console.error(`❌ Error: Ownership with id ${ownerships[i]._id} has an invalid property_id value of ${ownerships[i].property_id}`)
         return { success: false, error: `Data malformed` }
       }
+    }
 
-      let property_: DocumentType<Property> | null = await PropertyModel.findById(ownerships[i].property_id) as DocumentType<Property>
-      ownerships[i].property_doc = property_
+    // get the properties
+      let property_promises: DocumentQuery<DocumentType<Property> | null, DocumentType<Property>, {}>[] = []
+      let landlord_promise: DocumentQuery<DocumentType<Landlord> | null, DocumentType<Landlord>, {}>;
+    if (with_properties == true) {
+      for (let i = 0; i < ownerships.length; ++i) property_promises.push(PropertyModel.findById(ownerships[i].property_id))
+    }
+    if (with_landlord == true) {
+      landlord_promise = LandlordModel.findById(landlord_id)
+    }
+
+    for (let i = 0; i < property_promises.length && i < ownerships.length; ++i) ownerships[i].property_doc = await property_promises[i] as DocumentType<Property>
+    if (with_landlord == true) {
+      let landlord_: DocumentType<Landlord> = await landlord_promise! as DocumentType<Landlord>;
+      for (let i = 0; i < ownerships.length; ++i) ownerships[i].landlord_doc = landlord_;
     }
 
     console.log(chalk.bgGreen(`✔ Successfully retrieved ${ownerships.length} ownership documents for landlord with id ${landlord_id}`))
@@ -208,7 +224,13 @@ export class OwnershipResolver {
 
     // TODO find matching property
     let prop_address = `${address_line}, ${address_line_2}${address_line_2 == "" ? '' : ','} ${city} ${state}, ${zip_code}`;
-    let saved_prop: DocumentType<Property> | null = await PropertyModel.findOne({location: prop_address})
+    let saved_prop: DocumentType<Property> | null = await PropertyModel.findOne({
+      address_line,
+      address_line_2,
+      city,
+      state,
+      zip: zip_code
+    })
     /*
     Let's assume USPS gives us 1 address representation for each unique address
     With that assumption, then any property address entered should match at most 1 property object
@@ -219,7 +241,11 @@ export class OwnershipResolver {
       // that to the ownership.
       let property_ = new PropertyModel();
       property_.landlord = landlord_id;
-      property_.location = prop_address;
+      property_.address_line = address_line;
+      property_.address_line_2 = address_line_2;
+      property_.city = city;
+      property_.state = state;
+      property_.zip = zip_code;
       property_.sq_ft = -1;
       saved_prop = await property_.save() as DocumentType<Property>;
     }
