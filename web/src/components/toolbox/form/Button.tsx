@@ -1,4 +1,5 @@
 import React, {useRef} from 'react'
+import {Link} from 'react-router-dom'
 
 interface ButtonInterface {
   text?: string
@@ -7,11 +8,12 @@ interface ButtonInterface {
   border?: string
   textColor?: string
   background?: string
+  link_to?: string
   width?: number
   onClick?: Function
 }
 
-const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, background }: ButtonInterface) => {
+const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, textColor, background }: ButtonInterface) => {
 
   const buttonRef = useRef<HTMLDivElement>(null)
   const bgColor = (): string => {
@@ -52,7 +54,9 @@ const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, b
     window.removeEventListener(`mouseout`, endTransforms)
   }
 
-  return (<div 
+  return (<React.Fragment>
+
+  {link_to ? <Link to={link_to}><div 
     ref={buttonRef}
     className={`app-button ${getIconLocation()}-icon`}
     onMouseOver={initTransforms}
@@ -78,7 +82,35 @@ const Button = ({ text, icon, width, border, iconLocation, onClick, textColor, b
         {icon}
       </div>
     }</div>
-  </div>)
+  </div></Link>
+  : <div 
+    ref={buttonRef}
+    className={`app-button ${getIconLocation()}-icon`}
+    onMouseOver={initTransforms}
+    onClick={() => {
+      if (onClick) onClick ()
+    }}
+    style={{
+      backgroundColor: bgColor(),
+      color: textColor ? textColor : `black`,
+      width: `${width ?? width}px`
+    }}
+  >
+    <div className="button-holder">{
+      getIconLocation() == "left" &&
+      <div className={`icon-area ${getIconLocation()}`}>
+        {icon}
+      </div>
+    }
+    <div className={`text-area`}>{text}</div>
+    {
+      getIconLocation() == "right" &&
+      <div className={`icon-area ${getIconLocation()}`}>
+        {icon}
+      </div>
+    }</div>
+  </div>}
+  </React.Fragment>)
 }
 
 export default Button

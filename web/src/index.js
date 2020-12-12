@@ -99,7 +99,7 @@ const Routes = () => {
               <AuthRoute accessLevel={AccessLevels.OWNERSHIP_REVIEWER} exact path="/ownership/review/:id" component={({match}) => (<OwnershipDoc ownership_id={match.params.id} />)} />
 
             {/* Landlord Only */}
-            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/properties" component={LandlordDashboard} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={({match}) => (<LandlordOwnershipDocuments ownership_id={match.params.id} />)} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/verify/phone-number" component={PhoneVerifyView} />

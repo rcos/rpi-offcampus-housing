@@ -7,8 +7,9 @@ import Button from '../components/toolbox/form/Button'
 import {RiCheckLine} from 'react-icons/ri'
 import {usePopup} from '../components/hooks/usePopupHook'
 import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, 
-  HiOutlineHome, HiLogout, HiClipboard, HiOutlineChatAlt,
+  HiLogout, HiClipboard, HiOutlineChatAlt,
   HiOutlineChevronLeft, HiOutlineChevronRight, HiCog } from 'react-icons/hi';
+import {RiLayoutMasonryLine} from 'react-icons/ri';
 import { FiFileText } from 'react-icons/fi';
 import { BiSearch, BiCollection } from "react-icons/bi";
 import { Link } from 'react-router-dom';
@@ -32,6 +33,7 @@ interface PageLinkInfo {
 
 interface ViewWrapperProps {
   children: any
+  sidebar_content?: any
   left_attachment?: any
   left_attachment_width?: number
   onContentStart?: (val: number) => void
@@ -40,7 +42,10 @@ interface ViewWrapperProps {
 const ViewWrapper = ({children, 
   left_attachment, 
   left_attachment_width,
+  sidebar_content,
   onContentStart}: ViewWrapperProps) => {
+
+  const [DEBUG_MODE, SET_DEBUG_MODE] = useState<boolean>(true)
 
   const contentStartRef = useRef<HTMLDivElement>(null)
   const contentEndRef = useRef<HTMLDivElement>(null)
@@ -104,9 +109,9 @@ const ViewWrapper = ({children,
       else if (user.type && user.type == "landlord") {
         setPageLinks({
           properties: {
-            target: '/landlord/properties',
-            icon: <HiOutlineHome />,
-            name: "Properties"
+            target: '/landlord/dashboard',
+            icon: <RiLayoutMasonryLine />,
+            name: "Dashboard"
           },
           leases: {
             target: '/landlord/leases',
@@ -281,6 +286,8 @@ const ViewWrapper = ({children,
   })
 
   // collapse sidebar logic
+  const sidebarCollapseInitSpring = useSpring(sidebarCollapsed ? 0 : 1)
+
   const sidebarCollapseIntermediate = useSpring(sidebarCollapsed ? 0 : 1)
   const sidebarWidthCollapseTransform = useTransform(sidebarCollapseIntermediate, [0, 1], [0, 200])
   const rightContainerMarginTransform = useTransform(sidebarCollapseIntermediate, (x: number) => {
@@ -293,8 +300,24 @@ const ViewWrapper = ({children,
   })
 
   useEffect(() => {
-    if (sidebarCollapsed) sidebarCollapseIntermediate.set(0)
-    else sidebarCollapseIntermediate.set(1)
+    if (sidebarCollapsed) {
+      sidebarCollapseInitSpring.set(0)
+    }
+    else {
+      sidebarCollapseIntermediate.set(1)
+    }
+
+    let unmountSidebarCollapseInitSpring = sidebarCollapseInitSpring.onChange((x: number) => {
+      if (x == 0) sidebarCollapseIntermediate.set(0)
+    })
+    let unmountSidebarCollapseIntermediate = sidebarCollapseIntermediate.onChange((x: number) => {
+      if (x == 1) sidebarCollapseInitSpring.set(1)
+    })
+
+    return () => {
+      unmountSidebarCollapseInitSpring();
+      unmountSidebarCollapseIntermediate()
+    }
   }, [sidebarCollapsed])
 
   /**
@@ -341,8 +364,31 @@ const ViewWrapper = ({children,
 
   useEffect(() => {
     menuCollapseIntermediate.set(menuCollapsed ? 0.000000000001 : 9.999999999999);
-    // menuCollapseIntermediate.set(menuCollapsed ? 0 : 1);
+
+    const toggleDebugMode = (e: KeyboardEvent) => {
+      if (e.key === "q") SET_DEBUG_MODE (false)
+      if (e.key === "w") SET_DEBUG_MODE (true)
+    }
+    
+    // set debug mode event listener
+    window.addEventListener(`keypress`, toggleDebugMode)
+    return () => {
+      window.removeEventListener(`keypress`, toggleDebugMode)
+    }
   }, [])
+
+  useEffect(() => {
+    if (userControlVisible) {
+      userControlSpring.set(1)
+    }
+    else userControlSpring.set(0)
+  }, [userControlVisible])
+  const userControlSpring = useSpring(0)
+  const userControlRotateY = useTransform(userControlSpring, [0, 1], [-30, 0])
+  const userControlTranslateX = useTransform(userControlSpring, [0, 1], [-40, 0])
+  const userControlVisibility = useTransform(userControlSpring, (x: number) => {
+    return x < 0.01 ? 'hidden' : 'visible'
+  })
 
   return (<React.Fragment>
 
@@ -396,14 +442,20 @@ const ViewWrapper = ({children,
       </div>
       <div className="bottom-area">
         <div className={`user-control ${menuCollapsed ? 'collapsed' : ''}`}>
-        {user && user.type && user.type == "student" && <div 
+        {user && user.type && user.type == "student" ? <div 
         className={`photo-thumb ${menuCollapsed ? 'collapsed' : ''}`}
         onClick={() => setUserControlVisible(!userControlVisible)}>
           <img src={getSchoolThumbSource()} width="100%" />
           <motion.div className="user-settings" style={{
             opacity: userControlSettingsCollapsed
           }}><HiCog /></motion.div>
-        </div>}
+        </div>
+        :
+        <div className={`photo-thumb icon ${menuCollapsed ? 'collapsed' : ''}`}
+          onClick={() => setUserControlVisible(!userControlVisible)}>
+          <HiCog />
+        </div>
+        }
           <motion.div onClick={() => setUserControlVisible(!userControlVisible)} className="text-area" style={{
             opacity: menuCollapseInitSpring
           }}>
@@ -411,7 +463,15 @@ const ViewWrapper = ({children,
               <div className="arrow-icon"><HiOutlineChevronRight /></div>
             </motion.div>
 
-            {userControlVisible && <div className="user-control-menu">
+            <motion.div 
+            style={{
+              rotateY: userControlRotateY,
+              translateX: userControlTranslateX,
+              opacity: userControlSpring,
+              visibility: userControlVisibility,
+              perspective: `6.5cm`
+            }}
+            className="user-control-menu">
               <div className="header">User Control</div><div className="control-menu">
 
                 {/* Settings */}
@@ -432,7 +492,7 @@ const ViewWrapper = ({children,
                   <div className="ctrl-text-area">Logout</div>
                 </div>
               </div>
-            </div>}
+            </motion.div>
         </div>
       </div>
 
@@ -441,12 +501,21 @@ const ViewWrapper = ({children,
     {(left_attachment && left_attachment_width)?
       <div className="left-attachment-ctrl" style={{
         width: `${left_attachment_width}px`,
-        right: `${-1 * (left_attachment_width + 50)}px`
+        right: `${-1 * (left_attachment_width + 50)}px`,
+        border: DEBUG_MODE ? `1px solid blue` : ``,
+        boxSizing: 'border-box'
       }}>{left_attachment}
-        <div className="content-start-indicator" ref={contentStartRef} />
+        <div className="content-start-indicator" 
+        style={{opacity: DEBUG_MODE? 1 : 0}}
+        ref={contentStartRef} />
       </div>
-      : <div className="left-no-attachment-ctrl">
+      : <div className="left-no-attachment-ctrl"
+      style={{
+        border: DEBUG_MODE ? `1px solid blue` : ``,
+        boxSizing: 'border-box'
+      }}>
           <div className="content-start-indicator"
+          style={{opacity: DEBUG_MODE? 1 : 0}}
         ref={contentStartRef} />
       </div>
     }
@@ -461,7 +530,15 @@ const ViewWrapper = ({children,
         className={`menu-collapse-btn ${sidebarCollapsed? 'collapsed' : ''}`}>
         <HiOutlineChevronLeft />
       </div>
-      <div className="content-end-indicator" ref={contentEndRef} />
+      <div className="content-end-indicator" ref={contentEndRef} 
+        style={{opacity: DEBUG_MODE? 1 : 0}}
+      />
+
+      <motion.div style={{
+        opacity: sidebarCollapseInitSpring
+      }}>
+        {sidebar_content}
+      </motion.div>
 
     </motion.div>
 
@@ -469,17 +546,15 @@ const ViewWrapper = ({children,
     <motion.div style={{
       marginLeft: leftContainerMarginTransform,
       marginRight: rightContainerMarginTransform,
-      // border: `1px solid orange`,
       margin: `0 auto`
     }}>
       <React.Fragment>
         <div style={{marginTop: '20px'}}></div>
-        {false && <div style={{border: `1px solid black`}}>
-          {/* {user && user.type && user.type == "student" && <Navbar showNavbar={showNavbar} />}
-          {user && user.type && user.type == "landlord" && <LandlordNavbar showNavbar={showNavbar} />} */}
-        </div>}
         <div className="app-view-area">
-          <div className="content-area">
+          <div className="content-area" style={{
+            border: DEBUG_MODE ? `1px solid red` : ``,
+            boxSizing: 'border-box'
+          }}>
             {children}
           </div>
         </div>

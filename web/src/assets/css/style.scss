@@ -283,7 +283,7 @@ body {
 .app-button {
   outline: 1px solid transparent;
   color: white;
-  padding: 9px 20px;
+  padding: 6px 20px;
   border-radius: 5px;
   border: none;
   cursor: pointer;
@@ -298,12 +298,11 @@ body {
     
   .text-area {
     text-transform: capitalize;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     letter-spacing: 0.4px;
     display: inline-block;
     vertical-align: middle;
     font-family: Arial, Helvetica, sans-serif;
-    font-weight: 600;
   }
 
   .icon-area {
@@ -1007,7 +1006,6 @@ body {
   .content-area {
     flex-grow: 1;
     position: relative;
-    border: 1px solid red;
   }
 }
 
@@ -1243,6 +1241,28 @@ body {
   height: 40px;
   line-height: 40px;
   font-weight: 600;
+  
+
+  .icon-area {
+    width: 20px;
+    height: 40px;
+    margin-right: 5px;
+    transform: translateY(2px);
+    min-width: 20px;
+  }
+
+  .title-area {
+    font-size: 0.85rem;
+  }
+
+}
+
+.section-header-3 {
+
+  height: 40px;
+  line-height: 40px;
+  font-weight: 600;
+  font-family: sans-serif;
   
 
   .icon-area {
@@ -2442,6 +2462,19 @@ body {
             max-width: 40px;
             min-height: 40px;
             max-height: 40px;
+
+            &.icon {
+              line-height: 50px;
+              font-size: 1.35rem;
+            }
+          }
+
+          &.icon {
+            text-align: center;
+            line-height: 40px;
+            border: none;
+            font-size: 1.25rem;
+            transition: background 0.25s, font-size 0.25s, line-height 0.25s;
           }
 
           .user-settings {
@@ -2492,6 +2525,10 @@ body {
         }
 
         &:hover {
+          .photo-thumb.icon {
+            background-color: $navyVeryLight;
+          }
+
           .text-area {
             background-color: $navyVeryLight;
             .arrow-icon {
@@ -2645,7 +2682,6 @@ body {
     right: -650px;
     top: 20px;
     bottom: 20px;
-    border: 1px solid green;
 
     .content-start-indicator {
       width: 10px;
@@ -2662,7 +2698,6 @@ body {
     width: 0px;
     position: absolute;
     right: 0px;
-    border: 1px solid green;
 
     .content-start-indicator {
       width: 10px;
@@ -2976,5 +3011,202 @@ body {
     transform: translateY(1px);
     margin-left: 10px;
     color: $navyLightText;
+  }
+}
+
+
+.property-preview-container {
+  // display: flex;
+  // flex-wrap: wrap;
+  // justify-content: space-between;
+  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // minmax(30rem, 1fr)
+  grid-column-gap: 1.5rem;
+  grid-row-gap: 1rem;
+
+  .property-preview { 
+    margin-top: 20px;
+    cursor: pointer;
+    
+    .image-area {
+      width: 100%;
+      height: 130px;
+      border-radius: 3px;
+      background-color: #DEE5FF;
+    }
+
+    .address-line {
+      font-family: sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 8px;
+      color: $navy;
+    }
+
+    .sub-address-line {
+      font-size: 0.7rem;
+      color: $navyLightText;
+      margin-top: 5px;
+    }
+  }
+}
+
+.list-style-2 {
+  background-color: white;
+  margin-bottom: 8px;
+  display: flex;
+  position: relative;
+  padding: 5px 20px;
+  transition: padding 0.15s;
+  font-family: sans-serif;
+  cursor: pointer;
+  box-shadow: 0px 3px 5px rgba(59, 67, 83, 0.03);
+  border-radius: 3px;
+
+  &:hover {
+    padding: 5px 25px;
+    
+    &::before {
+      width: 15px;
+    }
+  }
+
+  &::before {
+    content: '';
+    width: 10px;
+    transition: width 0.15s;
+    background-color: $navy;
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  .primary {
+    color: $navy;
+    font-size: 0.7rem;
+  }
+
+  .secondary {
+    color: $navyLightText;
+    font-size: 0.7rem;
+    margin-left: 12px;
+    border-left: 1px solid $navyLightText;
+    padding-left: 12px;
+  }
+}
+
+.list-style-3 {
+  .task-item {
+    display: flex;
+    cursor: pointer;
+    background-color: $navyLight;
+    transition: background 0.15s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.23);
+    }
+
+    .list-item-number {
+      padding: 5px 0px;
+      width: 30px;
+      text-align: center;
+      margin-right: 10px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .list-item-value {      
+      padding: 5px 0;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.list-style-4 {
+  .list-item {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+    position: relative;
+    cursor: pointer;
+    font-family: sans-serif;
+    transition: background 0.15s, padding 0.15s;
+
+    &:hover {
+      background-color: $navyVeryLight;
+      padding: 4px 14px;
+
+      &::before {
+        width: 7px;
+      }
+    }
+
+    &::before {
+      transition: width 0.15s;
+      content: '';
+      width: 3px;
+      background-color: $navy;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
+
+.text-on-bg {
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  color: $navy;
+}
+
+.getting-started-attachment {
+  background-color: $navyLight;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.collapsable-tab {
+  &.at-end {
+    .count {
+      float: right;
+    }
+  }
+  
+  .tab {
+    color: $navy;
+    font-family: sans-serif;
+    padding: 5px 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+
+
+    .count {
+      background-color: $navy;
+      display: inline-block;
+      margin-left: 8px;
+      color: $navyVeryLight;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      vertical-align: top;
+      transform: translateY(-1px);
+      border-radius: 3px;
+      font-weight: 100;
+    }
+  }
+
+  .tab-body {
+    position: relative;
+    z-index: 1;
   }
 }

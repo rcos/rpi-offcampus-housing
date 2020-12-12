@@ -18,7 +18,10 @@ export const useNumberCounter = ({
     useEffect(() => {
 
         let ev = setInterval (() => {
-            valueRef.current = Math.min(value, Math.floor(valueRef.current + getTimeStep()))
+            valueRef.current = Math.max(
+                Math.min(value, Math.floor(valueRef.current + getTimeStep())),
+                valueRef.current + 1
+            )
             setValueState(valueRef.current)
             if (valueRef.current == value) clearInterval(ev)
         }, UPDATE_TIME);
