@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
 import {Ownership, Property} from '../API/queries/types/graphqlFragmentTypes'
@@ -9,10 +9,13 @@ import RectMouseTransform from '../components/toolbox/misc/RectMouseMagnet'
 import CollapsableTab from '../components/toolbox/misc/CollapsableTab'
 import NoEnties from '../components/toolbox/misc/NoEnties'
 import {useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+import {useHistory} from 'react-router'
+import {Link} from 'react-router-dom'
 
 
 const LandlordDashboard = () => {
 
+  const history = useHistory()
   const user = useSelector((state: ReduxState) => state.user)
   const [GetOwnershipsForLandlord, {data: ownershipsResponse}] = useGetOwnershipsForLandlordLazyQuery()
   const [propertyOwnerships, setProperyOwnerships] = useState<Ownership[]>([])
@@ -81,9 +84,11 @@ const LandlordDashboard = () => {
         <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Properties" count={propertyOwnerships.length}>
           <div className="list-style-4">
             {propertyOwnerships.map((ownership: Ownership, i: number) => 
-            <div className="list-item" key={i}>
-              <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
-            </div>)}
+            <Link key={i} to={`/landlord/property/${ownership.property_doc ? ownership.property_doc._id: '_'}`}>
+              <div className="list-item">
+                <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+              </div>
+            </Link>)}
           </div>
         </CollapsableTab>
         <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Leases" count={0}>
@@ -93,9 +98,11 @@ const LandlordDashboard = () => {
         <CollapsableTab counter_on_end={true} tab_name="In-Review" count={propertyOwnershipsInReview.length}>
           <div className="list-style-4">
             {propertyOwnershipsInReview.map((ownership: Ownership, i: number) => 
-            <div className="list-item" key={i}>
-              <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
-            </div>)}
+            <Link to={`/landlord/ownership-documents/${ownership._id}`} key={i}>
+              <div className="list-item">
+                <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+              </div>
+            </Link>)}
           </div>
         </CollapsableTab>}
       </div>
@@ -169,7 +176,7 @@ const LandlordDashboard = () => {
 
 const PropertyItem = ({property}: {property: Property}) => {
 
-  return (<div className="property-preview">
+  return (<Link to={`/landlord/property/${property._id}`}><div className="property-preview">
     
     <RectMouseTransform
       rotateXStrength={2.5}
@@ -179,16 +186,18 @@ const PropertyItem = ({property}: {property: Property}) => {
     <div className="address-line">{property.address_line} {property.address_line_2}</div>
     <div className="sub-address-line">{property.city} {property.state}, {property.zip}</div>
 
-  </div>)
+  </div></Link>)
 }
 
 const ReviewListItem = ({ownership}: {ownership: Ownership}) => {
 
-  return (<div className="list-style-2">
-    <div className="primary">{ownership.property_doc!.address_line} {ownership.property_doc!.address_line_2}</div>
-    <div className="secondary">{ownership.property_doc!.city} {ownership.property_doc!.state}, {ownership.property_doc!.zip}</div>
-    <div className="secondary">Submitted {dateToStr(new Date(ownership.date_submitted))}</div>
-  </div>)
+  return (<Link to={`/landlord/ownership-documents/${ownership._id}`}>
+    <div className="list-style-2">
+      <div className="primary">{ownership.property_doc!.address_line} {ownership.property_doc!.address_line_2}</div>
+      <div className="secondary">{ownership.property_doc!.city} {ownership.property_doc!.state}, {ownership.property_doc!.zip}</div>
+      <div className="secondary">Submitted {dateToStr(new Date(ownership.date_submitted))}</div>
+    </div>
+  </Link>)
 }
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]

@@ -3057,6 +3057,9 @@ body {
   }
 }
 
+a {
+  text-decoration: none; 
+}
 .list-style-2 {
   background-color: white;
   margin-bottom: 8px;
@@ -3090,7 +3093,6 @@ body {
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
   }
-
   .primary {
     color: $navy;
     font-size: 0.7rem;
@@ -3106,6 +3108,7 @@ body {
 }
 
 .list-style-3 {
+
   .task-item {
     display: flex;
     cursor: pointer;
@@ -3132,6 +3135,12 @@ body {
 }
 
 .list-style-4 {
+  
+  a { 
+    color: $navy;
+    text-decoration: none; 
+  }
+
   .list-item {
     padding: 4px 10px;
     font-size: 0.8rem;
