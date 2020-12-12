@@ -5,6 +5,7 @@ interface CounterProps {
     onChange?: (arg0: number) => void
     restrictions?: ((arg0: number) => boolean)[]
     incrementBy?: number
+    initial?: number
 }
 
 export const positiveOnly = (val: number) => val > 0
@@ -16,10 +17,16 @@ interface InclusiveOption {
 export const maxVal = (max_: number, {inclusive}: InclusiveOption = {inclusive: false}) => (val: number) => (inclusive ? val <= max_ : val < max_)
 export const minval = (min_: number, {inclusive}: InclusiveOption = {inclusive: false}) => (val: number) =>  (inclusive ? val >= min_ : val > min_)
 
-const Counter = ({onChange, incrementBy, restrictions}: CounterProps) => {
+const Counter = ({onChange, initial, incrementBy, restrictions}: CounterProps) => {
 
     const [value, setValue] = useState<number>(0)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (initial != undefined && initial != null) {
+            setValue(initial)
+        }
+    }, [])
 
     useEffect(() => {
         if (inputRef.current) {

@@ -1889,6 +1889,24 @@ body {
 }
 
 .textarea-holder {
+  position: relative;
+
+  .word-counter {
+    position: absolute;
+    right: 0;
+    font-size: 0.8rem;
+    font-family: monospace;
+    letter-spacing: 0.8px;
+
+    &.over-limit {
+      color: #ba4949;
+    }
+
+    &.good {
+      color: #52c470;
+    }
+  }
+
   textarea {
     width: 100%;
     height: 100%;
@@ -2252,8 +2270,16 @@ body {
   letter-spacing: 0.5px;
   transition: background 0.25s;
 
+  &.active {
+    background-color: $navyLightText;
+  }
+
+  &:hover {
+
+  }
+
   &:active {
-    background-color: $cyan;
+    background-color: $navyLightText;
   }
 }
 
@@ -3238,5 +3264,55 @@ a {
     font-family: sans-serif;
     font-style: italic;
     font-size: 0.9rem;
+  }
+}
+
+.initial-details-container {
+  font-family: sans-serif;
+  // border: 1px solid red;
+
+  .title-area {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: $navyLightText;
+  }
+
+  .address-line {
+    padding: 0;
+    font-size: 0.8rem;
+    color: $navy;
+  }
+
+  .question-area {
+    margin-top: 30px;
+    .question-tracker {
+      font-size: 0.7rem;
+      color: $navyLightText;
+      font-weight: 600;
+    }
+
+    .question-line {
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+
+      .emphasize {
+        text-decoration: underline;
+        font-weight: 600;
+      }
+    }
+
+    .question-input {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .button-group {
+      display: flex;
+      div.btn:first-child {
+        margin-right: 10px;
+      }
+    }
   }
 }

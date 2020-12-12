@@ -217,7 +217,8 @@ const StudentRegisterCompleteView = () => {
           text="Complete"
           icon={<BiCheck />}
           iconLocation="right"
-          background="#63db97"
+          background="#3B4353"
+          textColor="white"
         />
       </div>
 
