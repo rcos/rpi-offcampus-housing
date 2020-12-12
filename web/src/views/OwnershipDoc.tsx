@@ -58,12 +58,6 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }, [])
 
     useEffect(() => {
-        console.log(ownershipConflicts)
-    }, [ownershipConflicts])
-
-    useEffect(() => {
-        console.log(`Changed status!`)
-        console.log(ownershipStatusChangeResponse)
         if (ownershipStatusChangeResponse && ownershipStatusChangeResponse.changeOwnershipStatus
             && ownershipStatusChangeResponse.changeOwnershipStatus.data) {
                 setOwnershipDoc(ownershipStatusChangeResponse.changeOwnershipStatus.data)
@@ -88,8 +82,6 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     }, [confirmationActivityResponse])
 
     useEffect(() => {
-        console.log(`HEREE!!!`)
-        console.log(ownershipDocData)
         if (confirmActivityRef.current) {
             confirmActivityRef.current.scrollTo({
                 top: confirmActivityRef.current.scrollHeight
@@ -120,8 +112,6 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         if (ownershipDoc && ownershipDoc.landlord_doc && ownershipDoc.landlord_doc.phone_number) {
                 let phone_number: string = ownershipDoc.landlord_doc.phone_number.trim()
                 if (phone_number.length < 3) return phone_number;
-
-                console.log(`Phone Number: ${phone_number}`)
                 if (phone_number[0] == '+') phone_number = phone_number.substring(1)
                 return `+${phone_number[0]} (${phone_number.substring(1, 4)}) ${phone_number.substring(4, 7)} ${phone_number.substring(7)}`
 

@@ -37,7 +37,6 @@ const Slider = ({ range, forceUpdate, toStr, onChange }: SliderProps) => {
     const updateBounds = () => {
         if (!sliderContainerRef.current) return;
         let bounds_ = sliderContainerRef.current.getBoundingClientRect();
-        console.log(`Bounds`, bounds_)
         setSliderBounds({
             left: bounds_.left,
             right: bounds_.right

@@ -259,7 +259,6 @@ const ViewWrapper = ({children,
 
   const institution = useSelector((state: ReduxState) => state.institution)
   const getSchoolThumbSource = (): string => {
-    console.log(`getSchoolThumbSource()`)
     if ((user && user.type && user.type != "student") || institution == null) return '';
     return objectURI(institution.s3_thumb_key, {width: 60, height: 60})
   }
