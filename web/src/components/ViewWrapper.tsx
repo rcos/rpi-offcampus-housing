@@ -82,6 +82,8 @@ const ViewWrapper = ({children,
   }, [feedbackSubmitted])
 
   const [pageLinks, setPageLinks] = useState<{[key: string]: PageLinkInfo}>({})
+  const userControlMenuRef = useRef<HTMLDivElement>(null)
+  const userControlInitiatorRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (user){
@@ -378,6 +380,21 @@ const ViewWrapper = ({children,
   }, [])
 
   useEffect(() => {
+    const handleClose = (e: any) => {
+      if (userControlMenuRef.current && userControlInitiatorRef.current) {
+        if (!userControlMenuRef.current.contains(e.target) && !userControlInitiatorRef.current.contains(e.target)) {
+          setUserControlVisible(false)
+        }
+      }
+    }
+
+    window.addEventListener(`click`, handleClose)
+    return () => {
+      window.removeEventListener(`click`, handleClose)
+    }
+  }, [userControlMenuRef])
+
+  useEffect(() => {
     if (userControlVisible) {
       userControlSpring.set(1)
     }
@@ -441,8 +458,8 @@ const ViewWrapper = ({children,
 
       </div>
       <div className="bottom-area">
-        <div className={`user-control ${menuCollapsed ? 'collapsed' : ''}`}>
-        {user && user.type && user.type == "student" ? <div 
+        <div ref={userControlInitiatorRef} className={`user-control ${menuCollapsed ? 'collapsed' : ''}`}>
+        {user && user.type && user.type == "student" ? <div
         className={`photo-thumb ${menuCollapsed ? 'collapsed' : ''}`}
         onClick={() => setUserControlVisible(!userControlVisible)}>
           <img src={getSchoolThumbSource()} width="100%" />
@@ -451,7 +468,8 @@ const ViewWrapper = ({children,
           }}><HiCog /></motion.div>
         </div>
         :
-        <div className={`photo-thumb icon ${menuCollapsed ? 'collapsed' : ''}`}
+        <div 
+          className={`photo-thumb icon ${menuCollapsed ? 'collapsed' : ''}`}
           onClick={() => setUserControlVisible(!userControlVisible)}>
           <HiCog />
         </div>
@@ -471,7 +489,8 @@ const ViewWrapper = ({children,
               visibility: userControlVisibility,
               perspective: `6.5cm`
             }}
-            className="user-control-menu">
+            className="user-control-menu"
+            ref={userControlMenuRef}>
               <div className="header">User Control</div><div className="control-menu">
 
                 {/* Settings */}
