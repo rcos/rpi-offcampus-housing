@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
-import {Ownership, Property} from '../API/queries/types/graphqlFragmentTypes'
+import {Ownership, Property, useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {useNumberCounter} from '../components/hooks/useNumberCounter';
 import RectMouseTransform from '../components/toolbox/misc/RectMouseMagnet'
 import CollapsableTab from '../components/toolbox/misc/CollapsableTab'
 import NoEnties from '../components/toolbox/misc/NoEnties'
-import {useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import {useHistory} from 'react-router'
 import {Link} from 'react-router-dom'
 
@@ -198,6 +197,84 @@ const ReviewListItem = ({ownership}: {ownership: Ownership}) => {
       <div className="secondary">Submitted {dateToStr(new Date(ownership.date_submitted))}</div>
     </div>
   </Link>)
+}
+
+interface DashboardSidebarProps {
+  propertyOwnerships?: Ownership[]
+  propertyOwnershipsInReview?: Ownership[]
+  landlord_id: string | null
+}
+export const DashboardSidebar = ({
+  propertyOwnerships: propertyOwnerships_,
+  propertyOwnershipsInReview: propertyOwnershipsInReview_,
+  landlord_id
+}: DashboardSidebarProps) => {
+
+  const [GetOwnerships, {data: ownershipsResponse}] = useGetOwnershipsForLandlordLazyQuery()
+  const [ownerships, setOwnerships] = useState<Ownership[]>([])
+  const [ownershipsInReview, setOwnershipsInReview] = useState<Ownership[]>([])
+
+  useEffect(() => {
+    if (landlord_id != null) {
+      if (!propertyOwnerships_ || !propertyOwnershipsInReview_) {
+        GetOwnerships({
+          variables: {
+            landlord_id,
+            with_properties: true
+          }
+        })
+      }
+    }
+  }, [landlord_id])
+
+  useEffect(() => {
+    if (ownershipsResponse && ownershipsResponse.getOwnershipsForLandlord && ownershipsResponse.getOwnershipsForLandlord.data) {
+      let ownerships_: Ownership[] = ownershipsResponse.getOwnershipsForLandlord.data.ownerships;
+      setOwnerships(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'confirmed')
+      )
+      setOwnershipsInReview(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'in-review')
+      )
+    }
+  }, [ownershipsResponse])
+
+  const getOwnerships = (): Ownership[] => {
+    if (propertyOwnerships_) return propertyOwnerships_;
+    return ownerships;
+  }
+
+  const getOwnershipsInReview = (): Ownership[] => {
+    if (propertyOwnershipsInReview_) return propertyOwnershipsInReview_;
+    return ownershipsInReview;
+  }
+
+  return (<div style={{marginTop: `50px`}}>
+  <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Properties" count={getOwnerships().length}>
+    <div className="list-style-4">
+      {getOwnerships().map((ownership: Ownership, i: number) => 
+      <Link key={i} to={`/landlord/property/${ownership.property_doc ? ownership.property_doc._id: '_'}`}>
+        <div className="list-item">
+          <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+        </div>
+      </Link>)}
+    </div>
+  </CollapsableTab>
+  <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Leases" count={0}>
+    <div/>
+  </CollapsableTab>
+  {getOwnershipsInReview().length > 0 &&
+  <CollapsableTab counter_on_end={true} tab_name="In-Review" count={getOwnershipsInReview().length}>
+    <div className="list-style-4">
+      {getOwnershipsInReview().map((ownership: Ownership, i: number) => 
+      <Link to={`/landlord/ownership-documents/${ownership._id}`} key={i}>
+        <div className="list-item">
+          <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+        </div>
+      </Link>)}
+    </div>
+  </CollapsableTab>}
+</div>)
 }
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]

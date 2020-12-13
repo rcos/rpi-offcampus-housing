@@ -6,6 +6,7 @@ import {ReduxState} from '../redux/reducers/all_reducers'
 import {PropertyDetails, Property, useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight} from 'react-icons/hi'
+import {DashboardSidebar} from './LandlordDashboard'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -48,7 +49,11 @@ const PropertyDetailsView = (
         }
     }, [propertyResponse])
 
-    return (<ViewWrapper>
+    return (<ViewWrapper
+        sidebar_content={<DashboardSidebar
+            landlord_id={user && user.user ? user.user._id : null}
+        />}
+    >
         <React.Fragment>
             {property != null &&
                 <div className="property-details-view">
