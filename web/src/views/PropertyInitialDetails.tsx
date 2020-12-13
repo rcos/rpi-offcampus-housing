@@ -2,8 +2,9 @@ import React, {useEffect, useRef, useState} from 'react'
 import Centered from '../components/toolbox/layout/Centered'
 import {useGetPropertyLazyQuery, Property} from '../API/queries/types/graphqlFragmentTypes'
 import Counter, {positiveOnly, maxVal} from '../components/toolbox/form/Counter'
-
+import {useUpdatePropertyDetailsMutation} from '../API/queries/types/graphqlFragmentTypes'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import {useHistory} from 'react-router'
 
 interface QuestionResponse {
     hasHeater: boolean | null
@@ -18,8 +19,12 @@ interface QuestionResponse {
 
 const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
 
-    const [GetProperty, {data: propertyResponse}] = useGetPropertyLazyQuery()
+    const history = useHistory()
+    const [GetProperty, {data: propertyResponse}] = useGetPropertyLazyQuery({
+        fetchPolicy: 'no-cache'
+    })
     const [property, setProperty] = useState<Property|null>(null)
+    const [UpdatePropertyDetails, {data: updatePropertyResponse}] = useUpdatePropertyDetailsMutation()
 
     useEffect (() => {
         GetProperty({
@@ -34,7 +39,12 @@ const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
 
     useEffect(() => {
         if (propertyResponse && propertyResponse.getProperty && propertyResponse.getProperty.data) {
-            setProperty(propertyResponse.getProperty.data)
+            if (propertyResponse.getProperty.data.details) {
+                history.push(`/landlord/property/${property_id}`)
+            }
+            else {        
+                setProperty(propertyResponse.getProperty.data)
+            }
         }
     }, [propertyResponse])
 
@@ -87,9 +97,28 @@ const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
 
     useEffect(() => {
         if (submitting) {
-            console.log(`TODO Make API Submission!`)
+            UpdatePropertyDetails({
+                variables: {
+                    property_id,
+                    description: response.description,
+                    rooms: response.rooms,
+                    bathrooms: response.bathrooms,
+                    sq_ft: response.sqFt,
+                    furnished: response.isFurnished,
+                    has_washer: response.hasWashingMachine,
+                    has_heater: response.hasHeater,
+                    has_ac: response.hasAC
+                }
+            })
         }
     }, [submitting])
+
+    useEffect(() => {
+        if (updatePropertyResponse && updatePropertyResponse.updatePropertyDetails
+            && updatePropertyResponse.updatePropertyDetails.data) {
+            history.push(`/landlord/property/${property_id}`)
+        }
+    }, [updatePropertyResponse])
 
     // Questions
     const roomCountQuestion = (<div>
@@ -129,6 +158,7 @@ const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
             <Counter 
             key={2}
             initial={0}
+            incrementBy={100}
             restrictions={[positiveOnly]}
             onChange={(x: number) => {
                 let response_ = {...response};
@@ -215,7 +245,8 @@ const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
         <div className="question-input">
             <div className="textarea-holder" 
             style={{
-                width: `100%`
+                width: `100%`,
+                transform: `translateY(-20px)`
             }}>
                 <textarea 
                     style={{
@@ -266,7 +297,9 @@ const PropertyInitialDetails = ({property_id}: {property_id: string}) => {
                         <div className="subtle-button" style={{width: `60px`, marginTop: `20px`}}>Back</div>
                     </div>}
                     <div onClick={goNext} style={{float: `right`}}>
-                        <div className="subtle-button" style={{width: `60px`, marginTop: `20px`}}>Next</div>
+                    <div className="subtle-button" style={{width: `60px`, marginTop: `20px`}}>{
+                        questionIndex == questions.length - 1 ? 'Complete' : 'Next'
+                    }</div>
                     </div>
                 </motion.div>
             </div>

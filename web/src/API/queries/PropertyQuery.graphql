@@ -41,18 +41,54 @@ query VerifyAddress(
   }
 }
 
+mutation UpdatePropertyDetails(
+  $property_id: String!,
+  $description: String,
+  $rooms: Int,
+  $bathrooms: Int,
+  $sq_ft: Int,
+  $furnished: Boolean,
+  $has_washer: Boolean,
+  $has_heater: Boolean,
+  $has_ac: Boolean
+) {
+  updatePropertyDetails (
+    property_id: $property_id,
+    description: $description,
+    rooms: $rooms,
+    bathrooms: $bathrooms,
+    sq_ft: $sq_ft,
+    furnished: $furnished,
+    has_washer: $has_washer,
+    has_heater: $has_heater,
+    has_ac: $has_ac
+  ) {
+    ...PropertyAPIResponseFields
+  }
+}
+
 fragment PropertyAPIResponseFields on PropertyAPIResponse {
   success
   error
   data {
     _id
     landlord
-    sq_ft
     address_line
     address_line_2
     city
     state
     zip
+    
+    details {
+      description
+      rooms
+      bathrooms
+      sq_ft
+      furnished
+      has_washer
+      has_heater
+      has_ac
+    }
   }
 }
 
@@ -63,12 +99,22 @@ fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
     properties {
       _id
       landlord
-      sq_ft
       address_line
       address_line_2
       city
       state
       zip
+
+      details {
+        description
+        rooms
+        bathrooms
+        sq_ft
+        furnished
+        has_washer
+        has_heater
+        has_ac
+      }
     }
   }
 }

@@ -109,14 +109,22 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
     property_doc {
       _id
       landlord
-      sq_ft
       address_line
       address_line_2
       city
       state
       zip
-      sq_ft
-      landlord
+
+      details {
+        description
+        rooms
+        bathrooms
+        sq_ft
+        furnished
+        has_washer
+        has_heater
+        has_ac
+      }
     }
     landlord_doc {
       _id
@@ -149,15 +157,23 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
       }
       property_doc {
         _id
-        landlord
-        sq_ft
         address_line
         address_line_2
         city
         state
         zip
-        sq_ft
         landlord
+
+        details {
+          description
+          rooms
+          bathrooms
+          sq_ft
+          furnished
+          has_washer
+          has_heater
+          has_ac
+        }
       }
       landlord_id
       landlord_doc {

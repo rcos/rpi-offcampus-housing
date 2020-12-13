@@ -23,14 +23,22 @@ fragment PropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntries
     collection_entries {
       _id
       landlord
-      sq_ft
-      landlord
-      sq_ft
       address_line
       address_line_2
       city
       state
       zip
+
+      details {
+        description
+        rooms
+        bathrooms
+        sq_ft
+        furnished
+        has_washer
+        has_heater
+        has_ac
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import {Resolver, Mutation, Arg, Query} from 'type-graphql'
+import {Resolver, Mutation, Arg, Query, Int} from 'type-graphql'
 import {Property, 
   PropertyAPIResponse, 
   PropertyModel, 
@@ -6,7 +6,8 @@ import {Property,
   PropertySearchInput,
   PropertyList,
   AddressVerificationAPIResponse,
-  PropertyListAPIResponse} from '../entities/Property'
+  PropertyListAPIResponse,
+  PropertyDetails} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {Ownership, OwnershipModel, StatusType} from '../entities/Ownership'
 import {DocumentType} from "@typegoose/typegoose"
@@ -168,6 +169,54 @@ export class PropertyResolver {
         })
       });
     })
+
+  }
+
+  @Mutation(() => PropertyAPIResponse)
+  async updatePropertyDetails(
+    @Arg("property_id", type => String, {nullable: false}) property_id: string,
+    @Arg("description", type => String, {nullable: true}) description?: string,
+    @Arg("rooms", type => Int, {nullable: true}) rooms?: number,
+    @Arg("bathrooms", type => Int, {nullable: true}) bathrooms?: number,
+    @Arg("sq_ft", type => Int, {nullable: true}) sq_ft?: number,
+    @Arg("furnished", type => Boolean, {nullable: true}) furnished?: boolean,
+    @Arg("has_washer", type => Boolean, {nullable: true}) has_washer?: boolean,
+    @Arg("has_heater", type => Boolean, {nullable: true}) has_heater?: boolean,
+    @Arg("has_ac", type => Boolean, {nullable: true}) has_ac?: boolean
+  ): Promise<PropertyAPIResponse> 
+  {
+
+    console.log(chalk.bgBlue(`👉 updatePropertyDetails()`))
+    if (!ObjectId.isValid(property_id)) {
+      console.log(chalk.bgRed(`❌ Error: Property id is not a valid object id`))
+      return { success: false, error: `property_id is not valid` }
+    }
+    let property: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property) {
+      console.log(chalk.bgRed(`❌ Error: No property found with id ${property_id}`))
+      return { success: false, error: `No property found` }
+    }
+
+    // initialize details if the property doesn't have details
+    if (!property.details) property.details = new PropertyDetails();
+    
+    // add the details provided
+    if (description) property.details.description = description;
+    if (rooms) property.details.rooms = rooms;
+    if (bathrooms) property.details.bathrooms = bathrooms;
+    if (sq_ft) property.details.sq_ft = sq_ft;
+    if (furnished != null && furnished != undefined) property.details.furnished = furnished;
+    if (has_washer != null && has_washer != undefined) property.details.has_washer = has_washer;
+    if (has_heater != null && has_heater != undefined) property.details.has_heater = has_heater;
+    if (has_ac != null && has_ac != undefined) property.details.has_ac = has_ac;
+
+    let updated_property: DocumentType<Property> = await property.save () as DocumentType<Property>
+
+    console.log(chalk.bgGreen(`✔ Successfully updated details for property (${property_id})`))
+    return {
+      success: true,
+      data: updated_property
+    }
 
   }
 }

@@ -246,7 +246,6 @@ export class OwnershipResolver {
       property_.city = city;
       property_.state = state;
       property_.zip = zip_code;
-      property_.sq_ft = -1;
       saved_prop = await property_.save() as DocumentType<Property>;
     }
 
