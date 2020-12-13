@@ -3317,3 +3317,198 @@ a {
     }
   }
 }
+
+.property-details-view {
+  
+  .header-container {
+    font-family: sans-serif;
+
+    .primary-banner {
+      background-color: #DEE5FF;
+      height: 120px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+    .header-text {
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      background-color: white;
+      padding: 15px 10px;
+
+      .address-line {
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .address-rest {
+        opacity: 0.6;
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .split-body {
+    display: flex;
+    margin-top: 20px;
+
+    .left, .right {
+      flex-grow: 1;
+    }
+
+    .left {
+      margin-right: 10px;
+    }
+    .right {
+      margin-left: 10px;
+    }
+  }
+}
+
+@media screen and (max-width: 1150px) {
+  .property-details-view {
+    .split-body {
+      display: block;
+    }
+  }
+}
+
+.content-card {
+  color: $navy;
+  white-space: normal;
+  font-family: sans-serif;
+
+  .header_ {
+    display: flex;
+    align-items: flex-end;
+    .left_ { 
+      flex-grow: 1;
+      font-weight: 600;
+     }
+  }
+
+  .body-holder {
+    background-color: white;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    padding: 10px 12px;
+    border-radius: 3px;
+
+    .sub-section {
+      .sub-header {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        opacity: 0.6;
+        margin-bottom: 5px;
+      }
+      .paragraph {
+        font-size: 0.8rem;
+      }
+
+      .kv-pair {
+        display: flex;
+        .key_ {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          font-weight: 600;
+          opacity: 0.6;
+          margin-bottom: 5px;
+        }
+        .value_ {
+          margin-left: 6px;
+          font-size: 0.7rem;
+        }
+      }
+    }
+  }
+}
+
+.image-placeholder {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
+  justify-self: stretch;
+  .image-placeholder {
+    border: 1px solid $navyLightText;
+    width: 100%;
+    height: 80px;
+    border-radius: 3px;
+
+  }
+}
+
+.lease-info {
+  border-bottom: 1px solid $navyVeryLight;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .header__ {
+    display: flex;
+    align-items: center;
+    padding: 7px 10px;
+
+    .left__ {
+      flex-grow: 1;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      opacity: 0.6;
+    }
+  }
+
+  .body__ {
+    padding: 0 10px;
+    font-size: 0.8rem;
+    color: $navy;
+    letter-spacing: 0.5px;
+
+    .leased-by {
+      margin-top: 3px;
+      span.icon {
+        margin-right: 8px;
+        color: rgba(0, 0, 0, 0.5);
+        display: inline-block;
+        transform: translateY(2px);
+      }
+    }
+
+    .lease-card {
+      cursor: pointer;
+      margin-top: 8px;
+      border-radius: 3px;
+      height: 60px;
+      border: 1px solid $navyLight;
+      width: 100%;
+      display: flex;
+      transition: border 0.15s;
+
+      &:hover {
+        border: 1px solid $navyLightText;
+        .institute-img {
+          border-right: 1px solid $navyLightText;
+        }
+
+        .txt__ {
+          margin-left: 4px;
+          padding: 14px 0;
+        }
+      }
+
+      .institute-img {
+        transition: border 0.15s;
+        width: 60px;
+        border-right: 1px solid $navyLight;
+        margin-right: 10px;
+      }
+      .txt__ {
+        transition: margin 0.15s;
+        margin-left: 0px;
+        padding: 14px 0;
+      }
+    }
+  }
+}

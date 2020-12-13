@@ -99,7 +99,6 @@ const generateProperty = (): Property => {
   return {
     _id: {$oid: OIDFactory.generateObjectID('property')},
     landlord: {$oid: OIDFactory.generateObjectID('landlord')},
-    sq_ft: 0,
     address_line: faker.address.streetAddress(),
     city: faker.address.city(),
     state: faker.address.stateAbbr(),
