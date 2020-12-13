@@ -3404,6 +3404,19 @@ a {
       }
       .paragraph {
         font-size: 0.8rem;
+
+        .check-list {
+          margin-left: 8px;
+          display: flex;
+
+          .check_ {
+            margin-right: 8px;
+            color: #6AD68B;
+          }
+          ._val_ {
+            letter-spacing: 0.6px;
+          }
+        }
       }
 
       .kv-pair {

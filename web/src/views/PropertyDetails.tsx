@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {PropertyDetails, Property, useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
-import {HiOutlineArrowNarrowRight} from 'react-icons/hi'
+import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
 
 const PropertyDetailsView = (
@@ -25,7 +25,7 @@ const PropertyDetailsView = (
         GetProperty({
             variables: { id: property_id, withLandlord: false, withReviews: false, reviewCount: 0, reviewOffset: 0 }
         })
-    }, [])
+    }, [property_id])
 
     useEffect(() => {
         if (propertyResponse && propertyResponse.getProperty) {
@@ -96,6 +96,28 @@ const PropertyDetailsView = (
                                         <div className="kv-pair">
                                             <div className="key_">Bathrooms</div>
                                             <div className="value_">{property.details!.bathrooms}</div>
+                                        </div>
+                                        <div className="sub-header">Amenities</div>
+                                        <div className="paragraph">
+                                            {Object.keys(property.details!).map((key: string) => {
+                                                return [key, (property.details! as any)[key]]
+                                            }).filter( (val: any) => val[1] === true)
+                                            .map((val: any) => {
+                                                let key_ = val[0]
+                                                let details_map = {
+                                                    "furnished": "Furnished",
+                                                    "has_washer": "Washing Machine",
+                                                    "has_heater": "Insulation",
+                                                    "has_ac": "Air Conditioning"
+                                                }
+                                                let _str_: string = Object.keys(details_map).includes(key_) ? 
+                                                    (details_map as any)[(key_ as string)] : "__none__"
+                                                
+                                                return (<div className="check-list">
+                                                    <div className="check_"><HiCheck /></div>
+                                                    <div className="_val_">{_str_}</div>
+                                                </div>)
+                                            })}
                                         </div>
                                     </div>
                             </Card>
