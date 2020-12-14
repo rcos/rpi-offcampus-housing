@@ -3,9 +3,7 @@ import {useSpring, useTransform, motion} from 'framer-motion'
 
 import AuthAPI from '../API/AuthAPI'
 
-import Button from '../components/toolbox/form/Button'
-import {RiCheckLine} from 'react-icons/ri'
-import {usePopup} from '../components/hooks/usePopupHook'
+import Popup, {PopupHeader, ConfirmLine} from '../components/toolbox/misc/Popup'
 import { HiOutlineNewspaper, HiCheckCircle, HiTerminal, 
   HiLogout, HiClipboard, HiOutlineChatAlt,
   HiOutlineChevronLeft, HiOutlineChevronRight, HiCog } from 'react-icons/hi';
@@ -194,76 +192,6 @@ const ViewWrapper = ({children,
     setShowFeedbackPopup(true)
   }
 
-  const popup = usePopup({
-    show: showFeedbackPopup,
-    popup: (<div className="popup-container">
-      <div className="title">Feedback</div>
-      {feedbackSubmitted && <div className="feedback-submitted"
-        style={{
-          padding: `10px 5px`
-        }}
-      >
-        <div className="icon-area"><HiCheckCircle /></div><div className="text-area">
-          Thanks for the feedback!
-        </div>
-      </div>}
-      {!feedbackSubmitted && <div>
-      <div className="body">
-
-        <div>
-
-          <div className={`selectable-label ${feedbackInfo.bug ? 'active' : ''}`} onClick={() => {
-            let feedbackInfo_ = {...feedbackInfo};
-            feedbackInfo_.bug = !feedbackInfo_.bug;
-            setFeedbackInfo(feedbackInfo_)
-          }}>Bug</div>
-          <div className={`selectable-label ${feedbackInfo.feature ? 'active' : ''}`} onClick={() => {
-            let feedbackInfo_ = {...feedbackInfo};
-            feedbackInfo_.feature = !feedbackInfo_.feature;
-            setFeedbackInfo(feedbackInfo_)
-          }}>Feature</div>
-          <div className={`selectable-label ${feedbackInfo.comment ? 'active' : ''}`} onClick={() => {
-            let feedbackInfo_ = {...feedbackInfo};
-            feedbackInfo_.comment = !feedbackInfo_.comment;
-            setFeedbackInfo(feedbackInfo_)
-          }}>Comment</div>
-
-        </div>
-        
-        <div className="textarea-holder" style={{marginTop: '10px'}}>
-          <textarea onChange={(e: any) => {
-            let feedbackInfo_ = {...feedbackInfo};
-            feedbackInfo_.feedback_message = e.target.value
-            setFeedbackInfo(feedbackInfo_)
-          }}></textarea>
-        </div>
-
-      </div>
-      <div className="footer">
-      <div className="left-action">
-          <Button 
-            onClick={() => {setShowFeedbackPopup(false)}}
-            text="cancel"
-            background="#E4E4E4"
-          />
-        </div>
-
-        <div className="right-action">
-          <Button 
-            onClick={() => {
-              submitFeedback()
-            }}
-            text="submit"
-            icon={<RiCheckLine />}
-            iconLocation="right"
-            background="#99E1D9"
-          />
-        </div>
-      </div>
-      </div>}
-    </div>)
-  })
-
   const institution = useSelector((state: ReduxState) => state.institution)
   const getSchoolThumbSource = (): string => {
     if ((user && user.type && user.type != "student") || institution == null) return '';
@@ -408,6 +336,64 @@ const ViewWrapper = ({children,
   })
 
   return (<React.Fragment>
+
+    {/* Feedback Popup */}
+    
+    <Popup
+      width={500}
+      height={`auto`}
+      show={showFeedbackPopup}>
+      <PopupHeader withClose={true}>Feedback</PopupHeader>
+
+      {feedbackSubmitted && <div className="feedback-submitted"
+        style={{
+          padding: `10px 5px`
+        }}
+      >
+        <div className="icon-area"><HiCheckCircle /></div><div className="text-area">
+          Thanks for the feedback!
+        </div>
+      </div>}
+      {!feedbackSubmitted && <div>
+        <div className="body" style={{padding: `0 12px`}}>
+
+          <div>
+
+            <div className={`selectable-label ${feedbackInfo.bug ? 'active' : ''}`} onClick={() => {
+              let feedbackInfo_ = {...feedbackInfo};
+              feedbackInfo_.bug = !feedbackInfo_.bug;
+              setFeedbackInfo(feedbackInfo_)
+            }}>Bug</div>
+            <div className={`selectable-label ${feedbackInfo.feature ? 'active' : ''}`} onClick={() => {
+              let feedbackInfo_ = {...feedbackInfo};
+              feedbackInfo_.feature = !feedbackInfo_.feature;
+              setFeedbackInfo(feedbackInfo_)
+            }}>Feature</div>
+            <div className={`selectable-label ${feedbackInfo.comment ? 'active' : ''}`} onClick={() => {
+              let feedbackInfo_ = {...feedbackInfo};
+              feedbackInfo_.comment = !feedbackInfo_.comment;
+              setFeedbackInfo(feedbackInfo_)
+            }}>Comment</div>
+
+          </div>
+          
+          <div className="textarea-holder" style={{marginTop: '10px'}}>
+            <textarea onChange={(e: any) => {
+              let feedbackInfo_ = {...feedbackInfo};
+              feedbackInfo_.feedback_message = e.target.value
+              setFeedbackInfo(feedbackInfo_)
+            }}></textarea>
+          </div>
+
+        </div>
+        <ConfirmLine
+          onCancel={() => setShowFeedbackPopup(false)}
+          onConfirm={() => submitFeedback()}
+          confirmButtonText="Submit Feedback"
+          withCancel={true}
+        />
+      </div>}
+    </Popup>
 
     <motion.div className={`vertical-navbar ${menuCollapsed ? 'collapsed': ''}`} style={{
       width: menuWidthCollapseTransform
