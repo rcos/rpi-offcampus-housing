@@ -3,7 +3,6 @@ import ViewWrapper from '../components/ViewWrapper'
 import {useSelector} from 'react-redux'
 
 import ContextMenu, {TripleDotButton} from '../components/toolbox/misc/ContextMenu'
-import {useContainerRef} from '../components/hooks/useContainerRefHook'
 import {
     useGetOwnershipLazyQuery,
     useAddOwnershipConfirmationActivityMutation,
@@ -13,11 +12,11 @@ import {
     useGetOwnershipConflictsQuery,
     useChangeOwnershipStatusMutation
 } from '../API/queries/types/graphqlFragmentTypes'
-import {HiClipboard, HiOutlineArrowNarrowRight, HiCheck, HiPhone} from 'react-icons/hi'
+import {HiOutlineArrowNarrowRight, HiCheck, HiPhone} from 'react-icons/hi'
 import {BsBoxArrowInUpRight} from 'react-icons/bs'
 import {FiAlertTriangle} from 'react-icons/fi'
 import {ImReply, ImForward} from 'react-icons/im'
-import SortableList from '../components/toolbox/layout/SortableList'
+import SortableList from '../components/toolbox/layout/SortableList2'
 import Button from '../components/toolbox/form/Button'
 import {objectURI} from '../API/S3API'
 import { ReduxState } from '../redux/reducers/all_reducers'
@@ -28,8 +27,6 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const confirmActivityRef = useRef<HTMLDivElement>(null)
     const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
-    const containerRef = useRef<HTMLDivElement>(null)
-    useContainerRef({ ref_: containerRef })
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const headerRef = useRef<HTMLDivElement>(null)
 
@@ -198,8 +195,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
         <div>
 
             {/* Header */}
-            <div className="section-header left-and-right" ref={headerRef}>
-                <div className="icon-area"><HiClipboard /></div>
+            <div className="section-header-2" ref={headerRef}>
                 <div className="title-area">Ownership Form</div>
             </div>
 
@@ -210,21 +206,18 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
             || !ownershipDoc.property_doc)
             && <div>Error Loading...</div>}
 
-            {ownershipDoc && ownershipDoc.landlord_doc && ownershipDoc.property_doc && <div ref={containerRef}>
+            {ownershipDoc && ownershipDoc.landlord_doc && ownershipDoc.property_doc && <div>
                 {/* Property Information */}
+
+                <div className="card-headr">
                 <div style={{
                     display: 'flex'
                 }}>
                     <div style={{
-                        fontFamily: 'mukta',
-                        fontSize: '1.3rem',
                         flexGrow: 1
-                    }}>
-                        {ownershipDoc.property_doc!.address_line}
-                        {ownershipDoc.property_doc!.address_line_2},
-                        {ownershipDoc.property_doc!.city}
-                        {ownershipDoc.property_doc!.state}
-                        {ownershipDoc.property_doc!.zip}
+                    }}
+                        className="title-area">
+        {ownershipDoc.property_doc!.address_line} {ownershipDoc.property_doc!.address_line_2 ? `${ownershipDoc.property_doc!.address_line_2}, ` : ''}, {ownershipDoc.property_doc!.city} {ownershipDoc.property_doc!.state}, {ownershipDoc.property_doc!.zip}
                     </div>
                     <div style={{
                         minWidth: '300px',
@@ -237,7 +230,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             }}>
                             <Button 
                                 text="Approve"
-                                background="#99E1D9"
+                                textColor="white"
+                                background="#6AD68B"
                                 onClick={() => {changeStatus('approve')}}
                             />
                         </div>}
@@ -246,9 +240,10 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                                 width: "100px",
                                 marginRight: '8px'
                             }}>
-                            <Button 
+                            <Button
+                                textColor="white" 
                                 text="Decline"
-                                background="#E0777D"
+                                background="#c45e5e"
                                 onClick={() => {changeStatus('decline')}}
                             />
                         </div>}
@@ -298,13 +293,15 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                     <div style={{display: 'flex', marginRight: '20px'}}>
                         <div style={{
                             width: `30px`, 
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            transform: `translateY(1px)`
                             }}><HiPhone /></div>
                         <div>{getPhoneNumber ()}</div>
                     </div>
                         <div className={`status-color ${getStatus()}`}>
                             <div className="circle_"/>
                             Status: {getStatusString (getStatus())}</div>
+                </div>
                 </div>
 
                 {/* Ownership Documents area */}
@@ -366,8 +363,7 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         hasConflicts ()
                         &&
                         <SortableList 
-                            labels={["Landlord Name", "Status", "Date Submitted"]}
-                            init_size_ratios={[1, 1]}
+                            columns={["Landlord Name", "Status", "Date Submitted"]}
                             entries={
                                 getConflicts().map((ownership: Ownership) => {
                                     return {
@@ -465,7 +461,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                             style={{
                                 resize: 'none',
                                 height: '50px',
-                                minHeight: '50px'
+                                minHeight: '50px',
+                                fontSize: `0.7rem`
                             }}
                             onChange={(e: any) => {
                                 setActivityUpdateValue(e.target.value)
@@ -478,7 +475,8 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
                         }}>
                             <Button 
                                 text="Submit"
-                                background="#99E1D9"
+                                background="#6AD68B"
+                                textColor="white"
                                 onClick={submitActivityUpdate}
                             />
                         </div>

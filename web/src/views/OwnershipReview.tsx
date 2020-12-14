@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ViewWrapper from '../components/ViewWrapper'
 import {useGetOwnershipsInReviewQuery, Ownership, Property} from '../API/queries/types/graphqlFragmentTypes'
+import { useHistory } from 'react-router-dom'
 
 import {useNumberCounter} from '../components/hooks/useNumberCounter'
-import SortableList, {EntryValue} from '../components/toolbox/layout/SortableList'
-import { useHistory } from 'react-router-dom'
+import SortableList_, {EntryValue} from '../components/toolbox/layout/SortableList2'
+import Input from '../components/toolbox/form/Input2'
 
 const OwnershipReview = () => {
 
@@ -36,23 +37,22 @@ const OwnershipReview = () => {
     <div className="section-header-2" ref={headerRef}>
       <div className="title-area">Ownership Forms</div>
       <div className="counter_">{formCounter} forms</div>
+      <div className="extra" style={{minWidth: `250px`, maxWidth: `300px`, width: `300px`}}>
+        <Input />
+      </div>
     </div>
 
     {!ownershipsInReviewData && <div>Loading TODO add loading animation</div>}
 
-    {ownershipsInReviewData && <SortableList 
-      labels={["Landlord Name", "Address", "Date Submitted", "Documents", "Assigned To", "Conflicts"]}
-      init_size_ratios={[2, 3, 1, 1, 1]}
-      entries={
-      ownershipsInReview.map((ownership_: Ownership) => {
+    {ownershipsInReviewData &&<SortableList_ 
+      columns={["Landlord Name", "Address", "Date Submitted", "Documents"]}
+      entries={ownershipsInReview.map((ownership_: Ownership) => {
         return {
           "landlord-name": ownership_.landlord_doc ? `${ownership_.landlord_doc.first_name} ${ownership_.landlord_doc.last_name}` : `undef`,
           "date-submitted": {
             data: new Date(ownership_.date_submitted),
             toString: dateToString
           },
-          "conflicts": "no",
-          "assigned-to": "-",
           "address": ownership_.property_doc ? getLocation(ownership_.property_doc) : '',
           "documents": {
             data: ownership_.ownership_documents.length,
@@ -60,9 +60,11 @@ const OwnershipReview = () => {
           },
           "id": ownership_._id,
         }
-      })
-    }
-      onClick={(entry: {[key: string]: EntryValue}) => {
+      })}
+      sortConfig={{
+        'date-submitted': (a: Date, b: Date) =>  a > b
+      }}
+      onClick={(entry: EntryValue) => {
         history.push(`/ownership/review/${entry["id"]}`)
       }}
     />}
@@ -71,6 +73,7 @@ const OwnershipReview = () => {
   </ViewWrapper>)
 }
 
-const dateToString = (date_: Date): string => `${date_.getMonth()} / ${date_.getDate()} / ${date_.getFullYear()}`
+const dataToMS = (_date_: Date): string => _date_.getMilliseconds().toString()
+const dateToString = (_date_: Date): string => `${_date_.getMonth()} / ${_date_.getDate()} / ${_date_.getFullYear()}`
 
 export default OwnershipReview

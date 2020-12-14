@@ -77,9 +77,19 @@ export class OwnershipResolver {
     console.log(chalk.bgBlue(`👉 getOwnershipsInReview()`))
     let under_review: DocumentType<Ownership>[] = await OwnershipModel.find({status: "in-review"})
     // fill the landlord_doc parts
+
+    let landlord_docs: DocumentQuery<DocumentType<Landlord> | null, DocumentType<Landlord>, {}>[] = []
+    let property_docs: DocumentQuery<DocumentType<Property> | null, DocumentType<Property>, {}>[] = []
     for (let i = 0; i < under_review.length; ++i) {
-      under_review[i].landlord_doc = await LandlordModel.findById(under_review[i].landlord_id) as DocumentType<Landlord>
-      under_review[i].property_doc = await PropertyModel.findById(under_review[i].property_id) as DocumentType<Property>
+      landlord_docs.push(LandlordModel.findById(under_review[i].landlord_id));
+      property_docs.push(PropertyModel.findById(under_review[i].property_id));
+    }
+
+    for (let i = 0; i < under_review.length; ++i) {
+      under_review[i].landlord_doc = await landlord_docs[i] as DocumentType<Landlord>
+    }
+    for (let i = 0; i < under_review.length; ++i) {
+      under_review[i].property_doc = await property_docs[i] as DocumentType<Property>
     }
 
     console.log(chalk.bgGreen(`✔ Successfully retrieved ownerships in review (${under_review.length} documents)`))
