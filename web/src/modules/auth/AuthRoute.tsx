@@ -110,10 +110,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     if (user && user.user && user.type && user.type == "student") {
 
       // if the student does not have all their information, redirect them to complete registration
-      console.log(`HELLO???`, user)
-      console.log(`firstname undefined? ${user.user.first_name == undefined}`)
-      console.log(`lastname undefined? ${user.user.last_name == undefined}`)
-      console.log(`email undefined? ${user.user.email == undefined}`)
       if (!Object.prototype.hasOwnProperty.call(user.user, 'first_name')
       || !Object.prototype.hasOwnProperty.call(user.user, 'last_name')
       || !Object.prototype.hasOwnProperty.call(user.user, 'email')
@@ -133,6 +129,16 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   }, [user])
 
+  const userInfoIsLoaded = (): boolean => {
+    if (accessLevel == AccessLevels.UNAUTH) return true;
+    if (!user || !user.user) return false;
+    if (user && user.type == "student") {
+      // students also need institution information to load
+      if (!institution) return false;
+    }
+    return true;
+  }
+
   const hasAccess = (access_flag: number): boolean => ( accessLevel & access_flag ) != 0
 
   /**
@@ -150,25 +156,26 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     // if this route is set for any user level (no restriction)
     if (accessLevel === AccessLevels.ANY) return <Component {...props} />
 
-    else if (auth.loaded) {
+    else if (userInfoIsLoaded() && auth.loaded) {
       // If I am authenticated, I can access components with accessLevel of authenticated user
       if (auth.isAuthenticated) {
-
-        
         if (canAccess()) {
           return <Component {...props} />
         }
-        else return (<Redirect to={defaultRoute(getUserType(auth))} />);
+        else {
+          return (<Redirect to={defaultRoute(getUserType(auth))} />);
+        }
 
       }
       else {
-
         if (hasAccess(AccessLevels.UNAUTH)) return <Component {...props} />
         else return <Redirect to={defaultRoute(getUserType(auth))} />
 
       }
     }
-    else return <div />
+    else {
+      return <div />
+    }
     
   }} 
   />)

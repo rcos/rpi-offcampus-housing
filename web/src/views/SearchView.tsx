@@ -207,7 +207,7 @@ const SearchResult = ({delay}: {delay: number}) => {
         {isLargeScreen && <div className="amenities-area">
             <div className="header_">Amenities</div>
             {Array.from(new Array(3), (_: any, i: number) => 
-                <div className="entry_">
+                <div className="entry_" key={i}>
                     <div className="check_"><HiCheck /></div>
                     <div className="">Entry Goes Here</div>
                 </div>
