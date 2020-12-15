@@ -2911,14 +2911,13 @@ body {
 
 .search-container {
   // border: 1px solid red;
-  height: 1500px;
   display: flex;
   position: relative;
   justify-content: flex-start;
 
   .right-side_ {
     // border: 1px solid blue;
-    width: 50%;
+    width: 100%;
   }
 }
 
@@ -3743,6 +3742,84 @@ a {
 
       .confirm_, .cancel_ {
         transform: translateY(10px);
+      }
+    }
+  }
+}
+
+.search-result-2 {
+  background-color: white;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  display: flex;
+  font-family: sans-serif;
+  position: relative;
+  box-shadow: 0px 3px 10px rgba(59, 67, 83, 0.1);
+
+  .image-area_ {
+    padding: 8px 10px;
+    width: 180px;
+    height: 120px;
+    margin-right: 10px;
+
+    .image-holder {
+      background-color: #DEE5FF;
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      box-shadow: 0px 3px 10px rgba(59, 67, 83, 0.12);
+    }
+  }
+
+  .info-area_ {
+    padding: 13px 0px;
+    position: relative;
+    flex-grow: 1;
+    
+    .property-location {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: $navy;
+      margin-bottom: 5px;
+    }
+
+    .property-meta {
+      color: $navyLightText;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+  .action-area {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .amenities-area {
+    width: 180px;
+    background-color: $navyVeryLight;
+    padding: 10px 8px;
+    box-sizing: border-box;
+
+    .header_ {
+      font-weight: 600;
+      text-transform: uppercase;
+      color: $navyLightText;
+      font-size: 0.7rem;
+      letter-spacing: 0.6px;
+      margin-bottom: 5px;
+    }
+
+    .entry_ {
+      font-size: 0.7rem;
+      display: flex;
+      margin-left: 4px;
+      color: $navy;
+
+      .check_ {
+        margin-right: 5px;
+        transform: translateY(1px);
+        color: #6AD68B;
       }
     }
   }

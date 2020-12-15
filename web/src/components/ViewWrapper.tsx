@@ -35,12 +35,14 @@ interface ViewWrapperProps {
   left_attachment?: any
   left_attachment_width?: number
   onContentStart?: (val: number) => void
+  hide_sidebar?: boolean
 }
 
 const ViewWrapper = ({children, 
   left_attachment, 
   left_attachment_width,
   sidebar_content,
+  hide_sidebar,
   onContentStart}: ViewWrapperProps) => {
 
   const [DEBUG_MODE, SET_DEBUG_MODE] = useState<boolean>(true)
@@ -52,7 +54,7 @@ const ViewWrapper = ({children,
   // const [viewWidth, setViewWidth] = useState<number>(1400)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false)
   const [menuCollapsed, setMenuCollapsed] = useState<boolean>(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(hide_sidebar ? true : false)
 
   useEffect(() => {
     if (submissionData) {
@@ -230,11 +232,13 @@ const ViewWrapper = ({children,
   })
 
   useEffect(() => {
-    if (sidebarCollapsed) {
-      sidebarCollapseInitSpring.set(0)
-    }
-    else {
-      sidebarCollapseIntermediate.set(1)
+    if (!hide_sidebar) {
+      if (sidebarCollapsed) {
+        sidebarCollapseInitSpring.set(0)
+      }
+      else {
+        sidebarCollapseIntermediate.set(1)
+      }
     }
 
     let unmountSidebarCollapseInitSpring = sidebarCollapseInitSpring.onChange((x: number) => {
@@ -530,11 +534,11 @@ const ViewWrapper = ({children,
     <motion.div className="vertical-sidebar" style={{
       width: sidebarWidthCollapseTransform
     }}>
-      <div 
-        onClick={() => {setSidebarCollapsed(!sidebarCollapsed)}}
+      {!hide_sidebar && <div 
+        onClick={() => {setSidebarCollapsed(hide_sidebar ? true : !sidebarCollapsed)}}
         className={`menu-collapse-btn ${sidebarCollapsed? 'collapsed' : ''}`}>
         <HiOutlineChevronLeft />
-      </div>
+      </div>}
       <div className="content-end-indicator" ref={contentEndRef} 
         style={{opacity: DEBUG_MODE? 1 : 0}}
       />
