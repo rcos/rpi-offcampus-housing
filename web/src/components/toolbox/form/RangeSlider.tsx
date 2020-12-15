@@ -7,9 +7,14 @@ interface SliderBounds {
     right: number
 }
 
+interface InterpolateionProps {
+    interpolate: (_: number) => any
+    toString: (_: any) => string
+}
+
 interface SliderProps {
-    onChange?: (left_ratio: number, right_ratio: number) => void
-    range: {start: number, end: number}
+    onChange?: ((left_: any, right: any) => void)
+    range: {start: number, end: number} | InterpolateionProps
     toStr?: (value: any) => string
     updateDimensionTrigger?: any
     forceUpdate?: any
@@ -104,7 +109,16 @@ const RangeSlider = ({ range, toStr, forceUpdate, updateDimensionTrigger, onChan
         // sliderPositinsRef.current = sliderPositionsState
 
         if (onChange) {
-            onChange(sliderValuesRef.current.left, sliderValuesRef.current.right)
+            if (Object.prototype.hasOwnProperty.call(range, `start`) && Object.prototype.hasOwnProperty.call(range, `end`)) {
+                let r_: any = range as any
+                onChange(
+                    r_.start + (sliderValuesRef.current.left * (r_.end - r_.start)), 
+                    r_.start + (sliderValuesRef.current.right * (r_.end - r_.start)))
+            }
+            else {
+                let r_: InterpolateionProps = range as InterpolateionProps
+                onChange(r_.interpolate(sliderValuesRef.current.left), r_.interpolate(sliderValuesRef.current.right))
+            }
         }
     }
 
@@ -157,9 +171,17 @@ const RangeSlider = ({ range, toStr, forceUpdate, updateDimensionTrigger, onChan
     
 
     const getValueAt = (ratio: number) => {
-        let val_ = (range.end - range.start) * ratio
-        if (toStr) return toStr(val_)
-        return val_
+        if (Object.prototype.hasOwnProperty.call(range, 'start') && Object.prototype.hasOwnProperty.call(range, 'end')) {
+            let val_ = ((range as any).end - (range as any).start) * ratio
+            if (toStr) return toStr(val_)
+            return val_
+        }
+
+        // interpolation type
+        else {
+            let interpolate_: InterpolateionProps = range as InterpolateionProps;
+            return interpolate_.toString( interpolate_.interpolate( ratio ) );
+        }
     }
     const sliderWidth = () => {
         if (!sliderContainerRef.current) return 0;
@@ -230,4 +252,30 @@ const RangeSlider = ({ range, toStr, forceUpdate, updateDimensionTrigger, onChan
     </div>)
 }
 
+export class date {
+    from_: Date;
+    constructor(d_: Date) {this.from_ = d_;}
+    static from (d_: Date): date { return new date(d_); }
+    to (d_: Date): ((_: number) => Date) {
+        return (_: number): Date => {
+            let start_secs = this.from_.getTime();
+            let end_secs = d_.getTime();
+            return new Date( start_secs + ((end_secs - start_secs)*_) );
+        }
+    }
+    static fromNow ({days, years, minutes}: {
+        days?: number, years?: number, minutes?: number
+    }): Date {
+        let t_ = new Date().getTime();
+        if (days != null) t_ += days * 1000 /*to seconds*/ * 60 * 60 * 24
+        if (minutes != null) t_ += minutes * 1000 * 60
+        if (years != null) t_ += years * 1000 * 60 * 60 * 24 * 365
+
+        return new Date(t_)
+    }
+}
+export const MONTHS_ABRV = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+]
 export default RangeSlider;

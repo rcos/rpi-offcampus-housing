@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ViewWrapper from '../components/ViewWrapper';
 import Slider from '../components/toolbox/form/Slider';
-import RangeSlider from '../components/toolbox/form/RangeSlider';
+import RangeSlider, {date,MONTHS_ABRV} from '../components/toolbox/form/RangeSlider';
 import Counter, {positiveOnly, maxVal} from '../components/toolbox/form/Counter';
 import MoreDetails from '../components/toolbox/misc/MoreDetails'
 import {useNumberCounter} from '../components/hooks/useNumberCounter'
@@ -78,9 +78,14 @@ const SearchView = () => {
                     <div className="input-label_">Lease Period</div>
                         <RangeSlider 
                             forceUpdate={leftFilterWidth}
-                            range={{start: 300, end: 1200}}
-                            onChange={(new_ratio: number) => {
-                                console.log(new_ratio)
+                            // range={{start: 300, end: 1200}}
+                            range={{
+                                interpolate: date.from(new Date()).to(date.fromNow({ years: 1 })),
+                                toString: (_: Date) => `${MONTHS_ABRV[_.getMonth()]} ${_.getDate()}, ${_.getFullYear()}`
+                            }}
+                            onChange={(start_date: Date, end_date: Date) => {
+                                console.log(`start`, start_date)
+                                console.log(`end`, end_date)
                             }}
                             toStr={(val: any): string => {return `$${(val as number).toFixed(2)}`}}
                         />
@@ -145,7 +150,7 @@ const SearchView = () => {
     >
         <div className="search-container" ref={containerRef} style={{
             position: 'relative',
-            left: `${0}px`
+            marginTop: `47px`
         }}>
 
             {/* Right Side */}
@@ -166,8 +171,8 @@ const SearchResult = ({delay}: {delay: number}) => {
     })
     
     const showResultSpring = useSpring(0)
-    const rotateXTransform = useTransform(showResultSpring, [0, 1], [40, 0])
-    const translateYTransform = useTransform(showResultSpring, [0, 1], [-100, 0])
+    const rotateXTransform = useTransform(showResultSpring, [0, 1], [10, 0])
+    const translateYTransform = useTransform(showResultSpring, [0, 1], [-15, 0])
 
     useEffect(() => {
         let t_ = setTimeout(() => {
@@ -216,5 +221,4 @@ const SearchResult = ({delay}: {delay: number}) => {
 
     </motion.div>)
 }
-
 export default SearchView
