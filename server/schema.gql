@@ -211,8 +211,15 @@ type PropertyDetails {
   has_ac: Boolean!
   has_heater: Boolean!
   has_washer: Boolean!
+  property_images: [PropertyImageInfo!]!
   rooms: Int!
   sq_ft: Float!
+}
+
+"""Property Image info"""
+type PropertyImageInfo {
+  date_uploaded: String!
+  s3_key: String!
 }
 
 """Collection of properties"""

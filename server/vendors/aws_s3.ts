@@ -193,10 +193,117 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
   })
 })
 
+awsRouter.post('/delete-object', (req, res) => {
+  
+  console.log(chalk.bgBlue(`👉 AWS S3 Delete Object`))
+  console.log(`\t${chalk.cyan(`key`)} ${req.params.object_key}`)
+  // check if there is an object key
+  if (!_.has(req.params, `object_key`)) {
+    console.log(chalk.bgRed(`❌ Error: No object key provided`))
+    res.json({
+      success: false,
+      error: `No object id found`
+    })
+    return;
+  }
+
+  let split_ = req.params.object_key.split('.')
+  if (split_.length < 2) {
+    console.log(chalk.bgRed(`❌ Error: Key has no mimetype.`))
+    res.json({
+      success: false,
+      error: `key has no mimetype`
+    })
+    return;
+  }
+  let content_type = split_[split_.length - 1].replace('_', '/')
+  let object_key = req.params.object_key
+  aws_s3.getObject({
+    Bucket: process.env.AWS_S3_BUCKET1 as string,
+    Key: object_key
+  }, 
+  (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
+
+    // check if there was a problem finding the object
+    if (err) {
+      console.log(chalk.bgRed(`❌ Error: Object does nit exist`))
+      console.log(err)
+      res.json({
+        success: false,
+        error: `Object not found`
+      })
+    }
+
+    else {
+
+      // check for restrictions
+      let has_access = false;
+
+      if (data.Metadata) {
+        if (data.Metadata["restricted"] && data.Metadata["restricted"].toLowerCase() == 'true') {
+          if (req.user && (req.user as any)._id != null && (req.user as any).type != null) {
+
+            let user_id = (req.user! as any)._id
+            let user_type = (req.user! as any).type
+            let access: IAccess = parseUserAccess(data.Metadata)
+            let has_elevated_access = hasElevatedAccess(
+                Object.prototype.hasOwnProperty.call((req.user as any), 'elevated_privileges') ?
+                (req.user as any).elevated_privileges : []
+              , access.elevated)
+
+            if (has_elevated_access) has_access = true;
+            if ((user_type == "student" && access.students.includes(`${user_id}`)) ||  (user_type == "landlord" && access.landlords.includes(`${user_id}`))) {
+              has_access = true;
+            }
+
+          }
+        }
+      }
+
+      if (!has_access) {
+        console.log(chalk.bgRed(`❌ Error: No access to resource.`))
+        res.json({
+          success: false,
+          error: `Resource is restricted`
+        })
+      }
+      else {
+
+        // remove the object !
+        aws_s3.deleteObject({
+          Bucket: process.env.AWS_S3_BUCKET1 as string,
+          Key: object_key
+        },
+        (err: aws.AWSError, data: aws.S3.Types.DeleteObjectOutput) => {
+          if (err) {
+            console.log(chalk.bgRed(`❌ Error: Problem deleting object.`))
+            return {
+              success: false,
+              error: `internal server error`
+            }
+          }
+          else {
+            console.log(chalk.bgGreen(`✔ Successfully deleted object`))
+            return {
+              success: true,
+              data: {
+                message: `Object deleted successfully`,
+                removed_object_key: object_key
+              }
+            }
+          }
+        })
+
+      }
+    }
+  })
+  
+})
+
 awsRouter.get('/get-object/:object_key', (req, res) => {
 
-  console.log(chalk.bgGreen(`👉 AWS S3 Get Object`))
-  console.log(`key: ${req.params.object_key}`)
+  console.log(chalk.bgBlue(`👉 AWS S3 Get Object`))
+  console.log(`\t${chalk.cyan(`key`)} ${req.params.object_key}`)
   if (!_.has(req.params, 'object_key') || typeof req.params.object_key != typeof "") {
     console.log(chalk.bgRed(`❌ Error: Invalid object key.`))
     res.send(`Invalid Request`)
