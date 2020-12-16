@@ -29,11 +29,11 @@ mutation UpdatePhoneNumber(
   }
 }
 
-mutation ConfirmEmail(
+mutation ConfirmLandlordEmail(
   $email: String!,
   $confirm_key: String!
 ) {
-  confirmEmail (
+  confirmLandlordEmail (
     email: $email,
     confirm_key: $confirm_key
   ) {

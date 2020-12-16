@@ -9,7 +9,16 @@ $last_name: String!, $email: String!) {
   updateStudent(_id:$id, new_student:{first_name: $first_name, last_name: $last_name,
   email: $email}) {
     ...StudentAPIResponseFields
+  }
 }
+
+mutation ConfirmStudentEmail($email: String!, $confirm_key: String!) {
+  confirmStudentEmail (
+    email:$email,
+    confirm_key:$confirm_key
+  ) {
+    ...StudentAPIResponseFields
+  }
 }
 
 fragment StudentAPIResponseFields on StudentAPIResponse {

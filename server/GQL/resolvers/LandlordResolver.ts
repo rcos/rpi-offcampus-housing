@@ -164,7 +164,7 @@ export class LandlordResolver {
   }
 
   @Mutation(() => LandlordAPIResponse)
-  async confirmEmail(
+  async confirmLandlordEmail(
     @Arg("email") email: string,
     @Arg("confirm_key") confirm_key: string
   ): Promise<LandlordAPIResponse> 

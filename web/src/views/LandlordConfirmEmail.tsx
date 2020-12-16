@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react'
 import {useHistory} from 'react-router'
 import queryString from 'query-string'
-import {useConfirmEmailMutation} from '../API/queries/types/graphqlFragmentTypes'
+import {useConfirmLandlordEmailMutation} from '../API/queries/types/graphqlFragmentTypes'
 
 const LandlordConfirmEmail = ({confirm_key}: {confirm_key: string}) => {
     const history = useHistory()
-    const [ConfirmEmail, {data: confirmEmailResponse}] = useConfirmEmailMutation()
+    const [ConfirmEmail, {data: confirmEmailResponse}] = useConfirmLandlordEmailMutation()
 
     useEffect(() => {
 
@@ -26,12 +26,9 @@ const LandlordConfirmEmail = ({confirm_key}: {confirm_key: string}) => {
     }, [])
 
     useEffect(() => {
-        if (confirmEmailResponse && confirmEmailResponse.confirmEmail) {
-            if (confirmEmailResponse.confirmEmail.error) {
+        if (confirmEmailResponse && confirmEmailResponse.confirmLandlordEmail) {
+            if (confirmEmailResponse.confirmLandlordEmail.error) {
                 console.error(`Error confirming email`)
-            }
-            else {
-                console.log(confirmEmailResponse.confirmEmail.data)
             }
             history.push('/')
         }

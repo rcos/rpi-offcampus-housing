@@ -243,6 +243,7 @@ export class StudentResolver {
 
         // generate confirm key
         let confirm_key = generateConfirmKey()
+        student_doc.confirmation_key = confirm_key;
 
         SendGrid.sendMail({
           to: email.toString(),
@@ -267,7 +268,7 @@ export class StudentResolver {
   }
 
   @Mutation(() => StudentAPIResponse) 
-  async confirmEmail(
+  async confirmStudentEmail(
     @Arg("email") email: string,
     @Arg("confirm_key") confirm_key: string
   ): Promise<StudentAPIResponse>
