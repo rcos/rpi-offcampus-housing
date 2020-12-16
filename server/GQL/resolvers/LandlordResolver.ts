@@ -196,7 +196,7 @@ export class LandlordResolver {
   }
 }
 
-const generateConfirmKey = (): string => {
+export const generateConfirmKey = (): string => {
   let capitals = [65, 91];
   let lowercases = [97, 123];
 

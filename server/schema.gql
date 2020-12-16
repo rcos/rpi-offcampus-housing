@@ -267,6 +267,7 @@ type StatusChangeInfo {
 type Student {
   _id: ID!
   auth_info: CasAuthInfo
+  confirmation_key: [String!]
   elevated_privileges: [String!]
   email: String!
   first_name: String!

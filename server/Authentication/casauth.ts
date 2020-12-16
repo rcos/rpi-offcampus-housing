@@ -79,9 +79,10 @@ function(profile: any, done: Function) {
               institution_id: institution_doc._id
             }
 
-            console.log(new_student)
+            // generate confirm key and send email
+            let confirm_key = generateConfirmKey()
+
             let added_student = await new_student.save()
-            console.log(added_student)
             done(null, new_student.toObject(), { new: true })
       
           }

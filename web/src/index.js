@@ -42,6 +42,7 @@ import PhoneVerifyView from './views/PhoneVerifyView'
 import PropertyDetails from './views/PropertyDetails'
 import PropertyInitialDetails from './views/PropertyInitialDetails'
 import LandlordConfirmEmail from './views/LandlordConfirmEmail'
+import StudentConfirmEmail from './views/StudentConfirmEmail'
 
 import Testing from './views/Testing'
 
@@ -81,8 +82,9 @@ const Routes = () => {
       <AlertController alertInfo={alertCtxValue} />
         <Switch>
 
-          <AuthRoute accessLevel={AccessLevels.ANY} exact path="/testing_" component={Testing} />
+          {/* <AuthRoute accessLevel={AccessLevels.ANY} exact path="/testing_" component={Testing} /> */}
           <Route exact path="/landlord/confirm/:confirm_key" component={({match}) => (<LandlordConfirmEmail confirm_key={match.params.confirm_key} />)} />
+          <Route exact path="/student/confirm/:confirm_key" component={({match}) => (<StudentConfirmEmail confirm_key={match.params.confirm_key} />)} />
 
           {/* Unrestricted Paths */}
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/" component={LandingView} />
