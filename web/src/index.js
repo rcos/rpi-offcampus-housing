@@ -82,7 +82,7 @@ const Routes = () => {
         <Switch>
 
           <AuthRoute accessLevel={AccessLevels.ANY} exact path="/testing_" component={Testing} />
-          <AuthRoute accessLevel={AccessLevels.ANY} exact path="/landlord/confirm/:confirm_key" component={({match}) => (<LandlordConfirmEmail confirm_key={match.params.confirm_key} />)} />
+          <Route exact path="/landlord/confirm/:confirm_key" component={({match}) => (<LandlordConfirmEmail confirm_key={match.params.confirm_key} />)} />
 
           {/* Unrestricted Paths */}
           <AuthRoute accessLevel={AccessLevels.UNAUTH} exact path="/" component={LandingView} />

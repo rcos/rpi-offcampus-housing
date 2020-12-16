@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import ViewWrapper from '../components/ViewWrapper'
 import Button from '../components/toolbox/form/Button'
-import {Ownership, Property, useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+import {Ownership, 
+  Property, 
+  useGetOwnershipsForLandlordLazyQuery,
+  useResendEmailConfirmationLazyQuery
+} from '../API/queries/types/graphqlFragmentTypes'
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {useNumberCounter} from '../components/hooks/useNumberCounter';
@@ -10,12 +14,19 @@ import CollapsableTab from '../components/toolbox/misc/CollapsableTab'
 import NoEnties from '../components/toolbox/misc/NoEnties'
 import {useHistory} from 'react-router'
 import {Link} from 'react-router-dom'
-
+import Popup, {PopupHeader} from '../components/toolbox/misc/Popup'
+import {HiCheckCircle} from 'react-icons/hi'
+import Cookies from 'universal-cookie'
 
 const LandlordDashboard = () => {
 
+  const cookies = new Cookies()
   const history = useHistory()
+  const [showResendConfirmation, setShowResendConfirmation] = useState<boolean>(false)
+  const [resendConfirmState, setResendConfirmState] = useState<number>(0)
   const user = useSelector((state: ReduxState) => state.user)
+
+  const [ResendEmailConfirmation, {data: resendConfirmResponse}] = useResendEmailConfirmationLazyQuery()
   const [GetOwnershipsForLandlord, {data: ownershipsResponse}] = useGetOwnershipsForLandlordLazyQuery()
   const [propertyOwnerships, setProperyOwnerships] = useState<Ownership[]>([])
   const [propertyOwnershipsInReview, setProperyOwnershipsInReview] = useState<Ownership[]>([])
@@ -43,6 +54,13 @@ const LandlordDashboard = () => {
     }
   }, [ownershipsResponse])
 
+  useEffect(() => {
+    if (resendConfirmResponse && resendConfirmResponse.resendEamilConfirmation
+      && resendConfirmResponse.resendEamilConfirmation.success) {
+        cookies.set('conf_em_last_res', new Date().getTime())
+      }
+  }, [resendConfirmResponse])
+
   const propertiesCounter = useNumberCounter({
     value: propertyOwnerships.length,
     duration: 800
@@ -53,9 +71,89 @@ const LandlordDashboard = () => {
     duration: 800
   })
 
+  const emailConfirmed = ():boolean => {
+    if (!user || !user.user) return false;
+    return !Object.prototype.hasOwnProperty.call(user.user, `confirmation_key`) || (user.user as any).confirmation_key == undefined
+  }
+
+
+  const resendEmail = () => {
+    let last_confirm_email_resent = cookies.get('conf_em_last_res')
+    if (last_confirm_email_resent) {
+      let last_requested: Date = new Date(parseInt(last_confirm_email_resent))
+      let min_required_date = new Date(
+        last_requested.getTime()
+        + (1000 * 60 * 60 * 24)
+      )
+
+      if (new Date().getTime() > min_required_date.getTime()) {
+        // allow them
+        ResendEmailConfirmation({
+          variables: {
+            landlord_id: user && user.user ? user.user._id : `undefined`
+          }
+        })
+      }
+    }
+
+    // if no cookie is set, then send the request
+    else {
+      ResendEmailConfirmation({
+        variables: {
+          landlord_id: user && user.user ? user.user._id : `undefined`
+        }
+      })
+    }
+    setResendConfirmState(1)
+    setTimeout(() => {
+      setShowResendConfirmation(false)
+    }, 1000)
+    setTimeout(() => {
+      setResendConfirmState(0)
+    }, 1500)
+  }
+
   return (<ViewWrapper
     left_attachment_width={200}
     left_attachment={<div className="getting-started-attachment">
+
+      {/* Resent Confirm-Email Popup */}
+      <Popup show={showResendConfirmation} width={400} height={90}>
+        <div>
+          <PopupHeader 
+            withClose={true}
+            onClose={() => {setShowResendConfirmation(false); setResendConfirmState(0);}}
+          >Resend Email Confirmation</PopupHeader>
+          {resendConfirmState == 0 && <div style={{
+              display: 'flex',
+              padding: `10px 10px`
+            }}>
+            <div style={{flexGrow: 1, marginRight: `10px`}}>
+              <div className="disabled-input">
+                {user && user.user ? user.user.email : `no email found`}
+              </div>
+            </div>
+            <div style={{width: `100px`, minWidth: `100px`}}>
+              <Button 
+                onClick={() => resendEmail()}
+                textColor="white"
+                text="Resend"
+                background="#6AD68B"
+              />
+            </div>
+          </div>}
+          {resendConfirmState == 1 && 
+          <div className="success-submit"
+            style={{
+              padding: `10px 5px`
+            }}
+          >
+        <div className="icon-area"><HiCheckCircle /></div><div className="text-area">
+          Confirmation email resent!
+        </div>
+        </div>}
+        </div>
+      </Popup>
       
       <div className="section-header-3" style={{padding: `0 10px`}}>
         <div className="title-area">Getting Started</div>
@@ -63,17 +161,30 @@ const LandlordDashboard = () => {
 
       {/* List of Tasks */}
       <div className="list-style-3">
-        {[
-          "Confirm Your Email",
-          "Add Phone Number",
-          "Add a Property",
-          "Add Details",
-          "Open a Lease"
-        ].map((task_: string, i: number) => 
-        <div className="task-item" key={i}>
-          <div className="list-item-number">{i + 1}</div>
-          <div className="list-item-value">{task_}</div>
-        </div>)}
+
+        <div 
+          onClick={() => {if (!emailConfirmed()) setShowResendConfirmation(true)}}
+          className={`task-item ${emailConfirmed() ? `strike-through` : ``}`}>
+          <div className="list-item-number">1</div>
+          <div className="list-item-value">Confirm Your Email</div>
+        </div>
+        <div className="task-item">
+          <div className="list-item-number">2</div>
+          <div className="list-item-value">Add Phone Number</div>
+        </div>
+        <div className="task-item">
+          <div className="list-item-number">3</div>
+          <div className="list-item-value">Add a Property</div>
+        </div>
+        <div className="task-item">
+          <div className="list-item-number">4</div>
+          <div className="list-item-value">Add Details</div>
+        </div>
+        <div className="task-item">
+          <div className="list-item-number">5</div>
+          <div className="list-item-value">Open a Lease</div>
+        </div>
+
       </div>
 
     </div>}
