@@ -1,31 +1,55 @@
-import React, {useEffect, useRef, useState} from 'react'
-import { BiHome, BiPlus } from 'react-icons/bi'
-import { BsThreeDotsVertical } from 'react-icons/bs'
-import { FiEdit2 } from 'react-icons/fi'
-import {useHistory} from 'react-router'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import React, {useEffect, useState} from 'react'
 import ViewWrapper from '../components/ViewWrapper'
-import {HiOutlineHome, HiSearch, HiPlus} from 'react-icons/hi'
-import Input from '../components/toolbox/form/Input'
 import Button from '../components/toolbox/form/Button'
-import Pagination from '../components/toolbox/layout/Pagination'
-import ContextMenu from '../components/toolbox/misc/ContextMenu'
 import {Ownership, Property, useGetOwnershipsForLandlordLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {useNumberCounter} from '../components/hooks/useNumberCounter';
 import RectMouseTransform from '../components/toolbox/misc/RectMouseMagnet'
 import CollapsableTab from '../components/toolbox/misc/CollapsableTab'
+import NoEnties from '../components/toolbox/misc/NoEnties'
+import {useHistory} from 'react-router'
+import {Link} from 'react-router-dom'
+
 
 const LandlordDashboard = () => {
 
+  const history = useHistory()
+  const user = useSelector((state: ReduxState) => state.user)
+  const [GetOwnershipsForLandlord, {data: ownershipsResponse}] = useGetOwnershipsForLandlordLazyQuery()
+  const [propertyOwnerships, setProperyOwnerships] = useState<Ownership[]>([])
+  const [propertyOwnershipsInReview, setProperyOwnershipsInReview] = useState<Ownership[]>([])
+
+  useEffect(() => {
+    if (user && user.user && user.type == 'landlord') {
+      GetOwnershipsForLandlord({
+        variables: {
+          landlord_id: user.user._id,
+          with_properties: true
+        }
+      })
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (ownershipsResponse && ownershipsResponse.getOwnershipsForLandlord && ownershipsResponse.getOwnershipsForLandlord.data) {
+      let ownerships_: Ownership[] = ownershipsResponse.getOwnershipsForLandlord.data.ownerships;
+      setProperyOwnerships(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'confirmed')
+      )
+      setProperyOwnershipsInReview(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'in-review')
+      )
+    }
+  }, [ownershipsResponse])
+
   const propertiesCounter = useNumberCounter({
-    value: 8,
+    value: propertyOwnerships.length,
     duration: 800
   })
 
   const inReviewCounter = useNumberCounter({
-    value: 2,
+    value: propertyOwnershipsInReview.length,
     duration: 800
   })
 
@@ -43,6 +67,7 @@ const LandlordDashboard = () => {
           "Confirm Your Email",
           "Add Phone Number",
           "Add a Property",
+          "Add Details",
           "Open a Lease"
         ].map((task_: string, i: number) => 
         <div className="task-item" key={i}>
@@ -55,30 +80,30 @@ const LandlordDashboard = () => {
 
     sidebar_content={
       <div style={{marginTop: `50px`}}>
-        <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Properties" count={8}>
+        <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Properties" count={propertyOwnerships.length}>
           <div className="list-style-4">
-            {Array.from(new Array(8), (_: any, i: number) => 
-            <div className="list-item" key={i}>
-              <div className="primary">1902 South 20th Ave</div>
-            </div>)}
+            {propertyOwnerships.map((ownership: Ownership, i: number) => 
+            <Link key={i} to={`/landlord/property/${ownership.property_doc ? ownership.property_doc._id: '_'}`}>
+              <div className="list-item">
+                <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+              </div>
+            </Link>)}
           </div>
         </CollapsableTab>
-        <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Leases" count={3}>
-          <div className="list-style-4">
-            {Array.from(new Array(3), (_: any, i: number) => 
-            <div className="list-item" key={i}>
-              <div className="primary">1902 South 20th Ave</div>
-            </div>)}
-          </div>
+        <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Leases" count={0}>
+          <div/>
         </CollapsableTab>
-        <CollapsableTab counter_on_end={true} tab_name="In-Review" count={2}>
+        {propertyOwnershipsInReview.length > 0 &&
+        <CollapsableTab counter_on_end={true} tab_name="In-Review" count={propertyOwnershipsInReview.length}>
           <div className="list-style-4">
-            {Array.from(new Array(2), (_: any, i: number) => 
-            <div className="list-item" key={i}>
-              <div className="primary">1902 South 20th Ave</div>
-            </div>)}
+            {propertyOwnershipsInReview.map((ownership: Ownership, i: number) => 
+            <Link to={`/landlord/ownership-documents/${ownership._id}`} key={i}>
+              <div className="list-item">
+                <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+              </div>
+            </Link>)}
           </div>
-        </CollapsableTab>
+        </CollapsableTab>}
       </div>
     }
   >
@@ -94,7 +119,7 @@ const LandlordDashboard = () => {
         }}>
           <div className="section-header-2" style={{flexGrow: 1}}>
             <div className="title-area">Properties</div>
-            <div className="counter_">{propertiesCounter} forms</div>
+            <div className="counter_">{propertiesCounter} {propertyOwnerships.length == 1 ? 'property' : 'properties'}</div>
           </div>
 
           <div>
@@ -109,15 +134,18 @@ const LandlordDashboard = () => {
 
         {/* Property Map */}
         <div className="property-preview-container">
-          {Array.from(new Array(8), (_: any, i: number) => 
+          {propertyOwnerships.length > 0 && propertyOwnerships.map((property: Ownership, i: number) => 
           <PropertyItem 
             key={i}
+            property={property.property_doc!}
           />)}
+          {propertyOwnerships.length == 0 && 
+          <NoEnties message="No properties on record" />}
         </div>
       </div>
 
       {/* In-Review Section */}
-      <div>
+      {propertyOwnershipsInReview.length > 0 && <div>
 
         {/* Header */}
         <div style={{
@@ -126,7 +154,7 @@ const LandlordDashboard = () => {
         }}>
           <div className="section-header-2" style={{flexGrow: 1}}>
             <div className="title-area">In-Review</div>
-            <div className="counter_">{inReviewCounter} properties in review</div>
+            <div className="counter_">{inReviewCounter} {propertyOwnershipsInReview.length == 1 ? 'property' : 'properties'} in review</div>
           </div>
         </div>
 
@@ -135,38 +163,121 @@ const LandlordDashboard = () => {
         </div>
 
         {/* In-Review List Items */}
-        {Array.from(new Array(2), (_: any, i: number) => 
-          <ReviewListItem key={i} />
+        {propertyOwnershipsInReview.length > 0 && propertyOwnershipsInReview.map((ownership: Ownership, i: number) => 
+          <ReviewListItem key={i} ownership={ownership} />
         )}
 
-      </div>
+      </div>}
 
     </div>
   </ViewWrapper>)
 }
 
-const PropertyItem = () => {
+const PropertyItem = ({property}: {property: Property}) => {
 
-  return (<div className="property-preview">
+  return (<Link to={`/landlord/property/${property._id}`}><div className="property-preview">
     
     <RectMouseTransform
       rotateXStrength={2.5}
       rotateYStrength={1.5}
       shadowStrength={0.1}
     ><div className="image-area" /></RectMouseTransform>
-    <div className="address-line">1902 South 20th Ave</div>
-    <div className="sub-address-line">Troy NY, 12180</div>
+    <div className="address-line">{property.address_line} {property.address_line_2}</div>
+    <div className="sub-address-line">{property.city} {property.state}, {property.zip}</div>
 
-  </div>)
+  </div></Link>)
 }
 
-const ReviewListItem = () => {
+const ReviewListItem = ({ownership}: {ownership: Ownership}) => {
 
-  return (<div className="list-style-2">
-    <div className="primary">1902 South 20th Ave</div>
-    <div className="secondary">Troy NY, 12180</div>
-    <div className="secondary">Submitted December 10th, 2021</div>
-  </div>)
+  return (<Link to={`/landlord/ownership-documents/${ownership._id}`}>
+    <div className="list-style-2">
+      <div className="primary">{ownership.property_doc!.address_line} {ownership.property_doc!.address_line_2}</div>
+      <div className="secondary">{ownership.property_doc!.city} {ownership.property_doc!.state}, {ownership.property_doc!.zip}</div>
+      <div className="secondary">Submitted {dateToStr(new Date(ownership.date_submitted))}</div>
+    </div>
+  </Link>)
 }
+
+interface DashboardSidebarProps {
+  propertyOwnerships?: Ownership[]
+  propertyOwnershipsInReview?: Ownership[]
+  landlord_id: string | null
+}
+export const DashboardSidebar = ({
+  propertyOwnerships: propertyOwnerships_,
+  propertyOwnershipsInReview: propertyOwnershipsInReview_,
+  landlord_id
+}: DashboardSidebarProps) => {
+
+  const [GetOwnerships, {data: ownershipsResponse}] = useGetOwnershipsForLandlordLazyQuery()
+  const [ownerships, setOwnerships] = useState<Ownership[]>([])
+  const [ownershipsInReview, setOwnershipsInReview] = useState<Ownership[]>([])
+
+  useEffect(() => {
+    if (landlord_id != null) {
+      if (!propertyOwnerships_ || !propertyOwnershipsInReview_) {
+        GetOwnerships({
+          variables: {
+            landlord_id,
+            with_properties: true
+          }
+        })
+      }
+    }
+  }, [landlord_id])
+
+  useEffect(() => {
+    if (ownershipsResponse && ownershipsResponse.getOwnershipsForLandlord && ownershipsResponse.getOwnershipsForLandlord.data) {
+      let ownerships_: Ownership[] = ownershipsResponse.getOwnershipsForLandlord.data.ownerships;
+      setOwnerships(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'confirmed')
+      )
+      setOwnershipsInReview(
+        ownerships_.filter((ownership_: Ownership) => ownership_.status == 'in-review')
+      )
+    }
+  }, [ownershipsResponse])
+
+  const getOwnerships = (): Ownership[] => {
+    if (propertyOwnerships_) return propertyOwnerships_;
+    return ownerships;
+  }
+
+  const getOwnershipsInReview = (): Ownership[] => {
+    if (propertyOwnershipsInReview_) return propertyOwnershipsInReview_;
+    return ownershipsInReview;
+  }
+
+  return (<div style={{marginTop: `50px`}}>
+  <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Properties" count={getOwnerships().length}>
+    <div className="list-style-4">
+      {getOwnerships().map((ownership: Ownership, i: number) => 
+      <Link key={i} to={`/landlord/property/${ownership.property_doc ? ownership.property_doc._id: '_'}`}>
+        <div className="list-item">
+          <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+        </div>
+      </Link>)}
+    </div>
+  </CollapsableTab>
+  <CollapsableTab counter_on_end={true} collapsed={true} tab_name="Leases" count={0}>
+    <div/>
+  </CollapsableTab>
+  {getOwnershipsInReview().length > 0 &&
+  <CollapsableTab counter_on_end={true} tab_name="In-Review" count={getOwnershipsInReview().length}>
+    <div className="list-style-4">
+      {getOwnershipsInReview().map((ownership: Ownership, i: number) => 
+      <Link to={`/landlord/ownership-documents/${ownership._id}`} key={i}>
+        <div className="list-item">
+          <div className="primary">{ownership.property_doc ? ownership.property_doc.address_line : ''}</div>
+        </div>
+      </Link>)}
+    </div>
+  </CollapsableTab>}
+</div>)
+}
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+const dateToStr = (d_: Date): string => `${MONTHS[d_.getMonth()]} ${d_.getDate()}, ${d_.getFullYear()}`
 
 export default LandlordDashboard

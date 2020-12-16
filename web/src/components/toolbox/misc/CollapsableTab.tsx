@@ -66,7 +66,7 @@ const CollapsableTab = ({tab_name, counter_on_end, count,
         <div 
             onClick={() => setCollapsed(!collapsed)}
             className={`tab`}>{tab_name}
-        {count && <div className="count">{counterRef_}</div>}
+        {count != undefined && <div className="count">{counterRef_}</div>}
         </div>
         <motion.div 
             style={{

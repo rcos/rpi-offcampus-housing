@@ -1,6 +1,11 @@
 # Queries
-query GetOwnershipsForLandlord($landlord_id: String!) {
-  getOwnershipsForLandlord(landlord_id:$landlord_id) {
+query GetOwnershipsForLandlord($landlord_id: String!, 
+$with_properties: Boolean, $with_landlord: Boolean) {
+  getOwnershipsForLandlord(
+      landlord_id:$landlord_id,
+      with_properties:$with_properties,
+      with_landlord:$with_landlord
+    ) {
     ...OwnershipCollectionAPIResponseFields
   }
 }
@@ -103,9 +108,23 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
     status
     property_doc {
       _id
-      location
-      sq_ft
       landlord
+      address_line
+      address_line_2
+      city
+      state
+      zip
+
+      details {
+        description
+        rooms
+        bathrooms
+        sq_ft
+        furnished
+        has_washer
+        has_heater
+        has_ac
+      }
     }
     landlord_doc {
       _id
@@ -138,9 +157,23 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
       }
       property_doc {
         _id
-        location
-        sq_ft
+        address_line
+        address_line_2
+        city
+        state
+        zip
         landlord
+
+        details {
+          description
+          rooms
+          bathrooms
+          sq_ft
+          furnished
+          has_washer
+          has_heater
+          has_ac
+        }
       }
       landlord_id
       landlord_doc {

@@ -39,6 +39,8 @@ import OwnershipReview from './views/OwnershipReview'
 import ModConsole from './views/ModConsole'
 import OwnershipDoc from './views/OwnershipDoc'
 import PhoneVerifyView from './views/PhoneVerifyView'
+import PropertyDetails from './views/PropertyDetails'
+import PropertyInitialDetails from './views/PropertyInitialDetails'
 
 import Testing from './views/Testing'
 
@@ -103,6 +105,8 @@ const Routes = () => {
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={({match}) => (<LandlordOwnershipDocuments ownership_id={match.params.id} />)} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/verify/phone-number" component={PhoneVerifyView} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/property/:id" component={({match}) => (<PropertyDetails property_id={match.params.id} />)} />
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/property/:id/new" component={({match}) => (<PropertyInitialDetails property_id={match.params.id} />)} />
 
             {/* Landlord and Student */}
             <AuthRoute accessLevel={AccessLevels.STUDENT | AccessLevels.LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />

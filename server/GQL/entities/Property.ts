@@ -1,9 +1,44 @@
 import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
-import {Field, ObjectType, ID, InputType, Int} from "type-graphql"
+import {Field, ObjectType, ID, InputType, Int, Float} from "type-graphql"
 import {APIResult} from "."
-import {ObjectId} from "mongodb"
 
 import {Landlord} from './Landlord'
+
+@ObjectType({description: "Details describing the property"})
+export class PropertyDetails {
+
+  @Field(type => String)
+  @prop({type: String})
+  description: string;
+
+  @Field(type => Int)
+  @prop()
+  rooms: number;
+
+  @Field(type => Int)
+  @prop()
+  bathrooms: number;
+
+  @Field(type => Float)
+  @prop()
+  sq_ft: number;
+
+  @Field(type => Boolean)
+  @prop({type: Boolean})
+  furnished: boolean;
+
+  @Field(type => Boolean)
+  @prop({type: Boolean})
+  has_washer: boolean;
+
+  @Field(type => Boolean)
+  @prop({type: Boolean})
+  has_heater: boolean;
+  
+  @Field(type => Boolean)
+  @prop({type: Boolean})
+  has_ac: boolean;
+}
 
 @ObjectType({description: "Property model"})
 export class Property {
@@ -18,23 +53,29 @@ export class Property {
   @prop()
   landlord_doc?: Landlord;
 
-  @Field()
-  @prop()
-  location: string;
+  @Field(type => String)
+  @prop({type: String})
+  address_line: string;
+  
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  address_line_2?: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  city: string;
 
-  @Field()
-  @prop()
-  sq_ft: number;
+  @Field(type => String)
+  @prop({type: String})
+  state: string;
+  
+  @Field(type => String)
+  @prop({type: String})
+  zip: string;
 
-  /**
-   * Properties that have been submitted by landlords to add
-   * to their account will have a submission_id. These properties
-   * need to be vetted manually before adding it to the landlord's
-   * properties.
-   */
-  @Field({nullable: true})
-  @prop()
-  submission_id?: string;
+  @Field(type => PropertyDetails, {nullable: true})
+  @prop({type: PropertyDetails})
+  details?: PropertyDetails;
 }
 
 @InputType()

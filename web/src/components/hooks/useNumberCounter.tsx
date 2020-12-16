@@ -17,17 +17,22 @@ export const useNumberCounter = ({
     const getTimeStep = () => value / (getDuration() / UPDATE_TIME)
     useEffect(() => {
 
-        let ev = setInterval (() => {
-            valueRef.current = Math.max(
-                Math.min(value, Math.floor(valueRef.current + getTimeStep())),
-                valueRef.current + 1
-            )
-            setValueState(valueRef.current)
-            if (valueRef.current == value) clearInterval(ev)
-        }, UPDATE_TIME);
+        valueRef.current = 0;
+        let ev: NodeJS.Timeout | null = null;
+
+        if (value > 0) {
+            ev = setInterval (() => {
+                    valueRef.current = Math.max(
+                        Math.min(value, Math.floor(valueRef.current + getTimeStep())),
+                        valueRef.current + 1
+                    )
+                    setValueState(valueRef.current)
+                    if (valueRef.current == value) clearInterval((ev as NodeJS.Timeout))
+            }, UPDATE_TIME);
+        }
 
         return () => {
-            clearInterval(ev)
+            if (ev != null) clearInterval(ev)
         }
     }, [value])
 

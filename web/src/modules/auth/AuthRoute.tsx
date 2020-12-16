@@ -3,6 +3,7 @@ import {Route, Redirect} from 'react-router'
 import AccessLevels from './accessLevels.json'
 // import AuthAPI from '../../API/AuthAPI'
 import Cookies from 'universal-cookie'
+import {useHistory} from 'react-router'
 
 import _ from 'lodash'
 
@@ -22,6 +23,7 @@ interface IAuthStatus {
 
 const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
+  const history = useHistory()
   const cookie = new Cookies()
 
   const getUserType = (auth: IAuthStatus): number => {
@@ -105,7 +107,23 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     })
 
     // if this is a student, check the institution id
-    if (user && user.type && user.type == "student") {
+    if (user && user.user && user.type && user.type == "student") {
+
+      // if the student does not have all their information, redirect them to complete registration
+      console.log(`HELLO???`, user)
+      console.log(`firstname undefined? ${user.user.first_name == undefined}`)
+      console.log(`lastname undefined? ${user.user.last_name == undefined}`)
+      console.log(`email undefined? ${user.user.email == undefined}`)
+      if (!Object.prototype.hasOwnProperty.call(user.user, 'first_name')
+      || !Object.prototype.hasOwnProperty.call(user.user, 'last_name')
+      || !Object.prototype.hasOwnProperty.call(user.user, 'email')
+      || user.user.first_name == undefined
+      || user.user.last_name == undefined
+      || user.user.email == undefined ) {
+        console.log(`Redirecting!`)
+        history.push('/student/register/complete')
+      }
+
       if (user.user && user.user.auth_info && user.user.auth_info.institution_id) {
         let institution_id: string | null = user.user.auth_info.institution_id
         setInstitutionId(institution_id)

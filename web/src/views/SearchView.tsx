@@ -5,6 +5,10 @@ import RangeSlider from '../components/toolbox/form/RangeSlider';
 import Counter, {positiveOnly, maxVal} from '../components/toolbox/form/Counter';
 import MoreDetails from '../components/toolbox/misc/MoreDetails'
 import {useNumberCounter} from '../components/hooks/useNumberCounter'
+import Button from '../components/toolbox/form/Button'
+import {useMediaQuery} from 'react-responsive'
+import {HiCheck} from 'react-icons/hi'
+import {motion, useSpring, useTransform} from 'framer-motion'
 
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
@@ -36,6 +40,7 @@ const SearchView = () => {
     }
 
     return (<ViewWrapper
+        hide_sidebar={true}
         left_attachment_width={leftFilterWidth}
         onContentStart={(val: number) => {
             setContentStart(val)
@@ -145,11 +150,71 @@ const SearchView = () => {
 
             {/* Right Side */}
             <div className="right-side_">
-                Right
+                {Array.from(new Array(10), (_: any, i: number) => 
+                    <SearchResult key={i} delay={i < 8 ? i * 100 : 0} />
+                )}
             </div>
 
         </div>
     </ViewWrapper>)
+}
+
+const SearchResult = ({delay}: {delay: number}) => {
+    
+    const isLargeScreen = useMediaQuery({
+        query: '(min-width: 1200px)'
+    })
+    
+    const showResultSpring = useSpring(0)
+    const rotateXTransform = useTransform(showResultSpring, [0, 1], [40, 0])
+    const translateYTransform = useTransform(showResultSpring, [0, 1], [-100, 0])
+
+    useEffect(() => {
+        let t_ = setTimeout(() => {
+            showResultSpring.set(1)
+        }, delay)
+
+        return () => {
+            clearTimeout(t_);
+        }
+    }, [])
+
+    return (<motion.div 
+        style={{
+            opacity: showResultSpring,
+            rotateX: rotateXTransform,
+            translateY: translateYTransform,
+            perspective: `6.5cm`
+        }}
+        className="search-result-2">
+        
+        <div className="image-area_">
+            <div className="image-holder" />
+        </div>
+        <div className="info-area_">
+            <div className="property-location">Sample Property Location 101</div>
+            <div className="property-meta">TROY NY, 12180</div>
+
+            <div className="action-area">
+                <Button 
+                    text="View"
+                    textColor="white"
+                    background="#3B4353"
+                />
+            </div>
+        </div>
+
+        {isLargeScreen && <div className="amenities-area">
+            <div className="header_">Amenities</div>
+            {Array.from(new Array(3), (_: any, i: number) => 
+                <div className="entry_">
+                    <div className="check_"><HiCheck /></div>
+                    <div className="">Entry Goes Here</div>
+                </div>
+            )}
+        </div>}
+
+    </motion.div>)
 }
 
 export default SearchView

@@ -49,6 +49,7 @@ const StudentRegisterCompleteView = () => {
   useEffect(() => {
     // check if the user needs to be on this page
     // (if their data is already filled, they should be redirected to the app home page)
+    console.log(`Checking eligibility`)
     checkEligibility()
 
     const submitOnEnter = (e: KeyboardEvent) => {
@@ -75,9 +76,9 @@ const StudentRegisterCompleteView = () => {
   const userDataAlreadyComplete = (): boolean => {
     
     if (user == null) return true;
-    if (!_.has(user.user, 'first_name')) return false;
-    if (!_.has(user.user, 'last_name')) return false;
-    if (!_.has(user.user, 'email')) return false;
+    if (!_.has(user.user, 'first_name') || user.user.first_name == undefined) return false;
+    if (!_.has(user.user, 'last_name') || user.user.last_name == undefined) return false;
+    if (!_.has(user.user, 'email') || user.user.email == undefined) return false;
     return true;
     
   } 
@@ -216,7 +217,8 @@ const StudentRegisterCompleteView = () => {
           text="Complete"
           icon={<BiCheck />}
           iconLocation="right"
-          background="#63db97"
+          background="#3B4353"
+          textColor="white"
         />
       </div>
 

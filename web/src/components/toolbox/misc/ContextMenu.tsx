@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {motion, useSpring, useTransform} from 'framer-motion'
 import {BsThreeDotsVertical} from "react-icons/bs"
 
@@ -17,6 +17,7 @@ interface IMenuItem {
 
 const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu) => {
 
+  const menuRef = useRef<HTMLDivElement>(null)
   const makeList = (): JSX.Element[] => {
 
     let iconLeft: boolean = !iconLocation || iconLocation == 'left'
@@ -78,6 +79,22 @@ const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu
     }
   }, [])
 
+  useEffect(() => {
+
+    const handleClickClose = (e: MouseEvent) => {
+      if (menuRef.current) {
+        if (!menuRef.current.contains(e.target as any)) setShowCtxMenu(false)
+      }
+    }
+
+    window.addEventListener(`click`, handleClickClose)
+
+    return () => {
+      
+      window.removeEventListener(`click`, handleClickClose)
+    }
+  }, [menuRef])
+
   const toggleCtxMenu = () => setShowCtxMenu(!showCtxMenu)
 
   const isTop = (): boolean => position.includes('top')
@@ -86,7 +103,7 @@ const ContextMenu = ({children, menuItems, iconLocation, position}: IContextMenu
   const isLeft = (): boolean => position.includes('left')
   const isRight = (): boolean => position.includes('right')
 
-  return (<div className="context-menu-container">
+  return (<div className="context-menu-container" ref={menuRef}>
     <div onClick={toggleCtxMenu}>{children}</div>
 
     {/* Context Menu */}

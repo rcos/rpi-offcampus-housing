@@ -122,6 +122,7 @@ type Mutation {
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
   updatePhoneNumber(landlord_id: String!, phone_number: String!): LandlordAPIResponse!
+  updatePropertyDetails(bathrooms: Int, description: String, furnished: Boolean, has_ac: Boolean, has_heater: Boolean, has_washer: Boolean, property_id: String!, rooms: Int, sq_ft: Int): PropertyAPIResponse!
   updateStudent(_id: String!, new_student: StudentInput!): StudentAPIResponse!
 }
 
@@ -172,11 +173,14 @@ input OwnershipDocumentInput {
 """Property model"""
 type Property {
   _id: ID!
+  address_line: String!
+  address_line_2: String
+  city: String!
+  details: PropertyDetails
   landlord: String!
   landlord_doc: Landlord
-  location: String!
-  sq_ft: Float!
-  submission_id: String
+  state: String!
+  zip: String!
 }
 
 type PropertyAPIResponse {
@@ -194,6 +198,18 @@ type PropertyCollectionEntriesAPIResponse {
   data: PropertyCollectionEntries
   error: String
   success: Boolean!
+}
+
+"""Details describing the property"""
+type PropertyDetails {
+  bathrooms: Int!
+  description: String!
+  furnished: Boolean!
+  has_ac: Boolean!
+  has_heater: Boolean!
+  has_washer: Boolean!
+  rooms: Int!
+  sq_ft: Float!
 }
 
 """Collection of properties"""
@@ -224,8 +240,9 @@ type Query {
   getMatchingInstitutions(partial_name: String!): InstitutionListAPIResponse!
   getOwnership(_id: String!): OwnershipAPIResponse!
   getOwnershipConflicts(ownership_id: String!): OwnershipCollectionAPIResponse!
-  getOwnershipsForLandlord(landlord_id: String!): OwnershipCollectionAPIResponse!
+  getOwnershipsForLandlord(landlord_id: String!, with_landlord: Boolean, with_properties: Boolean): OwnershipCollectionAPIResponse!
   getOwnershipsInReview: OwnershipCollectionAPIResponse!
+  getPropertiesForLandlord(landlord_id: String!, status: String): PropertyListAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
