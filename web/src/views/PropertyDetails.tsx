@@ -7,6 +7,7 @@ import {PropertyDetails, Property, useGetPropertyLazyQuery} from '../API/queries
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
+import ImageUploadPopup from '../components/toolbox/misc/ImageUploadPopup'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -55,6 +56,10 @@ const PropertyDetailsView = (
         />}
     >
         <React.Fragment>
+            {/* Photos Update Popup */}
+            <ImageUploadPopup />
+
+            {/* View Layout */}
             {property != null &&
                 <div className="property-details-view">
                     
