@@ -10,11 +10,33 @@ mutation CreateLandlord(
   }
 }
 
+query ResendEmailConfirmation (
+  $landlord_id: String!
+) {
+  resendEamilConfirmation(
+    landlord_id:$landlord_id
+  ) {
+    success, error
+  }
+}
+
 mutation UpdatePhoneNumber(
   $landlord_id: String!,
   $phone_number: String!
 ) {
   updatePhoneNumber(landlord_id:$landlord_id,phone_number:$phone_number) {
+    ...LandlordAPIResponseFields
+  }
+}
+
+mutation ConfirmLandlordEmail(
+  $email: String!,
+  $confirm_key: String!
+) {
+  confirmLandlordEmail (
+    email: $email,
+    confirm_key: $confirm_key
+  ) {
     ...LandlordAPIResponseFields
   }
 }

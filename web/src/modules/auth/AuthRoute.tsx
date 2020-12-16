@@ -152,6 +152,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
           return <Component {...props} />
         }
         else {
+
           return (<Redirect to={defaultRoute(getUserType())} />);
         }
 
@@ -159,6 +160,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       else {
         console.log(`UNAUTHENTICATED`)
         if (hasAccess(AccessLevels.UNAUTH)) return <Component {...props} />
+
         else return <Redirect to={defaultRoute(getUserType())} />
 
       }

@@ -12,6 +12,8 @@ import mongoose from 'mongoose'
 import chalk from 'chalk'
 const ObjectId = mongoose.Types.ObjectId
 import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
+import {generateConfirmKey} from './LandlordResolver'
+import {frontendPath} from '../../config'
 
 @Resolver()
 export class StudentResolver {
@@ -239,9 +241,18 @@ export class StudentResolver {
       if (email) {
         student_doc.email = email; updated = true;
 
+        // generate confirm key
+        let confirm_key = generateConfirmKey()
+        student_doc.confirmation_key = confirm_key;
+
         SendGrid.sendMail({
           to: email.toString(),
-          email_template_id: SendGridTemplate.STUDENT_EMAIL_CONFIRMATION
+          email_template_id: SendGridTemplate.STUDENT_EMAIL_CONFIRMATION,
+          template_params: {
+            confirmation_key: confirm_key,
+          frontend_url: frontendPath(),
+          email: email.toString()
+          }
         })
       }
 
@@ -252,6 +263,40 @@ export class StudentResolver {
       }
       else return { success: true, data: student_doc }
 
+    }
+
+  }
+
+  @Mutation(() => StudentAPIResponse) 
+  async confirmStudentEmail(
+    @Arg("email") email: string,
+    @Arg("confirm_key") confirm_key: string
+  ): Promise<StudentAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 confirmEmail()`))
+    console.log(`\t${chalk.cyan(`email`)} ${email}`)
+
+    let student: DocumentType<Student> = await StudentModel.findOne({
+      email,
+      confirmation_key: confirm_key
+    }) as DocumentType<Student>
+
+    if (!student) {
+      console.log(chalk.bgRed(`No student found with email ${email} and confirm key:\n\t${confirm_key}`))
+      return {
+        success: false,
+        error: `No student found`
+      }
+    }
+
+    student.confirmation_key = undefined;
+    let updated_student: DocumentType<Student> = await student.save() as DocumentType<Student>
+
+    console.log(chalk.bgGreen(`✔ Successfully confirmed student's email (${email})`))
+    return {
+      success: true,
+      data: updated_student
     }
 
   }

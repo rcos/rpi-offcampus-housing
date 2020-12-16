@@ -2270,6 +2270,26 @@ body {
   }
 }
 
+.success-submit {
+  display: flex;
+
+  .icon-area {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 33px;
+    font-size: 1.4rem;
+    color: #6AD68B;
+  }
+
+  .text-area {
+    font-size: 1rem;
+    font-family: khumbh-sans;
+    height: 30px;
+    line-height: 30px;
+  }
+}
+
 .subtle-button {
   background-color: $navyLight;
   font-family: mukta;
@@ -3158,6 +3178,15 @@ a {
     background-color: $navyLight;
     transition: background 0.15s;
 
+    &.strike-through {
+      .list-item-value {
+        text-decoration: line-through;
+      }
+      &:hover {
+        background-color: $navyLight;
+      }
+    }
+
     &:hover {
       background-color: rgba(255, 255, 255, 0.23);
     }
@@ -3837,4 +3866,16 @@ a {
       }
     }
   }
+}
+
+.disabled-input {
+  color: $navy;
+  border: 2px solid $navy;
+  height: 30px;
+  line-height: 26px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-size: 0.8rem;
+  background: $navyVeryLight;
 }

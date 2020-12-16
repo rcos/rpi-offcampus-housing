@@ -13,7 +13,7 @@ import _ from 'lodash'
 import {useSelector, useDispatch} from 'react-redux'
 import {useHistory} from 'react-router'
 
-import {BiCheck, BiUser} from "react-icons/bi"
+import {BiUser} from "react-icons/bi"
 import { BsAt } from "react-icons/bs";
 
 interface IRegData {
@@ -215,7 +215,6 @@ const StudentRegisterCompleteView = () => {
         <Button 
           onClick={completeRegistration}
           text="Complete"
-          icon={<BiCheck />}
           iconLocation="right"
           background="#3B4353"
           textColor="white"

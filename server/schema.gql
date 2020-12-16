@@ -89,6 +89,7 @@ type InstitutionLocationInfo {
 """Landlord model"""
 type Landlord {
   _id: ID!
+  confirmation_key: String
   email: String!
   first_name: String!
   last_name: String!
@@ -117,6 +118,8 @@ type Mutation {
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   changeOwnershipStatus(new_status: String!, ownership_id: String!, status_changer_user_id: String!, status_changer_user_type: String!, with_landlord: Boolean!, with_property: Boolean!): OwnershipAPIResponse!
+  confirmLandlordEmail(confirm_key: String!, email: String!): LandlordAPIResponse!
+  confirmStudentEmail(confirm_key: String!, email: String!): StudentAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
@@ -246,6 +249,7 @@ type Query {
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
+  resendEamilConfirmation(landlord_id: String!): LandlordAPIResponse!
   searchProperties(searchOptions: PropertySearchInput!): PropertyListAPIResponse!
   verifyAddress(address_1: String!, address_2: String!, city: String!, state: String!, zip: String!): AddressVerificationAPIResponse!
 }
@@ -264,6 +268,7 @@ type StatusChangeInfo {
 type Student {
   _id: ID!
   auth_info: CasAuthInfo
+  confirmation_key: [String!]
   elevated_privileges: [String!]
   email: String!
   first_name: String!

@@ -30,6 +30,10 @@ export class Landlord {
   @Field(type => String, {nullable: true})
   @prop({type: String})
   type?: String;
+
+  @Field(type => String, {nullable: true})
+  @prop({type: String})
+  confirmation_key?: string;
 }
 
 @InputType()

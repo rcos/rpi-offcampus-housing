@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import bcrypt from 'bcrypt'
 const ObjectId = mongoose.Types.ObjectId
 import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
+import {frontendPath} from '../../config'
 
 @Resolver()
 export class LandlordResolver {
@@ -37,6 +38,48 @@ export class LandlordResolver {
     }
   }
 
+  @Query(() => LandlordAPIResponse)
+  async resendEamilConfirmation(@Arg("landlord_id") landlord_id: string): Promise<LandlordAPIResponse>
+  {
+    console.log(chalk.bgBlue(`👉 resendEmail()`))
+    if (!ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: landlord_id is not a valid object id`))
+      return {
+        success: false,
+        error: `Invalid landlord_id provided`
+      }
+    }
+
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(landlord_id) as DocumentType<Landlord>
+    if (!landlord_) {
+      console.log(chalk.bgRed(`❌ Error: No landlord found with id ${landlord_id}`))
+      return {
+        success: false,
+        error: `landlord does nto exist`
+      }
+    }
+
+    if (landlord_.confirmation_key) {
+      SendGrid.sendMail({
+        to: landlord_.email,
+        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION,
+        template_params: {
+          confirmation_key: landlord_.confirmation_key,
+          frontend_url: frontendPath(),
+          email: landlord_.email
+        }
+      })
+    }
+    else {
+      console.log(chalk.yellow(`\tLandlord (${landlord_.email}) has already confirmed their email`))
+    }
+
+    return {
+      success: true,
+      data: landlord_
+    }
+  }
+
   /**
    * createLandlord()
    * @desc Create a landlord object with the given first_name, last_name, email, and
@@ -64,18 +107,25 @@ export class LandlordResolver {
     }
     else {
 
+      let confirm_key: string =  generateConfirmKey ()
       let hashed_password: string = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS as string))
       let new_landlord = new LandlordModel({
         first_name,
         last_name,
         email,
-        password: hashed_password
+        password: hashed_password,
+        confirmation_key: confirm_key
       })
 
       // Email
       SendGrid.sendMail({
         to: email,
-        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION
+        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION,
+        template_params: {
+          confirmation_key: confirm_key,
+          frontend_url: frontendPath(),
+          email: email
+        }
       })
 
       let saved_landlord: DocumentType<Landlord> = await new_landlord.save() as DocumentType<Landlord>
@@ -112,4 +162,54 @@ export class LandlordResolver {
     }
 
   }
+
+  @Mutation(() => LandlordAPIResponse)
+  async confirmLandlordEmail(
+    @Arg("email") email: string,
+    @Arg("confirm_key") confirm_key: string
+  ): Promise<LandlordAPIResponse> 
+  {
+    console.log(chalk.bgBlue(`👉 confirmEmail()`))
+    console.log(`\t${chalk.cyan(`email`)} ${email}`)
+
+    let landlord: DocumentType<Landlord> = await LandlordModel.findOne({
+      email: email,
+      confirmation_key: confirm_key
+    }) as DocumentType<Landlord>
+
+    if (!landlord) {
+      console.log(chalk.bgRed(`❌ Error: No landlord found`))
+      return {
+        success: false,
+        error: `No landlord found`
+      }
+    }
+
+    landlord.confirmation_key = undefined;
+    let updated_landlord = await landlord.save() as DocumentType<Landlord>
+
+    console.log(chalk.bgGreen(`✔ Successfully confirmed email of landlord (${email})`))
+    return {
+      success: true,
+      data: landlord
+    }
+  }
+}
+
+export const generateConfirmKey = (): string => {
+  let capitals = [65, 91];
+  let lowercases = [97, 123];
+
+  let key_ = ""
+  for (let i = 0; i < 120; ++i) {
+    let r_ = Math.random();
+    if (r_ < 0.33) {
+      key_ += String.fromCharCode( Math.floor(( (capitals[1] - capitals[0]) * Math.random() ) + capitals[0] ) );
+    }
+    else if (r_ < 0.66) {
+      key_ += String.fromCharCode( Math.floor(( (lowercases[1] - lowercases[0]) * Math.random() ) + lowercases[0] ) );
+    }
+    else key_ += Math.floor(Math.random() * 10).toString()
+  }
+  return key_
 }

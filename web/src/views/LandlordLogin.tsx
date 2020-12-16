@@ -14,6 +14,8 @@ import Error from '../components/toolbox/form/Error'
 
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUser} from '../redux/actions/user'
+import queryString from 'query-string'
+import urlencode from 'urlencode'
 
 interface ILoginFields {
   email: string
@@ -65,18 +67,17 @@ const LandlordLogin = () => {
         hasError: false, message: ""
       })
       LandlordAPI.login(loginFields.email, loginFields.password)
-    .then(res => {
-      if (res.data.success) {
-
-        dispatch(fetchUser(user, {update: true}))
-      }
-    })
-    .catch(err => {
-      setFormError({
-        hasError: true,
-        message: "Error logging in."
+      .then(res => {
+        if (res.data.success) { 
+          dispatch(fetchUser(user, {update: true}))
+        }
       })
-    })
+      .catch(err => {
+        setFormError({
+          hasError: true,
+          message: "Error logging in."
+        })
+      })
     }
 
   }

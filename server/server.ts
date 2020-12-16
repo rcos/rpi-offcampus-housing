@@ -27,7 +27,7 @@ import bodyParser from "body-parser";
 app.use(express.json());
 app.use(
   cors({
-    origin: [frontendPath(null)],
+    origin: [frontendPath()],
     credentials: true,
   })
 );
