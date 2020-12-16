@@ -16,12 +16,6 @@ const Input = ({label, initial, type, autoFocus, onChange, icon, validators, inp
 
   const inputRef = useRef<HTMLInputElement>(null)
   const focusSpring = useSpring(0, {stiffness: 120, damping: 20})
-  // const lineHeightTransform = useTransform(focusSpring, (x: number) => {
-  //   let range = [40, 15]
-  //   return `${range[1] + ((range[0] - range[1]) * (1-x))}px`
-  // })
-  const scaleTransform = useTransform(focusSpring, [0, 1], [1, 0.8], {clamp: false})
-  const translateTrasnform = useTransform(focusSpring, [0, 1], [0, -6], {clamp: false})
 
   const [setInitial, setSetInitial] = useState<boolean>(true)
   const [focused, setFocused] = useState(false)
@@ -98,14 +92,10 @@ const Input = ({label, initial, type, autoFocus, onChange, icon, validators, inp
   }, [focused])
 
   return (<div className="input-field" onClick={focusInput}>
-    <motion.div 
-      style={{
-        // lineHeight: lineHeightTransform,
-        scale: scaleTransform,
-        translateY: translateTrasnform
-      }}
+    <div 
+      
       className={`label-area ${icon ? 'icon' : ''} ${focused ? 'focused': ''}`}
-      onClick={focusInput}>{label}</motion.div>
+      onClick={focusInput}>{label}</div>
     {icon && <div className={`icon-area ${focused ? 'focused' : ''}`}>{icon}</div>}
     <div className={`input-area ${icon ? 'icon' : ''}`}>
       <input 

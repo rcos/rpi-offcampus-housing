@@ -24,8 +24,6 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
 
   const inputRef = useRef<HTMLInputElement>(null)
   const focusSpring = useSpring(0, {stiffness: 120, damping: 20})
-  const scaleTransform = useTransform(focusSpring, [0, 1], [1, 0.8], {clamp: false})
-  const translateTrasnform = useTransform(focusSpring, [0, 1], [0, -6], {clamp: false})
 
   const [optionClickControl, setOptionClickControl] = useState<boolean>(false)
   const [dropdownFocused, setDropdownFocused] = useState<boolean>(false)
@@ -208,14 +206,9 @@ const Dropdown = ({label, type, onChange, inferenceFn, icon, validators}: IDropd
 
   return (<div style={{position: 'relative'}} className="dropdown-wrapper">
       <div className={`input-field ${dropdownFocused ? `focused`: ''}`} onClick={focusInput}>
-      <motion.div 
-        style={{
-          // lineHeight: lineHeightTransform,
-          scale: scaleTransform,
-          translateY: translateTrasnform
-        }}
+      <div 
         className={`label-area ${icon ? 'icon' : ''} ${focused ? 'focused': ''}`}
-        onClick={focusInput}>{label}</motion.div>
+        onClick={focusInput}>{label}</div>
       {icon && <div className={`icon-area ${focused ? 'focused' : ''}`}>{icon}</div>}
       <div className={`input-area ${icon ? 'icon' : ''}`}>
         <input 

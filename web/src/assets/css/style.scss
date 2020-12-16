@@ -361,9 +361,11 @@ body {
       font-size 0.25s, 
       border 0.25s,
       background 0.25s,
-      color 0.25s;
+      color 0.25s,
+      transform 0.25s;
 
     transition-timing-function: ease-in-out;
+    transform: scale(1) translateY(0px);
 
     &.icon {
       left: 30px;
@@ -371,6 +373,7 @@ body {
 
     &.focused {
       color: $navy;
+      transform: scale(0.8) translateY(-6px);
     }
   }
 
