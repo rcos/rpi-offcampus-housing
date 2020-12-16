@@ -30,7 +30,6 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
     .then(user_data => user_data.data)
     .then(user_ => {
 
-
       // user is authenticated on our server
       if (user_ && user_.authenticated && user_.user && user_.user.type) {
         

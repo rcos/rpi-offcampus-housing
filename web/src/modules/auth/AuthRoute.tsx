@@ -14,37 +14,29 @@ import {useDispatch, useSelector} from 'react-redux'
 import {useGetInstitutionLazyQuery} from '../../API/queries/types/graphqlFragmentTypes'
 import {Student, Landlord} from '../../API/queries/types/graphqlFragmentTypes'
 
-interface IAuthStatus {
-  isAuthenticated: boolean
-  user: Student | Landlord | null
-  loaded?: boolean
-  type: string | null
-}
-
 const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   const history = useHistory()
   const cookie = new Cookies()
 
-  const getUserType = (auth: IAuthStatus): number => {
-    // auth.user != undefined && _.has(auth.user, 'type') && (auth.user as any).type == "landlord"
-    if (auth.user === null) return AccessLevels.UNAUTH
-    else if (auth.type) {
-      if (auth.type === "landlord") {
-        return AccessLevels.LANDLORD;
-      }
-      if (auth.type === "student") {
+  const getUserType = (): number => {
+    if (!user) return -1;
+    if (!user.authenticated) return AccessLevels.UNAUTH
+    if (user.authenticated) {
+      if (user.type == "landlord") return AccessLevels.LANDLORD;
+      if (user.type == "student") {
+
         let level_ = AccessLevels.STUDENT;
-        if (auth.user && (auth.user as Student).elevated_privileges ) {
-          let privileges = (auth.user as Student).elevated_privileges!
-          for (let i = 0; i < privileges.length; ++i) {
-            switch (privileges[i]) {
+        // check their elevated privileges
+        if (user.user && user.user.elevated_privileges) {
+          // augment with elevated_privileges flags
+          for (let i = 0; i < user.user.elevated_privileges.length; ++i) {
+            switch (user.user.elevated_privileges[i]) {
               case "ownership_reviewer":
                 level_ = level_ | AccessLevels.OWNERSHIP_REVIEWER
             }
           }
-        }
-
+        } // end if
         return level_
       }
     }
@@ -57,14 +49,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     if ((user_type & AccessLevels.UNAUTH) != 0) return '/'
     return '/'
   }
-
-  const [auth, setAuth] = useState<IAuthStatus>({
-    isAuthenticated: false,
-    user: null,
-    loaded: false,
-    type: null
-  })
-
   const dispatch = useDispatch()
   const user = useSelector((state: ReduxState) => state.user)
   const institution = useSelector((state: ReduxState) => state.institution)
@@ -99,21 +83,12 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   useEffect(() => {
 
-    setAuth({
-      isAuthenticated: user == null ? false : user.authenticated,
-      user: user == null ? null : user.user,
-      loaded: user != null, 
-      type: !user || !(user!.type) ? null : user!.type
-    })
+    console.log("User", user)
 
     // if this is a student, check the institution id
     if (user && user.user && user.type && user.type == "student") {
 
       // if the student does not have all their information, redirect them to complete registration
-      console.log(`HELLO???`, user)
-      console.log(`firstname undefined? ${user.user.first_name == undefined}`)
-      console.log(`lastname undefined? ${user.user.last_name == undefined}`)
-      console.log(`email undefined? ${user.user.email == undefined}`)
       if (!Object.prototype.hasOwnProperty.call(user.user, 'first_name')
       || !Object.prototype.hasOwnProperty.call(user.user, 'last_name')
       || !Object.prototype.hasOwnProperty.call(user.user, 'email')
@@ -133,6 +108,24 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   }, [user])
 
+  const userInfoIsLoaded = (): boolean => {
+    if (accessLevel == AccessLevels.UNAUTH) return true;
+    if (user != null) {
+      if (user.authenticated) {
+
+        if (user && user.type == "student") {
+          // students also need institution information to load
+          if (!institution) return false;
+        }
+        return true;
+      }
+      else {
+        return true;
+      }
+    }
+    return false;
+  }
+
   const hasAccess = (access_flag: number): boolean => ( accessLevel & access_flag ) != 0
 
   /**
@@ -141,7 +134,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
    * all the possible permissions to access this page
    */
   const canAccess = (): boolean => {
-    let user_perm_flags = getUserType(auth)
+    let user_perm_flags = getUserType()
     return (accessLevel & user_perm_flags) != 0
   }
 
@@ -150,25 +143,30 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
     // if this route is set for any user level (no restriction)
     if (accessLevel === AccessLevels.ANY) return <Component {...props} />
 
-    else if (auth.loaded) {
+    else if (userInfoIsLoaded() && user != null) {
       // If I am authenticated, I can access components with accessLevel of authenticated user
-      if (auth.isAuthenticated) {
-
-        
+      console.log(`IN AUTH RSTRICTED`)
+      if (user.authenticated) {
+        console.log(`AUTHENTICATED`)
         if (canAccess()) {
           return <Component {...props} />
         }
-        else return (<Redirect to={defaultRoute(getUserType(auth))} />);
+        else {
+          return (<Redirect to={defaultRoute(getUserType())} />);
+        }
 
       }
       else {
-
+        console.log(`UNAUTHENTICATED`)
         if (hasAccess(AccessLevels.UNAUTH)) return <Component {...props} />
-        else return <Redirect to={defaultRoute(getUserType(auth))} />
+        else return <Redirect to={defaultRoute(getUserType())} />
 
       }
     }
-    else return <div />
+    else {
+      console.log(`DEFAULT ROUTE`)
+      return <div />
+    }
     
   }} 
   />)

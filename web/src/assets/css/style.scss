@@ -3787,6 +3787,20 @@ a {
       color: $navyLightText;
       font-size: 0.75rem;
       font-weight: 600;
+
+      .key_, .value_ {
+        display: inline-block;
+      }
+
+      .key_ {
+        margin-right: 5px;
+        text-transform: uppercase;
+        font-size: 0.65rem;
+        width: 130px;
+      }
+      .value_ {
+        color: $navy;
+      }
     }
   }
   .action-area {
