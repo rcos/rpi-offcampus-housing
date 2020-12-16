@@ -38,6 +38,10 @@ fragment PropertyCollectionEntriesAPIResponseFields on PropertyCollectionEntries
         has_washer
         has_heater
         has_ac
+        property_images {
+          s3_key
+          date_uploaded
+        }
       }
     }
   }

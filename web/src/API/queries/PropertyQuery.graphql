@@ -88,6 +88,10 @@ fragment PropertyAPIResponseFields on PropertyAPIResponse {
       has_washer
       has_heater
       has_ac
+      property_images {
+        s3_key
+        date_uploaded
+      }
     }
   }
 }
@@ -114,6 +118,10 @@ fragment PropertyListAPIResponseFields on PropertyListAPIResponse {
         has_washer
         has_heater
         has_ac
+        property_images {
+          s3_key
+          date_uploaded
+        }
       }
     }
   }

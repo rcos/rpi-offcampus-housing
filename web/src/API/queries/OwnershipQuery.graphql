@@ -124,6 +124,10 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
         has_washer
         has_heater
         has_ac
+        property_images {
+          s3_key
+          date_uploaded
+        }
       }
     }
     landlord_doc {
@@ -173,6 +177,10 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
           has_washer
           has_heater
           has_ac
+          property_images {
+            s3_key
+            date_uploaded
+          }
         }
       }
       landlord_id
