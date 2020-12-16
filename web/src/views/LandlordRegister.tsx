@@ -9,6 +9,10 @@ import Button from '../components/toolbox/form/Button'
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import {useCreateLandlordMutation} from '../API/queries/types/graphqlFragmentTypes'
 import Error from '../components/toolbox/form/Error'
+import LandlordAPI from '../API/LandlordAPI'
+
+import {useDispatch, useSelector} from 'react-redux'
+import {fetchUser} from '../redux/actions/user'
 
 interface IFormError {
   message: string
@@ -26,7 +30,9 @@ interface IRegisterFields {
 
 const LandlordRegister = () => {
 
-  const [createLandlord, {data: landlordCreationResponse}] = useCreateLandlordMutation()
+  const dispatch = useDispatch()
+  const user = useSelector((state: any) => state.user)
+  const [createLandlord, {data: landlordCreationResponse, loading: createLandlordLoading}] = useCreateLandlordMutation()
   const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
   const history = useHistory()
   const [formError, setFormError] = useState<IFormError>({
@@ -42,7 +48,17 @@ const LandlordRegister = () => {
     if (landlordCreationResponse) {
 
       if (landlordCreationResponse.createLandlord.success) {
-        history.push('/')
+        // history.push('/')
+        // log user in after registering
+        LandlordAPI.login(
+          registerFields.email,/* email */
+          registerFields.password/* password */
+        )
+        .then(res => {
+          if (res.data.success) { 
+            dispatch(fetchUser(user, {update: true}))
+          }
+        })
       }
       else if (landlordCreationResponse.createLandlord.error) {
         setFormError({
@@ -63,7 +79,6 @@ const LandlordRegister = () => {
 
   useEffect(() => {
 
-    // handleRegistrationCompletion
     const submitOnEnter = (e: KeyboardEvent) => {
       if (e.key === "Enter") handleRegistrationCompletion()
     }
@@ -129,45 +144,13 @@ const LandlordRegister = () => {
             password: registerFields.password
           }
         })
-
-        
-        /*
-        LandlordAPI.createLandlord(
-          registerFields.first_name,
-          registerFields.last_name,
-          registerFields.email,
-          registerFields.password
-        )
-        .then(res => {
-
-          if (res.data.success) {
-
-            // the user should be logged in now
-            history.push('/')
-
-          }
-          else {
-            setFormError({
-              hasError: true,
-              message: res.data.error
-            })
-          }
-
-        })
-        .catch(err => {
-          setFormError({
-            hasError: true,
-            message: "Error processing registration"
-          })
-        })
-        */
       }
 
     }
   }
 
   return (<Centered width={isMobile ? 300 : 400} height={600}>
-    <div>
+    <div>{!createLandlordLoading && !landlordCreationResponse && <div>
 
       {/* Header */}
       <div style={{display: 'flex'}} className="padded upper">
@@ -271,7 +254,7 @@ const LandlordRegister = () => {
         />
       </div>
 
-    </div>
+    </div>}</div>
   </Centered>)
 }
 

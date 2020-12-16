@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import bcrypt from 'bcrypt'
 const ObjectId = mongoose.Types.ObjectId
 import SendGrid, {SendGridTemplate} from '../../vendors/SendGrid'
+import {frontendPath} from '../../config'
 
 @Resolver()
 export class LandlordResolver {
@@ -64,18 +65,24 @@ export class LandlordResolver {
     }
     else {
 
+      let confirm_key: string =  generateConfirmKey ()
       let hashed_password: string = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS as string))
       let new_landlord = new LandlordModel({
         first_name,
         last_name,
         email,
-        password: hashed_password
+        password: hashed_password,
+        confirmation_key: confirm_key
       })
 
       // Email
       SendGrid.sendMail({
         to: email,
-        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION
+        email_template_id: SendGridTemplate.LANDLORD_EMAIL_CONFIRMATION,
+        template_params: {
+          confirmation_key: confirm_key,
+          frontend_url: frontendPath()
+        }
       })
 
       let saved_landlord: DocumentType<Landlord> = await new_landlord.save() as DocumentType<Landlord>
@@ -112,4 +119,23 @@ export class LandlordResolver {
     }
 
   }
+}
+
+
+const generateConfirmKey = (): string => {
+  let capitals = [65, 91];
+  let lowercases = [97, 123];
+
+  let key_ = ""
+  for (let i = 0; i < 120; ++i) {
+    let r_ = Math.random();
+    if (r_ < 0.33) {
+      key_ += String.fromCharCode( Math.floor(( (capitals[1] - capitals[0]) * Math.random() ) + capitals[0] ) );
+    }
+    else if (r_ < 0.66) {
+      key_ += String.fromCharCode( Math.floor(( (lowercases[1] - lowercases[0]) * Math.random() ) + lowercases[0] ) );
+    }
+    else key_ += Math.floor(Math.random() * 10).toString()
+  }
+  return key_
 }

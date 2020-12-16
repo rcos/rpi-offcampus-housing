@@ -65,18 +65,17 @@ const LandlordLogin = () => {
         hasError: false, message: ""
       })
       LandlordAPI.login(loginFields.email, loginFields.password)
-    .then(res => {
-      if (res.data.success) {
-
-        dispatch(fetchUser(user, {update: true}))
-      }
-    })
-    .catch(err => {
-      setFormError({
-        hasError: true,
-        message: "Error logging in."
+      .then(res => {
+        if (res.data.success) { 
+          dispatch(fetchUser(user, {update: true}))
+        }
       })
-    })
+      .catch(err => {
+        setFormError({
+          hasError: true,
+          message: "Error logging in."
+        })
+      })
     }
 
   }
