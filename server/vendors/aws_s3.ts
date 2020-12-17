@@ -195,9 +195,9 @@ awsRouter.post('/upload', upload.array('objects', 10), (req: express.Request, re
 awsRouter.post('/delete-object', (req, res) => {
   
   console.log(chalk.bgBlue(`👉 AWS S3 Delete Object`))
-  console.log(`\t${chalk.cyan(`key`)} ${req.params.object_key}`)
+  console.log(`\t${chalk.cyan(`key`)} ${req.body.object_key}`)
   // check if there is an object key
-  if (!_.has(req.params, `object_key`)) {
+  if (!_.has(req.body, `object_key`)) {
     console.log(chalk.bgRed(`❌ Error: No object key provided`))
     res.json({
       success: false,
@@ -206,7 +206,7 @@ awsRouter.post('/delete-object', (req, res) => {
     return;
   }
 
-  let split_ = req.params.object_key.split('.')
+  let split_ = req.body.object_key.split('.')
   if (split_.length < 2) {
     console.log(chalk.bgRed(`❌ Error: Key has no mimetype.`))
     res.json({
@@ -216,7 +216,7 @@ awsRouter.post('/delete-object', (req, res) => {
     return;
   }
   let content_type = split_[split_.length - 1].replace('_', '/')
-  let object_key = req.params.object_key
+  let object_key = req.body.object_key
   aws_s3.getObject({
     Bucket: process.env.AWS_S3_BUCKET1 as string,
     Key: object_key
@@ -237,6 +237,7 @@ awsRouter.post('/delete-object', (req, res) => {
 
       // check for restrictions
       let has_access = false;
+      console.log(data.Metadata)
 
       if (data.Metadata) {
         if (data.Metadata["restricted"] && data.Metadata["restricted"].toLowerCase() == 'true') {
@@ -257,6 +258,9 @@ awsRouter.post('/delete-object', (req, res) => {
 
           }
         }
+        else if (data.Metadata["restricted"] && data.Metadata["restricted"].toLowerCase() == 'false') {
+          has_access = true;
+        }
       }
 
       if (!has_access) {
@@ -276,20 +280,21 @@ awsRouter.post('/delete-object', (req, res) => {
         (err: aws.AWSError, data: aws.S3.Types.DeleteObjectOutput) => {
           if (err) {
             console.log(chalk.bgRed(`❌ Error: Problem deleting object.`))
-            return {
+            console.log(err)
+            res.json({
               success: false,
               error: `internal server error`
-            }
+            })
           }
           else {
             console.log(chalk.bgGreen(`✔ Successfully deleted object`))
-            return {
+            res.json({
               success: true,
               data: {
                 message: `Object deleted successfully`,
                 removed_object_key: object_key
               }
-            }
+            })
           }
         })
 

@@ -6,12 +6,13 @@ import {ReduxState} from '../redux/reducers/all_reducers'
 import {PropertyDetails, Property, 
     PropertyImageInfo,
     useGetPropertyLazyQuery,
-    useAddImagesToPropertyMutation} from '../API/queries/types/graphqlFragmentTypes'
+    useAddImagesToPropertyMutation,
+    useRemoveImageFromPropertyMutation} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
 import ImageUploadPopup, {FileTypes} from '../components/toolbox/misc/ImageUploadPopup'
-import {uploadObjects} from '../API/S3API'
+import {uploadObjects, deleteObject} from '../API/S3API'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -22,6 +23,7 @@ const PropertyDetailsView = (
     const [GetProperty, {data: propertyResponse}] = useGetPropertyLazyQuery()
     const [property, setProperty] = useState<Property | null>(null)
     const [AddImagesToProperty, {data: addImagesToPropertyResponse}] = useAddImagesToPropertyMutation()
+    const [RemoveImageFromProperty, {data: removeImageFromPropertyResponse}] = useRemoveImageFromPropertyMutation()
 
     const isSet = (_: any) => _ != null && _ != undefined
 
@@ -35,6 +37,16 @@ const PropertyDetailsView = (
             }
 
     }, [addImagesToPropertyResponse])
+
+    useEffect(() => {
+
+        console.log(removeImageFromPropertyResponse)
+        if (removeImageFromPropertyResponse && removeImageFromPropertyResponse.removeImageFromProperty
+            && removeImageFromPropertyResponse.removeImageFromProperty.data) {
+                setProperty(removeImageFromPropertyResponse.removeImageFromProperty.data)
+            }
+
+    }, [removeImageFromPropertyResponse])
 
     useEffect(() => {
         GetProperty({
@@ -73,12 +85,10 @@ const PropertyDetailsView = (
             restricted: false
         })
         .then((result) => {
-            console.log(`result`, result)
             if (result && result.status == 200 && result.data) {
                 let files_uploaded = result.data.files_uploaded;
 
                 let s3_keys = files_uploaded.map((file_: any) => file_.key)
-                
                 AddImagesToProperty({
                     variables: {
                         property_id,
@@ -90,7 +100,23 @@ const PropertyDetailsView = (
     }
 
     const handleDeleteFile = (file_key: string) => {
-        console.log(`Delete: ${file_key}`)
+        deleteObject({
+            s3_key: file_key
+        })
+        .then((res: any) => {
+            console.log(res)
+            if (res && res.data && res.data.success) {
+                RemoveImageFromProperty({
+                    variables: {
+                        property_id,
+                        s3_key: file_key
+                    }
+                })
+            }
+        })
+        .catch((err: any) => {
+            console.log(err)
+        })
     }
 
     return (<ViewWrapper
