@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {PropertyDetails, Property, 
     PropertyImageInfo,
-    useGetPropertyLazyQuery,
+    useGetPropertyOwnedByLandlordLazyQuery,
     useAddImagesToPropertyMutation,
     useRemoveImageFromPropertyMutation} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
@@ -20,7 +20,7 @@ const PropertyDetailsView = (
 
     const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
-    const [GetProperty, {data: propertyResponse}] = useGetPropertyLazyQuery()
+    const [GetPropertyOwnedByLandlord, {data: propertyResponse}] = useGetPropertyOwnedByLandlordLazyQuery()
     const [property, setProperty] = useState<Property | null>(null)
     const [AddImagesToProperty, {data: addImagesToPropertyResponse}] = useAddImagesToPropertyMutation()
     const [RemoveImageFromProperty, {data: removeImageFromPropertyResponse}] = useRemoveImageFromPropertyMutation()
@@ -49,15 +49,25 @@ const PropertyDetailsView = (
     }, [removeImageFromPropertyResponse])
 
     useEffect(() => {
-        GetProperty({
-            variables: { id: property_id, withLandlord: false, withReviews: false, reviewCount: 0, reviewOffset: 0 }
-        })
-    }, [property_id])
+        if (user && user.user) {
+            if (user.type == 'landlord') {
+                GetPropertyOwnedByLandlord({
+                    variables: { 
+                        property_id,
+                        landlord_id: user.user._id
+                    }
+                })
+            }
+            else {
+                history.push('/')
+            }
+        }
+    }, [property_id, user])
 
     useEffect(() => {
-        if (propertyResponse && propertyResponse.getProperty) {
-            if (propertyResponse.getProperty.error || !propertyResponse.getProperty.success
-            || !propertyResponse.getProperty.data) {
+        if (propertyResponse && propertyResponse.getPropertyOwnedByLandlord) {
+            if (propertyResponse.getPropertyOwnedByLandlord.error || !propertyResponse.getPropertyOwnedByLandlord.success
+            || !propertyResponse.getPropertyOwnedByLandlord.data) {
                 console.error(`Error retrieving property`)
                 history.push('/')
             }
@@ -66,11 +76,11 @@ const PropertyDetailsView = (
                  * If the property details have not been set, take them to the page to
                  * set the initial details of the property.
                  */
-                if (!propertyDetailsSet(propertyResponse.getProperty.data.details)) {
+                if (!propertyDetailsSet(propertyResponse.getPropertyOwnedByLandlord.data.details)) {
                     history.push(`/landlord/property/${property_id}/new`)
                 }
                 else {
-                    setProperty(propertyResponse.getProperty.data)
+                    setProperty(propertyResponse.getPropertyOwnedByLandlord.data)
                 }
             }
         }
