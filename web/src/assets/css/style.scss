@@ -3914,6 +3914,8 @@ a {
     .title {
       color: $navy;
       font-size: 0.8rem;
+      padding-right: 10px;
+      padding-bottom: 10px;
     }
 
     .thumbnails-area {
@@ -3922,12 +3924,47 @@ a {
       padding-bottom: 10px;
       padding-right: 10px;
       grid-template-columns: auto auto auto;
+
       .image-thumbnail {
         width: 100%;
         height: 100%;
         border-radius: 3px;
-        background-color: lightgoldenrodyellow;
+        background-color: $navyVeryLight;
         height: 80px;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+
+        .delete-image-button {
+          width: 20px;
+          height: 20px;
+          line-height: 22px;
+          background-color: rgba(59, 67, 83, 0.2);
+          position: absolute;
+          right: 0;
+          z-index: 3;
+          border-bottom-left-radius: 5px;
+          transition: background 0.15s;
+          text-align: center;
+          color: $navy;
+
+          &:hover {
+            background-color: rgba(59, 67, 83, 0.4);
+          }
+        }
+
+        img {
+          width: 100%;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%) scale(1);
+          transition: transform 0.15s;
+
+          &:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+          }
+        }
       }
     }
   }

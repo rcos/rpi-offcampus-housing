@@ -5,7 +5,8 @@ import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
 import {PropertyDetails, Property, 
     PropertyImageInfo,
-    useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+    useGetPropertyLazyQuery,
+    useAddImagesToPropertyMutation} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
@@ -20,10 +21,20 @@ const PropertyDetailsView = (
     const user = useSelector((state: ReduxState) => state.user)
     const [GetProperty, {data: propertyResponse}] = useGetPropertyLazyQuery()
     const [property, setProperty] = useState<Property | null>(null)
+    const [AddImagesToProperty, {data: addImagesToPropertyResponse}] = useAddImagesToPropertyMutation()
 
     const isSet = (_: any) => _ != null && _ != undefined
 
     const propertyDetailsSet = (details: PropertyDetails | null | undefined): boolean => isSet(details)
+
+    useEffect(() => {
+
+        if (addImagesToPropertyResponse && addImagesToPropertyResponse.addImagesToProperty
+            && addImagesToPropertyResponse.addImagesToProperty.data) {
+                setProperty(addImagesToPropertyResponse.addImagesToProperty.data)
+            }
+
+    }, [addImagesToPropertyResponse])
 
     useEffect(() => {
         GetProperty({
@@ -55,16 +66,31 @@ const PropertyDetailsView = (
 
 
     const handleFileUpload = (files_: File[]) => {
-        console.log(`Should upload:`, files_)
 
         // TODO
-        // uploadObjects({
-        //     files: files_,
-        //     restricted: false
-        // })
-        // .then((result) => {
-        //     console.log(result)
-        // })
+        uploadObjects({
+            files: files_,
+            restricted: false
+        })
+        .then((result) => {
+            console.log(`result`, result)
+            if (result && result.status == 200 && result.data) {
+                let files_uploaded = result.data.files_uploaded;
+
+                let s3_keys = files_uploaded.map((file_: any) => file_.key)
+                
+                AddImagesToProperty({
+                    variables: {
+                        property_id,
+                        s3_keys
+                    }
+                })
+            }
+        })
+    }
+
+    const handleDeleteFile = (file_key: string) => {
+        console.log(`Delete: ${file_key}`)
     }
 
     return (<ViewWrapper
@@ -85,6 +111,7 @@ const PropertyDetailsView = (
                     : []
                 }
                 onFileUpload={handleFileUpload}
+                onDeleteImage={handleDeleteFile}
             />
 
             {/* View Layout */}

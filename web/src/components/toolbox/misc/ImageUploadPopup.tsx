@@ -1,4 +1,5 @@
 import React from 'react'
+import {HiX} from 'react-icons/hi'
 import Popup, {PopupHeader} from './Popup'
 import Button from '../form/Button'
 import {objectURI} from '../../../API/S3API'
@@ -12,6 +13,7 @@ interface ImageUploadPopupProps {
     object_keys: string[]
     image_types: string[]
     onFileUpload: (files: File[]) => void
+    onDeleteImage: (file_key: string) => void
 }
 
 const FILE_SIZE_LIMIT = 600 * 1000 // 600 kb
@@ -19,7 +21,8 @@ const FILE_SIZE_LIMIT = 600 * 1000 // 600 kb
 const ImageUploadPopup = ({
     object_keys,
     image_types,
-    onFileUpload
+    onFileUpload,
+    onDeleteImage
     }: ImageUploadPopupProps) => {
 
     const uploadPhoto = () => {
@@ -95,8 +98,17 @@ const ImageUploadPopup = ({
 
                     <div className="thumbnails-area">
                         {object_keys.length > 0 
-                        && Array.from(new Array(20), (_: any, i: number) => {
-                            return (<div key={i} className="image-thumbnail" />)
+                        && object_keys.map((key_: string, i: number) => {
+                            return (<div key={i} className="image-thumbnail">
+                                <div className="delete-image-button"
+                                    onClick={() => {
+                                        onDeleteImage(key_)
+                                    }}
+                                ><HiX /></div>
+                                <img 
+                                    src={objectURI(key_)}
+                                />
+                            </div>)
                         })}
                     </div>
 
