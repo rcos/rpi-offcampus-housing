@@ -41,6 +41,18 @@ query VerifyAddress(
   }
 }
 
+mutation AddImagesToProperty(
+  $property_id: String!,
+  $s3_keys: [String!]!
+) {
+  addImagesToProperty(
+    property_id:$property_id,
+    s3_keys:$s3_keys
+  ) {
+    ...PropertyAPIResponseFields
+  }
+}
+
 mutation UpdatePropertyDetails(
   $property_id: String!,
   $description: String,
