@@ -48,7 +48,7 @@ export class PropertyResolver {
   async getProperty(
     @Arg("_id") _id: string, 
     @Arg("reviewOptions") {withReviews, offset, count}: PropertyReviewInput,
-    @Arg("withLandlord") withLandlord: boolean): Promise<PropertyAPIResponse> 
+    @Arg("withLandlord") withLandlord: boolean): Promise<PropertyAPIResponse>
   {
     console.log(chalk.bgBlue(`👉 getLandlord(id)`))
 
@@ -79,6 +79,52 @@ export class PropertyResolver {
       ...property_.toObject(),
       landlord_doc: landlord_doc == null ? undefined : landlord_doc as Landlord
     }}
+
+  }
+
+  @Query(() => PropertyAPIResponse)
+  async getPropertyOwnedByLandlord(
+    @Arg("property_id") property_id: string,
+    @Arg("landlord_id") landlord_id: string
+  ): Promise<PropertyAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 getPropertyOwnedByLandlord`))
+    if (!ObjectId.isValid(property_id) || !ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: Invalid object ids provided`))
+      return {
+        success: false,
+        error: `Invalid ids provided`
+      }
+    }
+
+    let ownership_: DocumentType<Ownership> = await OwnershipModel.findOne({
+      property_id,
+      landlord_id
+    }) as DocumentType<Ownership>
+
+    if (!ownership_) {
+      console.log(chalk.bgRed(`❌ Error: Ownership does not exist for landlord ${landlord_id} and property ${property_id}`))
+      return {
+        success: false,
+        error: `No access`
+      }
+    }
+    
+    let property_: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property_) {
+      console.log(chalk.bgRed(`❌ Error: Property does not exist`))
+      return {
+        success: false,
+        error: `No property found`
+      }
+    }
+
+    console.log(chalk.bgGreen(`✔ Successfully retrieved property ${property_id} owned by ${landlord_id}`))
+    return {
+      success: true,
+      data: property_
+    }
 
   }
 

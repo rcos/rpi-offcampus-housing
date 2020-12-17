@@ -256,6 +256,7 @@ type Query {
   getOwnershipsInReview: OwnershipCollectionAPIResponse!
   getPropertiesForLandlord(landlord_id: String!, status: String): PropertyListAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
+  getPropertyOwnedByLandlord(landlord_id: String!, property_id: String!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
   resendEamilConfirmation(landlord_id: String!): LandlordAPIResponse!

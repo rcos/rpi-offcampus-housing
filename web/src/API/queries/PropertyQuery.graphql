@@ -14,6 +14,18 @@ query GetProperty(
   }
 }
 
+query GetPropertyOwnedByLandlord(
+  $property_id: String!,
+  $landlord_id: String!
+) {
+  getPropertyOwnedByLandlord(
+    property_id: $property_id,
+    landlord_id: $landlord_id
+  ) {
+    ...PropertyAPIResponseFields
+  }
+}
+
 query GetPropertiesForLandlord(
   $landlord_id: String!,
   $status: String
