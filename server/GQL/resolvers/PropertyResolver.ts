@@ -262,6 +262,44 @@ export class PropertyResolver {
       success: true,
       data: saved_property
     }
+  }
 
+  @Mutation(() => PropertyAPIResponse)
+  async removeImageFromProperty(
+    @Arg("property_id") property_id: string,
+    @Arg("s3_key") s3_key: string
+  ): Promise<PropertyAPIResponse>
+  {
+    console.log(chalk.bgBlue(`👉 removeImageFromProperty()`))
+
+    if (!ObjectId.isValid(property_id)) {
+      console.log(chalk.bgRed(`❌ Error: property_id ${property_id} is not a valid object id`))
+      return {
+        success: false,
+        error: `Invalid property id provided`
+      }
+    }
+
+    let property_: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property_ ) {
+      console.log(chalk.bgRed(`❌ Error: No property found`))
+      return {
+        success: false,
+        error: `Property does not exist`
+      }
+    }
+
+    if (property_.details) {
+      property_.details.property_images = property_.details.property_images.filter((image_info:PropertyImageInfo) => {
+        return image_info.s3_key != s3_key
+      })
+
+      let saved_property: DocumentType<Property> = await property_.save() as DocumentType<Property>
+      console.log(chalk.bgGreen(`✔ Successfully removed ${s3_key} from property ${property_id}`))
+      return {success: true, data: saved_property}
+    }
+
+    console.log(chalk.bgYellow(`Property ${property_id} does not have image ${s3_key} in its details`))
+    return {success: true, data: property_}
   }
 }

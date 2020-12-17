@@ -53,6 +53,18 @@ mutation AddImagesToProperty(
   }
 }
 
+mutation RemoveImageFromProperty (
+  $property_id: String!,
+  $s3_key: String!
+) {
+  removeImageFromProperty(
+    property_id:$property_id,
+    s3_key:$s3_key
+  ){
+    ...PropertyAPIResponseFields
+  }
+}
+
 mutation UpdatePropertyDetails(
   $property_id: String!,
   $description: String,

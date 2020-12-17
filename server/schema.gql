@@ -123,6 +123,7 @@ type Mutation {
   confirmStudentEmail(confirm_key: String!, email: String!): StudentAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
+  removeImageFromProperty(property_id: String!, s3_key: String!): PropertyAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
   updatePhoneNumber(landlord_id: String!, phone_number: String!): LandlordAPIResponse!
