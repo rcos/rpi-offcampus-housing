@@ -114,6 +114,7 @@ input LandlordInput {
 }
 
 type Mutation {
+  addImagesToProperty(property_id: String!, s3_keys: [String!]!): PropertyAPIResponse!
   addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
