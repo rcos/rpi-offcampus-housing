@@ -197,7 +197,7 @@ const ViewWrapper = ({children,
   const institution = useSelector((state: ReduxState) => state.institution)
   const getSchoolThumbSource = (): string => {
     if ((user && user.type && user.type != "student") || institution == null) return '';
-    return objectURI(institution.s3_thumb_key, {width: 60, height: 60})
+    return objectURI(institution.s3_thumb_key)
   }
   const [userControlVisible, setUserControlVisible] = useState<boolean>(false) 
 

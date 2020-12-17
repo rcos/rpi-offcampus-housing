@@ -14,7 +14,6 @@ import sizeOf from 'buffer-image-size'
 import _resizeImage_ from 'resize-image-buffer'
 import mongoose from 'mongoose'
 const util = require('util')
-let ObjectId = mongoose.Types.ObjectId
 const upload = mutler()
 
 let user_creds = new aws.Credentials({
@@ -303,6 +302,7 @@ awsRouter.post('/delete-object', (req, res) => {
 awsRouter.get('/get-object/:object_key', (req, res) => {
 
   console.log(chalk.bgBlue(`👉 AWS S3 Get Object`))
+
   console.log(`\t${chalk.cyan(`key`)} ${req.params.object_key}`)
   if (!_.has(req.params, 'object_key') || typeof req.params.object_key != typeof "") {
     console.log(chalk.bgRed(`❌ Error: Invalid object key.`))
@@ -320,11 +320,21 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
   let content_type = split_[split_.length - 1].replace('_', '/')
   console.log(`\t${chalk.cyan(`Content-Type:`)} ${content_type}`)
 
+  // resize function
+  const resizeImage = async (image_buff: Buffer, width_: number, height_: number): Promise<Buffer> => {
+    return _resizeImage_(image_buff, {width: width_, height: height_})
+  }
+
+  // get the dimensions if requested
+  let width_: number = -1, height_: number = -1;
+  if (Object.prototype.hasOwnProperty.call(req.query, `width`)) width_ = parseInt(req.query.width as string)
+  if (Object.prototype.hasOwnProperty.call(req.query, `height`)) height_ = parseInt(req.query.height as string)
+
   aws_s3.getObject({
     Bucket: process.env.AWS_S3_BUCKET1 as string,
     Key: req.params.object_key
   }, 
-  (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
+  async (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
 
     if (err) {
       console.log(chalk.bgRed(`❌ Error: Problem retrieving object from S3 bucket.`))
@@ -366,8 +376,29 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
               'Content-Type': content_type,
               'Content-Length': (data.Body as Buffer).length
             })
-            res.end(data.Body)
-            return;
+            //_resizeImage_
+            if (width_ != -1 && height_ != -1) {
+              
+              // try to resize
+              let resized_: any = data.Body
+              try {
+                console.log(`Attempting to resize`)
+                resized_ = await resizeImage(data.Body as Buffer, width_, height_)
+                console.log(`Successfully resized`)
+                res.end(resized_)
+                return;
+              }
+              catch (err) {
+                console.log(chalk.bgYellow(`Could not resize. Returning raw size.`))
+                res.end(data.Body)
+                console.log(err)
+                return;
+              }
+            }
+            else {
+              res.end(data.Body)
+              return;
+            }
           }
 
           if (user_type != "student" && user_type != "landlord") {
@@ -391,7 +422,28 @@ awsRouter.get('/get-object/:object_key', (req, res) => {
         'Content-Type': content_type,
         'Content-Length': (data.Body as Buffer).length
       })
-      res.end(data.Body)
+
+      if (width_ != -1 && height_ != -1) {
+              
+        // try to resize
+        let resized_: any = data.Body
+        try {
+          console.log(`Attempting to resize`)
+          resized_ = await resizeImage(data.Body as Buffer, width_, height_)
+          console.log(`Successfully resized`)
+          res.end(resized_)
+          return;
+        }
+        catch (err) {
+          console.log(chalk.bgYellow(`Could not resize. Returning raw size.`))
+          res.end(data.Body)
+          console.log(err)
+          return;
+        }
+      }
+      else {
+        res.end(data.Body)
+      }
     }
 
   })

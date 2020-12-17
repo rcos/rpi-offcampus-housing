@@ -3,11 +3,14 @@ import ViewWrapper from '../components/ViewWrapper'
 import {useHistory} from 'react-router'
 import {useSelector} from 'react-redux'
 import {ReduxState} from '../redux/reducers/all_reducers'
-import {PropertyDetails, Property, useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
+import {PropertyDetails, Property, 
+    PropertyImageInfo,
+    useGetPropertyLazyQuery} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
-import ImageUploadPopup from '../components/toolbox/misc/ImageUploadPopup'
+import ImageUploadPopup, {FileTypes} from '../components/toolbox/misc/ImageUploadPopup'
+import {uploadObjects} from '../API/S3API'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -50,6 +53,20 @@ const PropertyDetailsView = (
         }
     }, [propertyResponse])
 
+
+    const handleFileUpload = (files_: File[]) => {
+        console.log(`Should upload:`, files_)
+
+        // TODO
+        // uploadObjects({
+        //     files: files_,
+        //     restricted: false
+        // })
+        // .then((result) => {
+        //     console.log(result)
+        // })
+    }
+
     return (<ViewWrapper
         sidebar_content={<DashboardSidebar
             landlord_id={user && user.user ? user.user._id : null}
@@ -57,7 +74,18 @@ const PropertyDetailsView = (
     >
         <React.Fragment>
             {/* Photos Update Popup */}
-            <ImageUploadPopup />
+            <ImageUploadPopup
+                image_types={[FileTypes.PNG,FileTypes.JPEG]}
+                object_keys={
+                    property && property.details ? 
+                    property.details.property_images.map(
+                        (property_image: PropertyImageInfo) => {
+                            return property_image.s3_key
+                        })
+                    : []
+                }
+                onFileUpload={handleFileUpload}
+            />
 
             {/* View Layout */}
             {property != null &&
@@ -107,7 +135,7 @@ const PropertyDetailsView = (
                                             {Object.keys(property.details!).map((key: string) => {
                                                 return [key, (property.details! as any)[key]]
                                             }).filter( (val: any) => val[1] === true)
-                                            .map((val: any) => {
+                                            .map((val: any, ind: number) => {
                                                 let key_ = val[0]
                                                 let details_map = {
                                                     "furnished": "Furnished",
@@ -118,7 +146,7 @@ const PropertyDetailsView = (
                                                 let _str_: string = Object.keys(details_map).includes(key_) ? 
                                                     (details_map as any)[(key_ as string)] : "__none__"
                                                 
-                                                return (<div className="check-list">
+                                                return (<div key={ind} className="check-list">
                                                     <div className="check_"><HiCheck /></div>
                                                     <div className="_val_">{_str_}</div>
                                                 </div>)
@@ -136,7 +164,7 @@ const PropertyDetailsView = (
                                     background="#3B4353"/>}>
                                 <div className="image-placeholder">
                                     {Array.from(new Array(8), (_: any, i: number) => {
-                                        return <div className="image-placeholder" />
+                                        return <div key={i} className="image-placeholder" />
                                     })}
                                 </div>
                             </Card>

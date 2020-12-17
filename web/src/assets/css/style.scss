@@ -1885,14 +1885,15 @@ body {
   text-transform: uppercase;
   font-weight: 600;
   margin-right: 5px;
-  background-color: $limewhite;
+  background-color: $navyVeryLight;
   padding: 5px 8px;
   border-radius: 2px;
   cursor: pointer;
   transition: background 0.25s;
+  color: $navy;
 
   &.active {
-    background-color: $cyan;
+    background-color: $navyLight;
   }
 }
 
@@ -3899,7 +3900,7 @@ a {
       position: absolute;
       left: 10px;
       right: 10px;
-      top: 10px;
+      top: 0px;
       bottom: 10px;
       border-radius: 5px;
     }
@@ -3911,7 +3912,6 @@ a {
     overflow-y: scroll;
 
     .title {
-      padding: 8px 5px;
       color: $navy;
       font-size: 0.8rem;
     }
