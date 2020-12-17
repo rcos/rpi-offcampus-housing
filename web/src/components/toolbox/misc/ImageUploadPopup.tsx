@@ -14,6 +14,8 @@ interface ImageUploadPopupProps {
     image_types: string[]
     onFileUpload: (files: File[]) => void
     onDeleteImage: (file_key: string) => void
+    show: boolean
+    onClose: Function
 }
 
 const FILE_SIZE_LIMIT = 600 * 1000 // 600 kb
@@ -22,7 +24,9 @@ const ImageUploadPopup = ({
     object_keys,
     image_types,
     onFileUpload,
-    onDeleteImage
+    onDeleteImage,
+    show,
+    onClose
     }: ImageUploadPopupProps) => {
 
     const uploadPhoto = () => {
@@ -51,9 +55,9 @@ const ImageUploadPopup = ({
         uploadInput.click ();
     }
 
-    return (<Popup width={700} height={450} show={true}>
+    return (<Popup width={700} height={450} show={show}>
         <React.Fragment>
-            <PopupHeader withClose={true}>Update Photos</PopupHeader>
+            <PopupHeader withClose={true} onClose={onClose}>Update Photos</PopupHeader>
             
             <div className="image-upload-popup">
                 <div className="image-preview">

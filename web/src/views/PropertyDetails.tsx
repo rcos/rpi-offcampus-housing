@@ -20,6 +20,7 @@ const PropertyDetailsView = (
 
     const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
+    const [showUpdateImagePopup, setShowUpdateImagePopup] = useState<boolean>(false)
     const [GetPropertyOwnedByLandlord, {data: propertyResponse}] = useGetPropertyOwnedByLandlordLazyQuery()
     const [property, setProperty] = useState<Property | null>(null)
     const [AddImagesToProperty, {data: addImagesToPropertyResponse}] = useAddImagesToPropertyMutation()
@@ -52,7 +53,7 @@ const PropertyDetailsView = (
         if (user && user.user) {
             if (user.type == 'landlord') {
                 GetPropertyOwnedByLandlord({
-                    variables: { 
+                    variables: {
                         property_id,
                         landlord_id: user.user._id
                     }
@@ -137,6 +138,8 @@ const PropertyDetailsView = (
         <React.Fragment>
             {/* Photos Update Popup */}
             <ImageUploadPopup
+                show={showUpdateImagePopup}
+                onClose={() => setShowUpdateImagePopup(false)}
                 image_types={[FileTypes.PNG,FileTypes.JPEG]}
                 object_keys={
                     property && property.details ? 
@@ -223,6 +226,7 @@ const PropertyDetailsView = (
                                 header="Photos"
                                 right_side={<Button 
                                     text="Update"
+                                    onClick={() => setShowUpdateImagePopup(true)}
                                     textColor="white"
                                     background="#3B4353"/>}>
                                 <div className="image-placeholder">
