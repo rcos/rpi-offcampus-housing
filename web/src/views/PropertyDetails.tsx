@@ -13,8 +13,9 @@ import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
 import ImageUploadPopup, {FileTypes} from '../components/toolbox/misc/ImageUploadPopup'
-import {uploadObjects, deleteObject} from '../API/S3API'
+import {uploadObjects, deleteObject, objectURI} from '../API/S3API'
 import Checkbox from '../components/toolbox/form/Checkbox'
+import NoEntries from '../components/toolbox/misc/NoEnties'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -344,11 +345,20 @@ const PropertyDetailsView = (
                                     onClick={() => setShowUpdateImagePopup(true)}
                                     textColor="white"
                                     background="#3B4353"/>}>
-                                <div className="image-placeholder">
-                                    {Array.from(new Array(8), (_: any, i: number) => {
-                                        return <div key={i} className="image-placeholder" />
+                                {property && property.details &&
+                                <div className="photos-container">
+                                    {property.details.property_images
+                                    .map((img_info: PropertyImageInfo, i: number) => {
+                                        return (<div key={i} className="photo-holder">
+                                            <img src={objectURI(img_info.s3_key)} />
+                                        </div>)
                                     })}
-                                </div>
+                                </div>}
+                                {(!property || !property.details || property && property.details.property_images.length == 0)
+                                    && <div><NoEntries 
+                                    message="No photos"
+                                /></div>
+                                }
                             </Card>
                         </div>
                     </div>

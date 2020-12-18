@@ -3489,18 +3489,37 @@ a {
   }
 }
 
-.image-placeholder {
+.photos-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-column-gap: 15px;
   grid-row-gap: 15px;
   justify-self: stretch;
-  .image-placeholder {
+  position: relative;
+  .photo-holder {
     border: 1px solid $navyLightText;
     width: 100%;
     height: 80px;
     border-radius: 3px;
+    position: relative;
+    background-color: $navyVeryLight;
+    overflow: hidden;
+    cursor: pointer;
 
+    &:hover {
+      img {
+        transform: translate(-50%, -50%) scale(0.9);
+      }
+    }
+
+    img {
+      width: 100%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      transition: transform 0.15s;
+    }
   }
 }
 
