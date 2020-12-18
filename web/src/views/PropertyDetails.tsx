@@ -65,6 +65,8 @@ const PropertyDetailsView = (
     }, [removeImageFromPropertyResponse])
 
     useEffect(() => {
+        setDetailsEditMode(false);
+
         if (user && user.user) {
             if (user.type == 'landlord') {
                 GetPropertyOwnedByLandlord({
@@ -110,6 +112,14 @@ const PropertyDetailsView = (
                 )
             }
     }, [updatedPropertyDetailsResponse])
+
+    useEffect(() => {
+        window.addEventListener(`beforeunload`, detailsUpdateBeforeUnload)
+
+        return () => {
+        window.removeEventListener(`beforeunload`, detailsUpdateBeforeUnload)
+        }
+    }, [updatedDetails])
 
 
     const handleFileUpload = (files_: File[]) => {
@@ -167,7 +177,27 @@ const PropertyDetailsView = (
                 has_ac: updatedDetails.has_ac
             }
         })
+
+        // reset details
+        setUpdatedDetails({
+            description: null,
+            furnished: null,
+            has_ac: null,
+            has_washer: null,
+            has_heater: null
+        })
         setDetailsEditMode(false)
+        window.removeEventListener(`beforeunload`, detailsUpdateBeforeUnload)
+    }
+
+    const detailsUpdateBeforeUnload = (): string | null => {
+
+        console.log(`beforeunload`, updatedDetails)
+        return Object.entries(updatedDetails)
+        .filter((details_: any[]) => details_[1] != null)
+        .length > 0 ? 
+        `You have unsaved changes. Save them before leaving the page`
+        : null
     }
 
     return (<ViewWrapper
