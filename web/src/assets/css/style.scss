@@ -278,6 +278,94 @@ body {
   background: url('../svg/logo.svg');
   background-size: 100%;
   cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.app-logo-text {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 50px;
+  margin-left: 8px;
+  font-family: khumbh-sans;
+  font-weight: 600;
+  color: $navy;
+  font-size: 1.3rem;
+  position: relative;
+  cursor: pointer;
+
+  .beta-tag {
+    position: absolute;
+    right: 0;
+    top: -0px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    transform: translate(calc(100% + 5px), 0);
+    height: 20px;
+    line-height: 22px;
+    font-weight: 100;
+    padding: 0 6px;
+    background-color: $navy;
+    color: white;
+    border-radius: 3px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+}
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+.app-dropdown-button {
+  font-family: sans-serif;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+  
+  position: relative;
+
+  .label-container {
+    padding: 6px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: 0.7px;
+  }
+
+  .options-container {
+    position: absolute;
+    width: 140px;
+    right: 0;
+    transform: translateY(5px);
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0px 3px 8px rgba(59, 67, 83, 0.05);
+    
+
+    .option-item {
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 3px 5px;
+      color: $navy;
+      transition: background 0.25s;
+
+      &:hover {
+        background-color: $navyVeryLight;
+      }
+    }
+  }
 }
 
 .app-button {
@@ -4075,6 +4163,46 @@ a {
 
     ._checkbox {
       border: 2px solid $navyLightText;
+    }
+  }
+}
+
+.form-toggle-2 {
+  position: relative;
+  display: inline-block;
+
+  .toggle-container {
+    cursor: pointer;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    background-color: $navy;
+    border-radius: 30px;
+
+    .toggle-ball {
+      width: 14px;
+      height: 14px;
+      background-color: white;
+      border-radius: 30px;
+      position: relative;
+      top: 3px;
+    }
+
+    .on-label, .off-label {
+      position: absolute;
+      top: 50%;
+      width: 120px;
+      font-size: 0.85rem;
+    }
+  
+    .on-label {
+      transform: translateY(-50%) translateX(calc(-100% - 8px));
+      left: 0;
+      text-align: right;
+    }
+    .off-label {
+      transform: translateY(-50%) translateX(calc(100% + 8px));
+      right: 0;
     }
   }
 }
