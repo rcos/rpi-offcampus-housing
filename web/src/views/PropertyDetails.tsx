@@ -7,12 +7,14 @@ import {PropertyDetails, Property,
     PropertyImageInfo,
     useGetPropertyOwnedByLandlordLazyQuery,
     useAddImagesToPropertyMutation,
-    useRemoveImageFromPropertyMutation} from '../API/queries/types/graphqlFragmentTypes'
+    useRemoveImageFromPropertyMutation,
+    useUpdatePropertyDetailsMutation} from '../API/queries/types/graphqlFragmentTypes'
 import Button from '../components/toolbox/form/Button'
 import {HiOutlineArrowNarrowRight, HiCheck} from 'react-icons/hi'
 import {DashboardSidebar} from './LandlordDashboard'
 import ImageUploadPopup, {FileTypes} from '../components/toolbox/misc/ImageUploadPopup'
 import {uploadObjects, deleteObject} from '../API/S3API'
+import Checkbox from '../components/toolbox/form/Checkbox'
 
 const PropertyDetailsView = (
     {property_id}: {property_id: string}
@@ -21,8 +23,21 @@ const PropertyDetailsView = (
     const history = useHistory()
     const user = useSelector((state: ReduxState) => state.user)
     const [showUpdateImagePopup, setShowUpdateImagePopup] = useState<boolean>(false)
-    const [GetPropertyOwnedByLandlord, {data: propertyResponse}] = useGetPropertyOwnedByLandlordLazyQuery()
+    const [detailsEditMode, setDetailsEditMode] = useState<boolean>(false)
     const [property, setProperty] = useState<Property | null>(null)
+    const [updatedDetails, setUpdatedDetails] = useState<{
+        description: string | null, furnished: boolean | null, has_washer: boolean | null, has_heater: boolean | null,
+        has_ac: boolean | null
+    }>({
+        description: null,
+        furnished: null,
+        has_washer: null,
+        has_heater: null,
+        has_ac: null
+    })
+
+    const [UpdatePropertyDetails, {data: updatedPropertyDetailsResponse}] = useUpdatePropertyDetailsMutation()
+    const [GetPropertyOwnedByLandlord, {data: propertyResponse}] = useGetPropertyOwnedByLandlordLazyQuery()
     const [AddImagesToProperty, {data: addImagesToPropertyResponse}] = useAddImagesToPropertyMutation()
     const [RemoveImageFromProperty, {data: removeImageFromPropertyResponse}] = useRemoveImageFromPropertyMutation()
 
@@ -87,10 +102,18 @@ const PropertyDetailsView = (
         }
     }, [propertyResponse])
 
+    useEffect(() => {
+        if (updatedPropertyDetailsResponse && updatedPropertyDetailsResponse.updatePropertyDetails
+            && updatedPropertyDetailsResponse.updatePropertyDetails.data) {
+                setProperty(
+                    updatedPropertyDetailsResponse.updatePropertyDetails.data
+                )
+            }
+    }, [updatedPropertyDetailsResponse])
+
 
     const handleFileUpload = (files_: File[]) => {
 
-        // TODO
         uploadObjects({
             files: files_,
             restricted: false
@@ -128,6 +151,23 @@ const PropertyDetailsView = (
         .catch((err: any) => {
             console.log(err)
         })
+    }
+
+    // save the changes of the property details made by
+    // the landlord.
+    const handleSaveChanges = () => {
+
+        UpdatePropertyDetails({
+            variables: {
+                property_id,
+                description: updatedDetails.description,
+                furnished: updatedDetails.furnished,
+                has_washer: updatedDetails.has_washer,
+                has_heater: updatedDetails.has_heater,
+                has_ac: updatedDetails.has_ac
+            }
+        })
+        setDetailsEditMode(false)
     }
 
     return (<ViewWrapper
@@ -178,11 +218,33 @@ const PropertyDetailsView = (
                         <div className="right">
                             {/* Info Card */}
                             <Card 
-                                header="Info">
+                                header="Info"
+                                right_side={<Button 
+                                    text={detailsEditMode ? `Save Changes` : `Edit`}
+                                    background={detailsEditMode ? "#8AE59C" : "#3B4353"}
+                                    textColor="white"
+                                    onClick={() => {
+                                        if (detailsEditMode) {
+                                            handleSaveChanges ()
+                                        }
+                                        else setDetailsEditMode(!detailsEditMode)
+                                    }}
+                                />}>
                                     <div className="sub-section">
                                         <div className="sub-header">Description</div>
                                         <div className="paragraph">
-                                            {property.details!.description}
+                                            {
+                                                detailsEditMode ? 
+                                                <textarea className="app-textarea"
+                                                defaultValue={property.details!.description} 
+                                                onChange={(e: any) => {
+                                                    let updatedDetails_ = {...updatedDetails}
+                                                    updatedDetails_.description = e.target.value;
+                                                    setUpdatedDetails(updatedDetails_)
+                                                }}/>
+                                                :
+                                                property.details!.description
+                                            }
                                         </div>
                                         <div className="kv-pair">
                                             <div className="key_">Square Feet</div>
@@ -198,7 +260,7 @@ const PropertyDetailsView = (
                                         </div>
                                         <div className="sub-header">Amenities</div>
                                         <div className="paragraph">
-                                            {Object.keys(property.details!).map((key: string) => {
+                                            {!detailsEditMode && Object.keys(property.details!).map((key: string) => {
                                                 return [key, (property.details! as any)[key]]
                                             }).filter( (val: any) => val[1] === true)
                                             .map((val: any, ind: number) => {
@@ -217,6 +279,29 @@ const PropertyDetailsView = (
                                                     <div className="_val_">{_str_}</div>
                                                 </div>)
                                             })}
+
+                                            {detailsEditMode && 
+                                                Object.entries({
+                                                    "furnished": "Furnished",
+                                                    "has_washer": "Washing Machine",
+                                                    "has_heater": "Insulation",
+                                                    "has_ac": "Air Conditioning"
+                                                }).map((entry_: string[], i: number) => {
+                                                    return (<Checkbox 
+                                                        key={i}
+                                                        onCheck={(val: boolean) => {
+                                                            let updatedDetails_ = {...updatedDetails};
+                                                            (updatedDetails_ as any)[entry_[0]] = val;
+                                                            setUpdatedDetails(updatedDetails_);
+                                                        }}
+                                                        initiallyChecked={
+                                                            property.details && (property.details as any)[entry_[0]] ?
+                                                            true : false
+                                                        }
+                                                        label={entry_[1]}
+                                                    />)
+                                                })
+                                            }
                                         </div>
                                     </div>
                             </Card>
@@ -225,7 +310,7 @@ const PropertyDetailsView = (
                             <Card 
                                 header="Photos"
                                 right_side={<Button 
-                                    text="Update"
+                                    text="Manage"
                                     onClick={() => setShowUpdateImagePopup(true)}
                                     textColor="white"
                                     background="#3B4353"/>}>

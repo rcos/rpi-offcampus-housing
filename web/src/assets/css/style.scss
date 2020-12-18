@@ -3403,6 +3403,7 @@ a {
 
     .left, .right {
       flex-grow: 1;
+      width: 50%;
     }
 
     .left {
@@ -3428,6 +3429,7 @@ a {
   font-family: sans-serif;
 
   .header_ {
+    height: 30px;
     display: flex;
     align-items: flex-end;
     .left_ { 
@@ -3442,6 +3444,7 @@ a {
     margin-bottom: 15px;
     padding: 10px 12px;
     border-radius: 3px;
+    box-shadow: 0px 3px 8px rgba(59, 67, 83, 0.05);
 
     .sub-section {
       .sub-header {
@@ -3966,6 +3969,93 @@ a {
           }
         }
       }
+    }
+  }
+}
+
+.app-textarea {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  resize: vertical;
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid $navyLightText;
+  border-radius: 5px;
+  color: $navy;
+
+  &:focus {
+    border: 1px solid $navy;
+  }
+}
+
+.app-checkbox {
+  ._label, .checkbox-container {
+    display: inline-block;
+    vertical-align: top;
+    align-items: center;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+
+  ._label {
+    padding: 2px 6px;
+  }
+
+  .checkbox-container {
+    height: 20px;
+    width: 25px;
+    position: relative;
+
+    ._checkbox {
+      width: 18px;
+      height: 18px;
+      background-color: rgba(0, 0, 0, 0.0);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 3px;
+      border: 1px solid $navyLightText;
+      box-sizing: border-box;
+      overflow: hidden;
+
+      .check-icon {
+        color: $navyLightText;
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, calc(-50% + 1px));
+        transition: color 0.15s;
+
+        &.checked {
+          color: white;
+        }
+      }
+
+      .checkbox-slider {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        background-color: $navyLightText;
+        transform: translate(-120%, -120%) rotate(45deg);
+        transition: transform 0.15s;
+        z-index: -1;
+
+        &.checked {
+          transform: translate(-20%, -20%) rotate(45deg);
+        }
+      }
+    }
+  }
+
+  &:hover {
+
+    ._checkbox {
+      border: 2px solid $navyLightText;
     }
   }
 }
