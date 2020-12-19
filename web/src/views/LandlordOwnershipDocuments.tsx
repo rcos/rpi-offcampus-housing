@@ -308,7 +308,7 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
       <div className="add-docs-btn-area">
           <Button 
             text="Upload Document(s)"
-            background="#96b5b1"
+            background="#E0777D"
             textColor="white"
             onClick={uploadEnabled ? chooseDocument : () => {}}
           />
@@ -323,7 +323,7 @@ const DocumentPreviews = ({documents, chooseDocument, uploadEnabled, pending}: I
           <Button 
             text="Upload Document(s)"
             iconLocation="left"
-            background="#96b5b1"
+            background="#E0777D"
             textColor="white"
             onClick={uploadEnabled ? chooseDocument : () => {}}
           />
