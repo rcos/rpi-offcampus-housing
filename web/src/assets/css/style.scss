@@ -4317,3 +4317,49 @@ a {
 ._canvas_ {
   position: relative;
 }
+
+.onboarding-container {
+  width: 400px;
+  margin: 0 auto;
+  position: relative;
+
+  .canvas-container {
+    height: 400px;
+    width: 400px;
+    margin-top: 60px;
+  }
+
+  .text-info {
+    margin-top: 40px;
+    font-family: sans-serif;
+    color: $navy;
+
+    .title__ {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .pg__ {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.onboard-slider {
+  height: 5px;
+  display: flex;
+  justify-content: space-between;
+
+  .onboard-slider-pin {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    height: 5px;
+    transition: background 0.45s;
+    cursor: pointer;
+
+    &.active {
+      background: #E0777D;
+    }
+  }
+}

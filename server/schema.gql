@@ -93,6 +93,7 @@ type Landlord {
   email: String!
   first_name: String!
   last_name: String!
+  onboarded: Boolean
   password: String
   phone_number: String
   type: String
@@ -125,6 +126,7 @@ type Mutation {
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
   removeImageFromProperty(property_id: String!, s3_key: String!): PropertyAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
+  setLandlordOnboarded(landlord_id: String!): LandlordAPIResponse!
   submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
   updatePhoneNumber(landlord_id: String!, phone_number: String!): LandlordAPIResponse!
   updatePropertyDetails(bathrooms: Int, description: String, furnished: Boolean, has_ac: Boolean, has_heater: Boolean, has_washer: Boolean, property_id: String!, rooms: Int, sq_ft: Int): PropertyAPIResponse!

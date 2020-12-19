@@ -116,7 +116,8 @@ export class LandlordResolver {
         last_name,
         email,
         password: hashed_password,
-        confirmation_key: confirm_key
+        confirmation_key: confirm_key,
+        onboarded: false
       })
 
       // Email
@@ -197,6 +198,36 @@ export class LandlordResolver {
       success: true,
       data: landlord
     }
+  }
+
+  @Mutation(() => LandlordAPIResponse)
+  async setLandlordOnboarded(
+    @Arg("landlord_id") landlord_id: string
+  ): Promise<LandlordAPIResponse> 
+  {
+
+    if (!ObjectId.isValid(landlord_id)) {
+      return {
+        success: false,
+        error: `Invalid landlord id`
+      }
+    }
+
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(landlord_id) as DocumentType<Landlord>;
+    if (!landlord_) {
+      return {
+        success: false,
+        error: `No landlord found`
+      }
+    }
+
+    landlord_.onboarded = undefined;
+    let saved_landlord: DocumentType<Landlord> = await landlord_.save() as DocumentType<Landlord>
+    return {
+      success: true,
+      data: saved_landlord
+    }
+
   }
 }
 

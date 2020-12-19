@@ -34,6 +34,10 @@ export class Landlord {
   @Field(type => String, {nullable: true})
   @prop({type: String})
   confirmation_key?: string;
+
+  @Field(type => Boolean, {nullable: true})
+  @prop({type: Boolean})
+  onboarded?: boolean;
 }
 
 @InputType()
