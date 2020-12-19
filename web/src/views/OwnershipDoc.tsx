@@ -30,6 +30,10 @@ const OwnershipDoc = ({ownership_id}: {ownership_id: string}) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const headerRef = useRef<HTMLDivElement>(null)
 
+    useEffect(() => {
+
+    }, [ownership_id])
+
     const [ownershipDoc, setOwnershipDoc] = useState<Ownership | null>(null)
     const [GetOwnership, {data: ownershipDocData}] = useGetOwnershipLazyQuery({
         fetchPolicy: 'no-cache',

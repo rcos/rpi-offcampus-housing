@@ -83,8 +83,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   useEffect(() => {
 
-    console.log("User", user)
-
     // if this is a student, check the institution id
     if (user && user.user && user.type && user.type == "student") {
 
@@ -95,7 +93,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       || user.user.first_name == undefined
       || user.user.last_name == undefined
       || user.user.email == undefined ) {
-        console.log(`Redirecting!`)
         history.push('/student/register/complete')
       }
 
@@ -145,9 +142,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
     else if (userInfoIsLoaded() && user != null) {
       // If I am authenticated, I can access components with accessLevel of authenticated user
-      console.log(`IN AUTH RSTRICTED`)
       if (user.authenticated) {
-        console.log(`AUTHENTICATED`)
         if (canAccess()) {
           return <Component {...props} />
         }
@@ -158,7 +153,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
       }
       else {
-        console.log(`UNAUTHENTICATED`)
         if (hasAccess(AccessLevels.UNAUTH)) return <Component {...props} />
 
         else return <Redirect to={defaultRoute(getUserType())} />
@@ -166,7 +160,6 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       }
     }
     else {
-      console.log(`DEFAULT ROUTE`)
       return <div />
     }
     

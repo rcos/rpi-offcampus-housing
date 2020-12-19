@@ -41,6 +41,16 @@ mutation ConfirmLandlordEmail(
   }
 }
 
+mutation OnboardLandlord(
+  $landlord_id: String!
+) {
+  setLandlordOnboarded(
+    landlord_id: $landlord_id
+  ) {
+    ...LandlordAPIResponseFields
+  }
+}
+
 fragment LandlordAPIResponseFields on LandlordAPIResponse {
   success
   error

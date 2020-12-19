@@ -65,7 +65,8 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
             email: user_.user.email,
             phone_number: user_.user.phone_number,
             password: "",
-            confirmation_key: user_.user.confirmation_key
+            confirmation_key: user_.user.confirmation_key,
+            onboarded: user_.user.onboarded
           }
 
           let landlord_auth: LandlordInfo = {

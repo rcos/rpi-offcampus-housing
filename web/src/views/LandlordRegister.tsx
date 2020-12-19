@@ -225,7 +225,7 @@ const LandlordRegister = () => {
           right={<Button 
             text="Complete"
             textColor="white"
-            background="#96b5b1"
+            background="#E0777D"
             iconLocation="right"
             onClick={handleRegistrationCompletion}
           />}

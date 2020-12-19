@@ -33,6 +33,13 @@ const LandlordDashboard = () => {
 
   useEffect(() => {
     if (user && user.user && user.type == 'landlord') {
+      
+      // check if the landlord is onboarded
+      console.log(`landlord info`, user.user)
+      if (user.user.onboarded == false) {
+        history.push('/landlord/welcome')
+      }
+
       GetOwnershipsForLandlord({
         variables: {
           landlord_id: user.user._id,
