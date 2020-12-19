@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import {Link} from 'react-router-dom'
 
 interface DramaticButtonProps {
     text: string
@@ -8,9 +9,10 @@ interface DramaticButtonProps {
     background3: string
     show: boolean
     initial?: boolean
+    linkTo: string
 }
 
-const DramaticButton = ({text, initial, show, background, background2, background3}: DramaticButtonProps) => {
+const DramaticButton = ({text, initial, linkTo, show, background, background2, background3}: DramaticButtonProps) => {
 
     useEffect(() => {
         let t_1: null | NodeJS.Timeout= null;
@@ -49,7 +51,7 @@ const DramaticButton = ({text, initial, show, background, background2, backgroun
 
     const textShowSpring = useSpring(0)
 
-    return (<div className="dramatic-button" style={{
+    return (<Link to={linkTo}><div className="dramatic-button" style={{
     }}>
         <motion.div className="text-holder_"
             style={{
@@ -75,7 +77,7 @@ const DramaticButton = ({text, initial, show, background, background2, backgroun
                 width: rectWidthTransform3
             }}
         />
-    </div>)
+    </div></Link>)
 }
 
 export default DramaticButton

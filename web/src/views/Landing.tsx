@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import queryString from 'query-string'
 
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import Logo from '../components/Logo'
@@ -25,10 +26,41 @@ import BlueTriangle from '../assets/svg/landing/blue_triangle.svg'
 import BlueTriangle2 from '../assets/svg/landing/blue_triangle2.svg'
 
 const LandingPage = () => {
-  const history = useHistory()
+  const history_ = useHistory()
 
-  const [showStudent, setShowStudent] = useState<boolean> (true)
-  const [showLandlord, setShowLandlord] = useState<boolean> (false)
+  const getInitialView = (): 'student' | 'landlord' => {
+    let query_ = queryString.parse(window.location.search);
+    if (Object.prototype.hasOwnProperty.call(query_, 'm')) {
+      let view_ = query_['m'];
+      
+      if (view_ == "student") {
+        return 'student'
+      }
+      if (view_ == "landlord") {
+        return 'landlord'
+      }
+    }
+
+    return 'student'
+  }
+
+  const [showStudent, setShowStudent] = useState<boolean> (getInitialView() == "landlord" ? false : true)
+  const [showLandlord, setShowLandlord] = useState<boolean> (getInitialView() == "landlord" ? true : false)
+
+  useEffect(() => {
+
+    if (showStudent) {
+      let url = new URL(window.location.toString());
+      url.searchParams.set('m', 'student');
+      window.history.pushState({}, '', url.toString());
+    }
+    if (showLandlord) {
+      let url = new URL(window.location.toString());
+      url.searchParams.set('m', 'landlord');
+      window.history.pushState({}, '', url.toString());
+    }
+
+  }, [showStudent, showLandlord])
 
   return (<div>
 
@@ -48,6 +80,7 @@ const LandingPage = () => {
           margin: `10px auto`
         }}>
           <Toggle2 
+            initialValue={getInitialView() == "landlord" ? false : true}
             on_label="I am a Student"
             off_label="I am a Landlord"
             onToggle={(val: boolean, option: string) => {
@@ -122,6 +155,7 @@ const StudentLanding = ({
       <div className="_btn_" style={{float: `right`}}>
         {/* <Button text="Get Started" textColor="white" background="#E0777D" /> */}
         <RectMouseMagnet><DramaticButton 
+          linkTo="/student/login"
           show={show}
           text="Get Started"
           background="#E0777D"
@@ -237,6 +271,7 @@ const LandlordLanding = ({show}: {show: boolean}) => {
           }}>
           {/* <Button text="Get Started" textColor="white" background="#E0777D" /> */}
           <RectMouseMagnet><DramaticButton 
+            linkTo="/landlord/register"
             show={show}
             text="Get Started"
             background="#E0777D"

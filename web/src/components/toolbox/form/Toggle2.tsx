@@ -5,13 +5,14 @@ interface ToggleOptions {
     on_label: string
     off_label: string
     onToggle: (_: boolean, __: string) => void
+    initialValue?: boolean
 }
 
 const Toggle2 = ({
-    on_label, off_label, onToggle
+    on_label, off_label, onToggle, initialValue
 }: ToggleOptions) => {
 
-    const [toggleOn, setToggleOn] = useState<boolean>(true)
+    const [toggleOn, setToggleOn] = useState<boolean>(initialValue != undefined ? initialValue : true)
 
     useEffect(() => {
 
