@@ -1,8 +1,20 @@
 import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
+import { type } from "os";
 import {Field, ObjectType, ID, InputType, Int, Float} from "type-graphql"
 import {APIResult} from "."
 
 import {Landlord} from './Landlord'
+
+@ObjectType({description: "Property Image info"})
+export class PropertyImageInfo {
+  @Field(type => String)
+  @prop({type: String})
+  s3_key: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  date_uploaded: string;
+}
 
 @ObjectType({description: "Details describing the property"})
 export class PropertyDetails {
@@ -38,6 +50,10 @@ export class PropertyDetails {
   @Field(type => Boolean)
   @prop({type: Boolean})
   has_ac: boolean;
+
+  @Field(type => [PropertyImageInfo])
+  @prop({type: [PropertyImageInfo]})
+  property_images: PropertyImageInfo[];
 }
 
 @ObjectType({description: "Property model"})

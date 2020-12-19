@@ -10,6 +10,15 @@ interface ImageSizeProps {
 export const objectURI = (s3_key: string, size: ImageSizeProps | undefined = undefined): string => 
   backendPath(`/vendors/aws_s3/get-object/${urlencode(s3_key)}${ size == undefined ? '' : `?width=${size.width}&height=${size.height}` }`)
 
+interface IDeleteObjectConfig {
+  s3_key: string
+}
+export const deleteObject = async (config: IDeleteObjectConfig): Promise<any> => {
+  return API.post(backendPath('/vendors/aws_s3/delete-object'), {
+    object_key: config.s3_key
+  })
+}
+
 interface IUploadObjectsConfig {
   restricted: boolean
   files: Blob[]
@@ -19,6 +28,7 @@ interface IUploadObjectsConfig {
   max_image_width?: number
   max_image_height?: number
 }
+
 export const uploadObjects = async (config: IUploadObjectsConfig): Promise<any> => {
   let form_data: FormData = new FormData();
 

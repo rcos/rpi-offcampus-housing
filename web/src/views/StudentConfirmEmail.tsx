@@ -15,7 +15,6 @@ const StudentConfirmEmail = ({confirm_key}: {confirm_key: string}) => {
             history_.push('/')
         }
         else {
-            alert (`Attempting to confirm email`)
             ConfirmEmail({
                 variables: {
                     email: query_.email as string,

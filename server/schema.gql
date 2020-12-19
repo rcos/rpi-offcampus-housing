@@ -114,6 +114,7 @@ input LandlordInput {
 }
 
 type Mutation {
+  addImagesToProperty(property_id: String!, s3_keys: [String!]!): PropertyAPIResponse!
   addOwnershipConfirmationActivity(date_submitted: String!, message: String!, ownership_id: String!, user_id: String!, user_type: String!): OwnershipAPIResponse!
   addOwnershipDocuments(documents_info: [OwnershipDocumentInput!]!, ownership_id: String!): OwnershipAPIResponse!
   addPropertyToStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
@@ -122,6 +123,7 @@ type Mutation {
   confirmStudentEmail(confirm_key: String!, email: String!): StudentAPIResponse!
   createLandlord(new_landlord: LandlordInput!): LandlordAPIResponse!
   createOwnershipReview(address_line: String!, address_line_2: String!, city: String!, landlord_id: String!, state: String!, zip_code: String!): OwnershipAPIResponse!
+  removeImageFromProperty(property_id: String!, s3_key: String!): PropertyAPIResponse!
   removePropertyFromStudentCollection(property_id: String!, student_id: String!): PropertyCollectionEntriesAPIResponse!
   submitFeedback(message: String!, submitter_id: String!, tags: [String!]!, user_type: String!): FeedbackAPIResponse!
   updatePhoneNumber(landlord_id: String!, phone_number: String!): LandlordAPIResponse!
@@ -211,8 +213,15 @@ type PropertyDetails {
   has_ac: Boolean!
   has_heater: Boolean!
   has_washer: Boolean!
+  property_images: [PropertyImageInfo!]!
   rooms: Int!
   sq_ft: Float!
+}
+
+"""Property Image info"""
+type PropertyImageInfo {
+  date_uploaded: String!
+  s3_key: String!
 }
 
 """Collection of properties"""
@@ -247,6 +256,7 @@ type Query {
   getOwnershipsInReview: OwnershipCollectionAPIResponse!
   getPropertiesForLandlord(landlord_id: String!, status: String): PropertyListAPIResponse!
   getProperty(_id: String!, reviewOptions: PropertyReviewInput!, withLandlord: Boolean!): PropertyAPIResponse!
+  getPropertyOwnedByLandlord(landlord_id: String!, property_id: String!): PropertyAPIResponse!
   getStudent(_id: String!): StudentAPIResponse!
   getStudentSavedCollection(_id: String!, collectionOptions: CollectionFetchInput!): PropertyCollectionEntriesAPIResponse!
   resendEamilConfirmation(landlord_id: String!): LandlordAPIResponse!

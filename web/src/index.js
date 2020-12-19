@@ -43,6 +43,7 @@ import PropertyDetails from './views/PropertyDetails'
 import PropertyInitialDetails from './views/PropertyInitialDetails'
 import LandlordConfirmEmail from './views/LandlordConfirmEmail'
 import StudentConfirmEmail from './views/StudentConfirmEmail'
+import LandlordOnboarding from './views/LandlordOnboarding'
 
 import Testing from './views/Testing'
 
@@ -105,6 +106,7 @@ const Routes = () => {
               <AuthRoute accessLevel={AccessLevels.OWNERSHIP_REVIEWER} exact path="/ownership/review/:id" component={({match}) => (<OwnershipDoc ownership_id={match.params.id} />)} />
 
             {/* Landlord Only */}
+            <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/welcome" component={LandlordOnboarding} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/dashboard" component={LandlordDashboard} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/new-property" component={LandlordNewProperty} />
             <AuthRoute accessLevel={AccessLevels.LANDLORD} exact path="/landlord/ownership-documents/:id" component={({match}) => (<LandlordOwnershipDocuments ownership_id={match.params.id} />)} />

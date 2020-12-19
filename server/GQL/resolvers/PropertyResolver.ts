@@ -7,6 +7,7 @@ import {Property,
   PropertyList,
   AddressVerificationAPIResponse,
   PropertyListAPIResponse,
+  PropertyImageInfo,
   PropertyDetails} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {Ownership, OwnershipModel, StatusType} from '../entities/Ownership'
@@ -47,7 +48,7 @@ export class PropertyResolver {
   async getProperty(
     @Arg("_id") _id: string, 
     @Arg("reviewOptions") {withReviews, offset, count}: PropertyReviewInput,
-    @Arg("withLandlord") withLandlord: boolean): Promise<PropertyAPIResponse> 
+    @Arg("withLandlord") withLandlord: boolean): Promise<PropertyAPIResponse>
   {
     console.log(chalk.bgBlue(`👉 getLandlord(id)`))
 
@@ -78,6 +79,52 @@ export class PropertyResolver {
       ...property_.toObject(),
       landlord_doc: landlord_doc == null ? undefined : landlord_doc as Landlord
     }}
+
+  }
+
+  @Query(() => PropertyAPIResponse)
+  async getPropertyOwnedByLandlord(
+    @Arg("property_id") property_id: string,
+    @Arg("landlord_id") landlord_id: string
+  ): Promise<PropertyAPIResponse>
+  {
+
+    console.log(chalk.bgBlue(`👉 getPropertyOwnedByLandlord`))
+    if (!ObjectId.isValid(property_id) || !ObjectId.isValid(landlord_id)) {
+      console.log(chalk.bgRed(`❌ Error: Invalid object ids provided`))
+      return {
+        success: false,
+        error: `Invalid ids provided`
+      }
+    }
+
+    let ownership_: DocumentType<Ownership> = await OwnershipModel.findOne({
+      property_id,
+      landlord_id
+    }) as DocumentType<Ownership>
+
+    if (!ownership_) {
+      console.log(chalk.bgRed(`❌ Error: Ownership does not exist for landlord ${landlord_id} and property ${property_id}`))
+      return {
+        success: false,
+        error: `No access`
+      }
+    }
+    
+    let property_: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property_) {
+      console.log(chalk.bgRed(`❌ Error: Property does not exist`))
+      return {
+        success: false,
+        error: `No property found`
+      }
+    }
+
+    console.log(chalk.bgGreen(`✔ Successfully retrieved property ${property_id} owned by ${landlord_id}`))
+    return {
+      success: true,
+      data: property_
+    }
 
   }
 
@@ -218,5 +265,87 @@ export class PropertyResolver {
       data: updated_property
     }
 
+  }
+
+  @Mutation(() => PropertyAPIResponse)
+  async addImagesToProperty(
+    @Arg("property_id") property_id: string,
+    @Arg("s3_keys", type => [String]) s3_keys: string[]
+  ): Promise<PropertyAPIResponse> {
+
+    console.log(chalk.bgBlue(`👉 addImagesToProperty()`))
+
+    if (s3_keys.length == 0) {
+      console.log(chalk.bgRed(`❌ Error: No images to add.`))
+      return { success: false, error: `No data to add` }
+    }
+
+    if (!ObjectId.isValid(property_id)) {
+      console.log(chalk.bgRed(`❌ Error: Property id ${property_id} is not a valid object id`))
+      return { success: false, error: `Invalid object id`}
+    }
+
+    let property_: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property_) {
+      console.log(chalk.bgRed(`❌ Error: Property with id ${property_id} does not exist`))
+      return { success: false, error: `Property not found`}
+    }
+
+    if (!property_.details) property_.details = new PropertyDetails()
+    for (let i = 0; i < s3_keys.length; ++i) {
+      let prop_image_info: PropertyImageInfo = {
+        s3_key: s3_keys[i],
+        date_uploaded: new Date().toISOString()
+      }
+      
+      property_.details.property_images.push(prop_image_info)
+    }
+
+    // save property
+    let saved_property: DocumentType<Property> = await property_.save() as DocumentType<Property>
+    console.log(chalk.green(`✔ Successfully added ${s3_keys.length} images to property ${property_id}`))
+    return {
+      success: true,
+      data: saved_property
+    }
+  }
+
+  @Mutation(() => PropertyAPIResponse)
+  async removeImageFromProperty(
+    @Arg("property_id") property_id: string,
+    @Arg("s3_key") s3_key: string
+  ): Promise<PropertyAPIResponse>
+  {
+    console.log(chalk.bgBlue(`👉 removeImageFromProperty()`))
+
+    if (!ObjectId.isValid(property_id)) {
+      console.log(chalk.bgRed(`❌ Error: property_id ${property_id} is not a valid object id`))
+      return {
+        success: false,
+        error: `Invalid property id provided`
+      }
+    }
+
+    let property_: DocumentType<Property> = await PropertyModel.findById(property_id) as DocumentType<Property>
+    if (!property_ ) {
+      console.log(chalk.bgRed(`❌ Error: No property found`))
+      return {
+        success: false,
+        error: `Property does not exist`
+      }
+    }
+
+    if (property_.details) {
+      property_.details.property_images = property_.details.property_images.filter((image_info:PropertyImageInfo) => {
+        return image_info.s3_key != s3_key
+      })
+
+      let saved_property: DocumentType<Property> = await property_.save() as DocumentType<Property>
+      console.log(chalk.bgGreen(`✔ Successfully removed ${s3_key} from property ${property_id}`))
+      return {success: true, data: saved_property}
+    }
+
+    console.log(chalk.bgYellow(`Property ${property_id} does not have image ${s3_key} in its details`))
+    return {success: true, data: property_}
   }
 }
