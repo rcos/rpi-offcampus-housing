@@ -169,7 +169,6 @@ const StudentLanding = ({
     style={{
       width: `55%`, 
       left: `45%`,
-      // border: `1px solid green`,
       // height: `100%`,
       top: `50%`,
       transform: `translateY(-50%)`,
@@ -223,7 +222,9 @@ const LandlordLanding = ({show}: {show: boolean}) => {
     }}
     className="landing-content">
   <div className="left_" style={{
-      width: `55%`
+      width: `55%`,
+      top: `50%`,
+      transform: `translateY(-50%)`
     }}>
       
     <Canvas 
