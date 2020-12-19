@@ -251,7 +251,9 @@ export class StudentResolver {
           template_params: {
             confirmation_key: confirm_key,
           frontend_url: frontendPath(),
-          email: email.toString()
+          email: email.toString(),
+          first_name: student_doc.first_name.toString(),
+          last_name: student_doc.last_name.toString()
           }
         })
       }

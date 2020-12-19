@@ -66,7 +66,9 @@ export class LandlordResolver {
         template_params: {
           confirmation_key: landlord_.confirmation_key,
           frontend_url: frontendPath(),
-          email: landlord_.email
+          email: landlord_.email,
+          first_name: landlord_.first_name,
+          last_name: landlord_.last_name
         }
       })
     }
@@ -124,7 +126,9 @@ export class LandlordResolver {
         template_params: {
           confirmation_key: confirm_key,
           frontend_url: frontendPath(),
-          email: email
+          email: email,
+          first_name: first_name,
+          last_name: last_name
         }
       })
 
