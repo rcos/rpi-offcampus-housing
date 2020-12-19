@@ -4196,13 +4196,124 @@ a {
     }
   
     .on-label {
-      transform: translateY(-50%) translateX(calc(-100% - 8px));
+      transform: translateY(-50%) translateX(calc(-100% - 10px));
       left: 0;
       text-align: right;
     }
     .off-label {
-      transform: translateY(-50%) translateX(calc(100% + 8px));
+      transform: translateY(-50%) translateX(calc(100% + 10px));
       right: 0;
     }
   }
+}
+
+.landing-content {
+  display: flex;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 100px;
+  bottom: 20px;
+
+  .landing-image-canvas {
+    position: absolute;
+  }
+
+  .left_ {
+    // border: 1px solid green;
+    position: absolute;
+  }
+
+  .right_ {
+    position: absolute;
+  }
+
+  ._title_ {
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: khumbh-sans;
+    color: $navy;
+  }
+
+  ._paragraph_ {
+    font-size: 1rem;
+    color: $navy;
+  }
+
+  .cta {
+
+    ._input_ {
+      margin-right: 15px;
+    }
+
+    ._btn_ {
+      width: 40%;
+      margin-top: 10px;
+      transform: translateX(-15px);
+
+      .custom-landing-button{
+        text-align: center;
+        height: 44px;
+        border-radius: 5px;
+        line-height: 44px;
+        color: white;
+        font-family: khumbh-sans;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.dramatic-button {
+  text-align: center;
+  height: 44px;
+  border-radius: 5px;
+  line-height: 44px;
+  color: white;
+  font-family: khumbh-sans;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  position: relative;
+
+  .rect-expand {
+    height: 100%;
+    border-radius: 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+  }
+
+  .text-holder_ {
+    z-index: 1;
+    position: absolute;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+  }
+}
+
+.build-circle {
+  position: absolute;
+  top: 0;
+  z-index: -2;
+
+  svg {
+  }
+  
+  circle {
+    fill: #F6F9FB;
+    stroke: $navyLight;
+    stroke-width: 2;
+    stroke-dasharray: 1885;
+    stroke-dashoffset: 0;
+    // animation: rotateCircle 1s linear;
+  }
+}
+
+._canvas_ {
+  // border: 1px solid purple;
+  position: relative;
 }
