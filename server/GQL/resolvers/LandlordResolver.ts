@@ -117,7 +117,10 @@ export class LandlordResolver {
         email,
         password: hashed_password,
         confirmation_key: confirm_key,
-        onboarded: false
+        onboarded: false,
+        user_settings: {
+          recieve_email_notifications: true
+        }
       })
 
       // Email

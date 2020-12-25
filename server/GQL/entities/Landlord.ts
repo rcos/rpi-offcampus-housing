@@ -2,6 +2,12 @@ import {prop, getModelForClass} from "@typegoose/typegoose"
 import {Field, ObjectType, ID, InputType} from "type-graphql"
 import {APIResult} from "."
 
+@ObjectType({description: "Landlord User Settings"})
+export class LandlordUserSettings {
+  @Field(type => Boolean)
+  recieve_email_notifications: boolean;
+}
+
 @ObjectType({description: "Landlord model"})
 export class Landlord {
   @Field(() => ID)
@@ -38,6 +44,9 @@ export class Landlord {
   @Field(type => Boolean, {nullable: true})
   @prop({type: Boolean})
   onboarded?: boolean;
+
+  @Field(type => LandlordUserSettings)
+  user_settings: LandlordUserSettings;
 }
 
 @InputType()

@@ -5,6 +5,12 @@ import {Property} from './Property'
 import {ObjectId} from 'mongodb'
 import mongoose from 'mongoose'
 
+@ObjectType({description: "Student User Settinhs"})
+export class StudentUserSettings {
+  @Field(type => Boolean)
+  recieve_email_notifications: boolean;
+}
+
 @ObjectType({description: "Cas Auth Information"})
 class CasAuthInfo {
   @Field(type => String, { nullable: true })
@@ -63,6 +69,9 @@ export class Student {
   @Field(type => [String], {nullable: true})
   @prop({type: String})
   confirmation_key?: string;
+
+  @Field(type => StudentUserSettings)
+  user_settings: StudentUserSettings;
 }
 
 @InputType()

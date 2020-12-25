@@ -78,6 +78,9 @@ function(profile: any, done: Function) {
               cas_id: cas_id,
               institution_id: institution_doc._id
             }
+            new_student.user_settings = {
+              recieve_email_notifications: true
+            }
 
             let added_student = await new_student.save()
             done(null, new_student.toObject(), { new: true })
