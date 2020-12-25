@@ -34,6 +34,7 @@ const LandlordLogin = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const user = useSelector((state: any) => state.user)
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 800px)'})
   const [formError, setFormError] = useState<IFormError>({
     hasError: false, message: ""
   })
@@ -144,6 +145,8 @@ const LandlordLogin = () => {
           left={<div style={{fontSize: '0.8rem'}}>Forgot password?</div>}
           right={<Button 
             text="Login"
+            bold={true}
+            large={isSmallScreen}
             onClick={handleLogin}
             textColor="white"
             background="#E0777D"
@@ -166,6 +169,8 @@ const LandlordLogin = () => {
           </div>}
           right={<Button 
             text="Sign Up"
+            bold={true}
+            large={isSmallScreen}
             textColor="white"
             background="#3B4353"
             onClick={() => history.push('/landlord/register')}
