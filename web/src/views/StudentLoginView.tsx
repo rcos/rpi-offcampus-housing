@@ -100,7 +100,7 @@ const StudentLoginView = () => {
     return partial.length == k
   }
 
-  return (<Centered width={400} height={lastInstitution == null? 300 : 500}>
+  return (<Centered width={350} height={lastInstitution == null? 300 : 500}>
 
     <div>
         <div style={{

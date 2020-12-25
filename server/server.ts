@@ -24,10 +24,20 @@ const MONGO_URI =
 
 // setup middleware
 import bodyParser from "body-parser";
+
+let whitelisted_ips = [
+  frontendPath(),
+  ...(
+    Object.keys(process.env)
+    .filter((key_: string) => key_.substring(0, 13) == "WHITELIST_IP_")
+    .map((key_: string) => `${process.env[key_]!}:${process.env.PORT}`)
+  )
+]
+console.log(whitelisted_ips)
 app.use(express.json());
 app.use(
   cors({
-    origin: [frontendPath()],
+    origin: whitelisted_ips,
     credentials: true,
   })
 );
