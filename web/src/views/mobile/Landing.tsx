@@ -3,6 +3,7 @@ import {studentLandingCanvas, landlordLandingCanvas} from '../Landing'
 import {motion, useSpring, useTransform} from 'framer-motion'
 import DramaticButton from '../../components/toolbox/form/DramaticButton'
 import RectMouseMagnet from '../../components/toolbox/misc/RectMouseMagnet'
+import UnauthMobileMenu from '../../components/toolbox/misc/UnauthMobileMenu'
 
 interface LandingProps {
     initialLandlord: boolean
@@ -42,73 +43,93 @@ const Landing = ({
         }
     }, [bodyRef])
 
-    return (<div>
-        
-        {/* Tab Slider */}
-        <div style={{
-            maxWidth: '500px',
-            margin: '0 auto'
-        }}>
-            <div className="mobile-tab-slider">
-                <div className="_slider no-select">
-                    <div onClick={() => changeView('student')}
-                        className={`_tab ${showStudentView ? `active` : ``}`}>I am a Student</div>
-                    <div onClick={() => changeView('landlord')}
-                        className={`_tab ${showLandlordView ? `active` : ``}`}>I am a Landlord</div>
+    return (
+        <UnauthMobileMenu
+            menu_info={[{
+                label: 'Student Menu',
+                links: [{
+                    name: 'Login'
+                },{
+                    name: 'Register'
+                }]
+            },{
+                label: 'Landlord Menu',
+                links: [{
+                    name: 'Login'
+                },{
+                    name: 'Register'
+                }]
+            }]}
+        >
+            <div>
+            
+            {/* Tab Slider */}
+            <div style={{
+                maxWidth: '500px',
+                margin: '0 auto'
+            }}>
+                <div className="mobile-tab-slider">
+                    <div className="_slider no-select">
+                        <div onClick={() => changeView('student')}
+                            className={`_tab ${showStudentView ? `active` : ``}`}>I am a Student</div>
+                        <div onClick={() => changeView('landlord')}
+                            className={`_tab ${showLandlordView ? `active` : ``}`}>I am a Landlord</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div ref={bodyRef} style={{
-            position: 'relative',
-            maxWidth: `500px`,
-            margin: '0 auto'
-        }}>
-            <div style={{
-                // border: `1px solid red`,
-                position: 'absolute',
-                top: 0, left: 0, right: 0
-            }}><StudentLandingMobile show={showStudentView} /></div>
-            <div style={{
-                // border: `1px solid green`,
-                position: 'absolute',
-                top: 0, left: 0, right: 0
-            }}><LandlordLandingMobile show={showLandlordView} /></div>
-        </div>
-
-        <div style={{
-            position: 'fixed',
-            bottom: 0, left: 0, right: 0,
-            height: `60px`,
-            display: 'flex',
-            justifyContent: 'space-around'
-        }}>
-
-            <div style={{width: `45%`}}>
-                <RectMouseMagnet><DramaticButton 
-                    linkTo={showStudentView ? "/student/login" : "/landlord/register"}
-                    show={true}
-                    text="Register"
-                    background="#3B4353"
-                    background2="#7080A1"
-                    background3="#E0777D"
-                /></RectMouseMagnet>
+            <div ref={bodyRef} style={{
+                position: 'relative',
+                maxWidth: `500px`,
+                margin: '0 auto'
+            }}>
+                <div style={{
+                    // border: `1px solid red`,
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0
+                }}><StudentLandingMobile show={showStudentView} /></div>
+                <div style={{
+                    // border: `1px solid green`,
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0
+                }}><LandlordLandingMobile show={showLandlordView} /></div>
             </div>
 
-            <div style={{width: `45%`}}>
-                <RectMouseMagnet><DramaticButton 
-                    linkTo={showStudentView ? "/student/login" : "/landlord/login"}
-                    show={true}
-                    text="Login"
-                    background="#E0777D"
-                    background2="#7080A1"
-                    background3="#3B4353"
-                /></RectMouseMagnet>
+            <div style={{
+                position: 'fixed',
+                bottom: 0, left: 0, right: 0,
+                height: `60px`,
+                display: 'flex',
+                justifyContent: 'space-around'
+            }}>
+
+                <div style={{width: `45%`}}>
+                    <RectMouseMagnet><DramaticButton 
+                        linkTo={showStudentView ? "/student/login" : "/landlord/register"}
+                        show={true}
+                        text="Register"
+                        background="#3B4353"
+                        background2="#7080A1"
+                        background3="#E0777D"
+                    /></RectMouseMagnet>
+                </div>
+
+                <div style={{width: `45%`}}>
+                    <RectMouseMagnet><DramaticButton 
+                        linkTo={showStudentView ? "/student/login" : "/landlord/login"}
+                        show={true}
+                        text="Login"
+                        background="#E0777D"
+                        background2="#7080A1"
+                        background3="#3B4353"
+                    /></RectMouseMagnet>
+                </div>
+
             </div>
 
         </div>
-
-    </div>)
+    </UnauthMobileMenu>
+    )
 }
 
 const StudentLandingMobile = ({show}: {show: boolean}) => {
