@@ -15,6 +15,7 @@ import {Ownership,
 import {Property, PropertyModel} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {Student, StudentModel} from '../entities/Student'
+import {NotificationsAPI} from '../../modules/NotificationsAPI'
 // import util from 'util'
 
 const ObjectId = mongoose.Types.ObjectId
@@ -268,6 +269,21 @@ export class OwnershipResolver {
     new_ownership.ownership_documents = [];
     let saved_ownership: DocumentType<Ownership> = await new_ownership.save() as DocumentType<Ownership>;
 
+    // Send notification
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(landlord_id) as DocumentType<Landlord>
+    if (landlord_) {
+      NotificationsAPI.getSingleton().sendNotification(landlord_, {
+        title: "Your Property Is In-Review",
+        excerpt: `Your property submission for ${address_line}, ${address_line_2 == "" ? '' : ` ${address_line_2}, `} ${city} ${state}, ${zip_code} is in-review.`,
+        body: `Your property submission for ${address_line}, ${address_line_2 == "" ? '' : ` ${address_line_2}, `} ${city} ${state}, ${zip_code}
+               is under review. Our moderation team will go through your submission to ensure that the property ownership information is accurate.
+               We will contact you once we have approved of the infroamtion.`
+      }, {
+        sendEmailNotifiation: true,
+        sendPushNotification: true
+      })
+    }
+
     console.log(chalk.bgGreen(`✔ Successfully created new ownership for landlord!`))
     return {
       success: true,
@@ -446,6 +462,9 @@ export class OwnershipResolver {
       return { success: false, error: 'No ownership found' }
     }
 
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(ownership_doc.landlord_id) as DocumentType<Landlord>
+    let property_: DocumentType<Property> = await PropertyModel.findById(ownership_doc.property_id) as DocumentType<Property>
+
     let old_status: StatusType = ownership_doc.status;
     if (ownership_doc.status != new_status) {
       ownership_doc.status = new_status;
@@ -458,16 +477,28 @@ export class OwnershipResolver {
       status_change_info.changed_to = new_status;
 
       ownership_doc.status_change_history.push(status_change_info)
-
       ownership_doc = await ownership_doc.save() as DocumentType<Ownership>
+
+      // send notification about the cahnge
+      if (landlord_ && property_) {
+        NotificationsAPI.getSingleton().sendNotification(landlord_, {
+          title: `Property Ownership Status Changed`,
+          excerpt: `The status of your property ownership has changed from ${old_status} to ${new_status}`,
+          body: `The status of your property at ${property_.getAddress()} has changed from ${old_status} to ${new_status}`
+        }, {
+          sendEmailNotifiation: true,
+          sendPushNotification: true
+        })
+      }
     }
+
 
     // get the landlord & property information
     if (with_landlord) {
-      ownership_doc.landlord_doc = await LandlordModel.findById(ownership_doc.landlord_id) as DocumentType<Landlord>
+      ownership_doc.landlord_doc = landlord_;
     }
     if (with_property) {
-      ownership_doc.property_doc = await PropertyModel.findById(ownership_doc.property_id) as DocumentType<Property>
+      ownership_doc.property_doc = property_;
     }
 
     console.log(chalk.bgGreen(`✅ Successfully changed status of ownership ${ownership_id} from ${old_status} to ${new_status}`))

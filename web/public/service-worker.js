@@ -26,12 +26,11 @@ self.addEventListener('message', evt => {
 })
 
 self.addEventListener('push', e => {
-    const data = e.data.json ();
-    console.log('push revieced!');
+    const data = e.data.json();
 
     self.registration.showNotification(
         data.title, {
-            body: "Sample Notification 101!!"
+            body: data.body
         }
     )
 })

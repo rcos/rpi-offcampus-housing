@@ -92,6 +92,10 @@ export class Property {
   @Field(type => PropertyDetails, {nullable: true})
   @prop({type: PropertyDetails})
   details?: PropertyDetails;
+
+  getAddress (): string {
+    return `${this.address_line}, ${this.address_line_2 == "" ? '' : `${this.address_line_2}, ${this.city} ${this.state}, ${this.zip}`}`
+  }
 }
 
 @InputType()
