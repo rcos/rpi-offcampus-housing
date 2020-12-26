@@ -11,11 +11,15 @@ import {HiCheck} from 'react-icons/hi'
 import {motion, useSpring, useTransform} from 'framer-motion'
 import Cookies from 'universal-cookie'
 import {useHistory} from 'react-router'
+import {shouldPromptToEnableNotifications} from './PushNotificationsPrompt'
+import {ReduxState} from '../redux/reducers/all_reducers'
+import {useSelector} from 'react-redux'
 
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
 const SearchView = () => {
 
+    const user = useSelector((state: ReduxState) => state.user)
     const containerRef = useRef<HTMLDivElement>(null)
     const leftContainerRef = useRef<HTMLDivElement>(null)
     const [leftFilterWidth, setLeftFilterWidth] = useState<number>(400)
@@ -33,16 +37,20 @@ const SearchView = () => {
         updateFilterWidth ()
         window.addEventListener(`resize`, updateFilterWidth)
 
-        // check if the notif cookie is set
-        let notification_prompted = cookie.get('notif') != undefined
-        if (!notification_prompted) {
-            history.push('/notifications/enable')
-        }
-
         return () => {
             window.removeEventListener(`resize`, updateFilterWidth)
         }
     }, [])
+
+    useEffect(() => {
+
+        if (user && user.user) {
+            shouldPromptToEnableNotifications(user)
+            .then((shouldPrompt: boolean) => {
+                if (shouldPrompt) history.push('/notifications/enable')
+            })
+        }
+    }, [user])
 
     const updateFilterWidth = () => {
         // filter width should be x% of the page width

@@ -2,54 +2,33 @@ import React, { useEffect } from 'react'
 import Centered from '../components/toolbox/layout/Centered'
 import Button from '../components/toolbox/form/Button'
 import {ReduxState} from '../redux/reducers/all_reducers'
+import {StudentInfo, LandlordInfo} from '../redux/actions/user'
 import {useSelector} from 'react-redux'
+import {useHistory} from 'react-router'
 import AuthAPI from '../API/AuthAPI'
+import Cookies from 'universal-cookie'
 
 const PushNotificationsPrompt = () => {
 
+    const cookies = new Cookies()
+    const history = useHistory();
     const user = useSelector((state: ReduxState) => state.user)
 
     useEffect(() => {
-        if (Notification.permission == 'granted') {
-            goToNextView ();
-        }
+        // if (Notification.permission == 'granted') {
+        //     goToNextView ();
+        // }
 
-        userAlreadySubscribed();
-
-        // testing getSubscription
-        navigator.serviceWorker.ready.then(registration => {
-            registration.pushManager.getSubscription()
-            .then(push_subscription => {
-                console.log(`Subscription: `, push_subscription)
-            })
-            .catch(err => {
-                console.log(`Error getting subscription`)
-                console.error(err)
-            })
-        })
-        .catch(err => {
-            console.log(`Error getting service worker registration`);
-            console.error(err)
+        userAlreadySubscribed(user).then(isSubscribed => {
+            console.log(`Is user already subscribed ? ${isSubscribed}`)
+            if (isSubscribed) goToNextView();
         })
 
     }, [user])
-    
-    /**
-     * userAlreadySubscribed
-     * @desc Determine whether the user that is logged in is already
-     * subscribed to push subscriptions on this browser
-     */
-    const userAlreadySubscribed = (): boolean => {
-
-        // user data not returned yet.
-        if (!user || !user.user) return false;
-
-        console.log(`user subscriptions`, user.user.user_settings)
-        return false;
-    }
 
     const goToNextView = () => {
-        console.log(`Permission already granted. Going to next view!`)
+        // console.log(`Permission already granted. Going to next view!`)
+        history.push('/')
     }
 
     const showPrompt = () => {
@@ -64,6 +43,19 @@ const PushNotificationsPrompt = () => {
         if (user.type == "landlord") {
             return <div>PLACEHOLDER</div>
         }
+    }
+
+    const setNotifCookie = () => {
+        let next_date_to_ask = new Date ( /* Today's date */ new Date().getTime() +  /* 2 weeks from now */ (1000 * 60 * 60 * 24 * 14) );
+        cookies.set('notif', next_date_to_ask.getTime().toString())
+    }
+
+    const declineEnableNotifications = () => {
+        // ask again 2 weeks from now
+        setNotifCookie();
+
+        // go to homepage
+        goToNextView();
     }
 
     const promptEnableNotifications = () => {
@@ -104,16 +96,14 @@ const PushNotificationsPrompt = () => {
                             console.error(`No subscription data found from service worker push-notification-response message`)
                         }
 
+                        setNotifCookie();
                         AuthAPI.subscribeToPush(
                             user.type,
                             user.user._id,
                             evt.data.data.subscription
                         )
                         .then(res => {
-                            console.log(`Subscription response`, res)
-                        })
-                        .catch(err => {
-                            console.log(`Error subscribing`, err)
+                            goToNextView();
                         })
                     }
                 })
@@ -152,6 +142,7 @@ const PushNotificationsPrompt = () => {
 
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: `center`, marginTop: `15px`}}>
                 <div 
+                    onClick={declineEnableNotifications}
                     style={{width: `25%`, color: `#80919e`, fontSize: `0.8rem`, cursor: 'pointer'}}>
                     No thanks
                 </div>
@@ -176,6 +167,93 @@ function urlBase64ToUint8Array(base64String: string) {
         outputArray[i] = rawData.charCodeAt(i);
     }
     return outputArray;
+}
+
+/**
+ * userAlreadySubscribed
+ * @desc Determine whether the user that is logged in is already
+ * subscribed to push subscriptions on this browser
+ */
+export const userAlreadySubscribed = async (user: null | StudentInfo | LandlordInfo): Promise<boolean> => {
+
+    // user data not returned yet.
+    if (!user || !user.user) return false;
+    if (!navigator.serviceWorker) {
+        console.error(`No service worker registered.`);
+        return false;
+    }
+
+    // check the current subscription
+    return new Promise((resolve, _) => {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.pushManager.getSubscription()
+            .then(push_subscription => {
+                console.log(user.user!.user_settings.push_subscriptions)
+
+                if (push_subscription == null) {
+                    resolve(false); return;
+                }
+
+                // find the subscription with the same endpoint
+                for (let i = 0; i < user.user!.user_settings.push_subscriptions.length; ++i) {
+                    if (user.user!.user_settings.push_subscriptions[i].endpoint == push_subscription.endpoint) {
+                        resolve(true);
+                        return;
+                    }
+                }
+
+                resolve(false);
+                return;
+            })
+            .catch(err => {
+                console.log(`Error occurred getting current subscription.`)
+                resolve (false);
+            })
+        })
+    })
+
+}
+
+export const shouldPromptToEnableNotifications = async (user: StudentInfo | LandlordInfo | null): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+
+
+        userAlreadySubscribed(user)
+        .then(isSubscribed => {
+
+            console.log(`TESTING: is Subscribed? ${isSubscribed}`)
+            // if the the user is already subscribed, do not prompt to subscribe again
+            if (isSubscribed) {
+                resolve(false);
+                return;
+            }
+
+            // if the user is NOT subscribed, check if the cookie notif exists.
+            //      If the cookie does not exist, then prompt the user to enable notifications.
+            //      If the cookie is set, only prompt the user to enable if the cookie time expires 
+            else {
+                const cookies = new Cookies();
+                let next_prompt_time = cookies.get(`notif`)
+                if (next_prompt_time == undefined) {
+                    resolve(true);
+                    return;
+                }
+
+                else {
+                    let next_date = new Date(parseInt(next_prompt_time));
+                    if (new Date() >= next_date) {
+                        resolve(true);
+                        return;
+                    }
+                    else {
+                        resolve(false);
+                        return;
+                    }
+                }
+            }
+
+        })
+    })
 }
 
 export default PushNotificationsPrompt
