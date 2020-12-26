@@ -35,7 +35,7 @@ passport.use(
 ({
   version: 'CAS3.0',
   ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
-  serverBaseURL: 'http://localhost:9010'
+  serverBaseURL: `http://${process.env.SERVER_IP}:9010`
 }, 
 
 function(profile: any, done: Function) {
@@ -107,13 +107,17 @@ authRouter.get("/rpi/cas-auth", (req, res, next) => {
   res.header('Access-Control-Allow-Credentials', "true");
   passport.authenticate('cas', (err, user, info) => {
 
-    if (err) return next(err);
+    if (err) {
+      console.log(`An error occurred ...`)
+      console.log(err);
+      res.redirect(`html://${process.env.FRONTEND_IP}:3000/student/login?err=Server+Error`)
+    }
     else {
       req.logIn(user, (login_err) => {
 
         if (login_err) return next(login_err);
-        else if (info.new) res.redirect('http://localhost:3000/student/register/complete')
-        else res.redirect('http://localhost:3000/')
+        else if (info.new) res.redirect(`http://${process.env.FRONTEND_IP}:3000/student/register/complete`)
+        else res.redirect(`http://${process.env.FRONTEND_IP}:3000/`)
 
       })
     }

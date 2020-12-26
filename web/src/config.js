@@ -21,7 +21,7 @@ const config = () => {
 const getFrontendBaseUrl = () => {
 
   if (process.env.REACT_APP_ENV == 'development') {
-    return `http://${process.env.REACT_APP_SERVER_IP}:${process.env.PORT}`
+    return `http://${process.env.REACT_APP_FRONTEND_IP}:${process.env.PORT}`
   }
   if (process.env.REACT_APP_ENV == 'production') {
     // TODO place base production url here

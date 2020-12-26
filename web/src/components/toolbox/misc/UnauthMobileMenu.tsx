@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {motion, useSpring, useTransform} from 'framer-motion'
 import {HiMenuAlt2, HiX} from 'react-icons/hi'
 
@@ -23,6 +23,7 @@ interface UnauthMobileMenuProps {
 const UnauthMobileMenu = ({children, menu_info}: UnauthMobileMenuProps) => {
 
     const [showMenu, setShowMenu] = useState<boolean>(false)
+    const bodyRef = useRef<HTMLDivElement>(null)
 
     const menuSpring = useSpring(0)
     const bodyScale = useTransform(menuSpring, [0, 1], [1, 0.8])
@@ -36,12 +37,26 @@ const UnauthMobileMenu = ({children, menu_info}: UnauthMobileMenuProps) => {
         if (x <= 0.1) return `hidden`
         return `visible`
     })
-    const menuWidthTransform = useTransform(menuSpring, [0, 1], [0, 200])
 
     useEffect(() => {
         if (showMenu) menuSpring.set(1)
         else menuSpring.set(0)
     }, [showMenu])
+    
+    useEffect(() => {
+
+        const closeMenu = () => {
+            setShowMenu(false);
+        }
+
+        if (bodyRef.current) {
+            bodyRef.current.addEventListener(`click`, closeMenu)
+        }
+        
+        return () => {
+            if (bodyRef.current) bodyRef.current.removeEventListener('click', closeMenu)
+        }
+    }, [bodyRef])
 
     return (<div className={`unauth-mobile-menu ${showMenu ? `menu-opened` : ''}`}>
             
@@ -55,6 +70,7 @@ const UnauthMobileMenu = ({children, menu_info}: UnauthMobileMenuProps) => {
             </div>
 
             <motion.div
+                ref={bodyRef}
                 style={{
                     scale: bodyScale,
                     translateX: bodyTranslate,
@@ -70,7 +86,6 @@ const UnauthMobileMenu = ({children, menu_info}: UnauthMobileMenuProps) => {
             <motion.div className="menu-container"
                 style={{
                     visibility: menuVisibilityTransform,
-                    width: menuWidthTransform,
                     opacity: menuSpring
                 }}
             >

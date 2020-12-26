@@ -17,9 +17,6 @@ const Landing = ({
     const [showStudentView, setShowStudentView] = useState<boolean>(!initialLandlord)
 
     const changeView = (view: string): void => {
-        console.log(`change view => ${view}`)
-        console.log(`\tcurrently showing student? ${showStudentView}`)
-        console.log(`\tcurrently showing landlord? ${showLandlordView}`)
         if (view == 'student') {
             if (showStudentView) return;
             
