@@ -60,5 +60,15 @@ fragment LandlordAPIResponseFields on LandlordAPIResponse {
     last_name
     email
     phone_number
+    user_settings {
+      recieve_email_notifications
+      push_subscriptions {
+        endpoint
+        keys {
+          p256dh
+          auth
+        }
+      }
+    }
   }
 }

@@ -117,6 +117,7 @@ input LandlordInput {
 
 """Landlord User Settings"""
 type LandlordUserSettings {
+  push_subscriptions: [PushSubscription!]!
   recieve_email_notifications: Boolean!
 }
 
@@ -254,6 +255,18 @@ input PropertySearchInput {
   offset: Int
 }
 
+"""Push Subscription Details"""
+type PushSubscription {
+  endpoint: String!
+  keys: PushSubscriptionKeys!
+}
+
+"""Keys for push subscription"""
+type PushSubscriptionKeys {
+  auth: String!
+  p256dh: String!
+}
+
 type Query {
   getInstitution(_id: String!): InstitutionAPIResponse!
   getLandlord(_id: String!): LandlordAPIResponse!
@@ -312,5 +325,6 @@ input StudentInput {
 
 """Student User Settinhs"""
 type StudentUserSettings {
+  push_subscriptions: [PushSubscription!]!
   recieve_email_notifications: Boolean!
 }

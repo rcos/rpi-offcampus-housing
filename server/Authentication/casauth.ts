@@ -35,7 +35,7 @@ passport.use(
 ({
   version: 'CAS3.0',
   ssoBaseURL: 'https://cas-auth.rpi.edu/cas',
-  serverBaseURL: `http://${process.env.SERVER_IP}:9010`
+  serverBaseURL: `http://localhost:9010`
 }, 
 
 function(profile: any, done: Function) {
@@ -72,18 +72,20 @@ function(profile: any, done: Function) {
             // register the user if they do not exist
             console.log(chalk.blue(`User with auth_info.cas_id = ${cas_id} could not be found. Registering user.`))
       
-            let new_student: DocumentType<Student> = new StudentModel({})
-            new_student.saved_collection = []
-            new_student.auth_info = {
-              cas_id: cas_id,
-              institution_id: institution_doc._id
-            }
-            new_student.user_settings = {
-              recieve_email_notifications: true
-            }
+            let new_student: DocumentType<Student> = new StudentModel({
+              saved_collection: [],
+              user_settings: {
+                recieve_email_notifications: true,
+                push_subscriptions: []
+              },
+              auth_info: {
+                cas_id: cas_id,
+                institution_id: institution_doc._id,
+              }
+            })
 
             let added_student = await new_student.save()
-            done(null, new_student.toObject(), { new: true })
+            done(null, added_student.toObject(), { new: true })
       
           }
           else {
@@ -117,7 +119,7 @@ authRouter.get("/rpi/cas-auth", (req, res, next) => {
 
         if (login_err) return next(login_err);
         else if (info.new) res.redirect(`http://${process.env.FRONTEND_IP}:3000/student/register/complete`)
-        else res.redirect(`http://${process.env.FRONTEND_IP}:3000/`)
+        else res.redirect(`http://localhost:3000/`)
 
       })
     }

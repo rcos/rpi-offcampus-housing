@@ -60,6 +60,80 @@ app.use(passport.session());
 app.use("/auth", CasAuthRouter);
 app.use("/auth", LocalAuthRouter);
 
+import {NotificationsAPI} from './modules/NotificationsAPI'
+import {StudentModel, Student} from './GQL/entities/Student'
+import {LandlordModel, Landlord} from './GQL/entities/Landlord'
+import {DocumentType} from '@typegoose/typegoose'
+import chalk from 'chalk'
+// test webpush
+app.post('/subscribe/:user_type/:id', async (req, res) => {
+  console.log(chalk.bgBlue(`👉 /subscribe`))
+
+  let type_: string = req.params.user_type;
+  if (type_ != "student" && type_ != "landlord") {
+    console.error(`Invalid user_type provided for subscription`);
+    res.json({
+      success: false,
+      error: `Invalid user type`
+    })
+    return;
+  }
+
+  let subscription = req.body;
+  let user_id = req.params.id
+
+  if (type_ == "student") {
+    let student_: DocumentType<Student> = await StudentModel.findById(user_id) as DocumentType<Student>;
+    if (student_) {
+      NotificationsAPI.getSingleton().addPushSubscription(student_, subscription);
+      res.json({ succes: true })
+      return;
+    }
+    else {
+      res.json({ success: false, error: "Problem adding subscription" })
+      return;
+    }
+  }
+
+  if (type_ == "landlord") {
+    let landlord_: DocumentType<Landlord> = await LandlordModel.findById(user_id) as DocumentType<Landlord>;
+    if (landlord_) {
+      NotificationsAPI.getSingleton().addPushSubscription(landlord_, subscription);
+      res.json({ success: true });
+      return;
+    }
+    else {
+      res.json({success: false, error: "Problem adding subscription"})
+      return;
+    }
+  }
+
+  /*
+  console.log(`Subscription`, subscription);
+  console.log(`User id`, user_id)
+
+  let student_: DocumentType<Student> = await StudentModel.findById(user_id) as DocumentType<Student>;
+  console.log(student_);
+  if (student_) {
+    NotificationsAPI.getSingleton().addPushSubscription(student_, subscription);
+  }
+  */
+
+  /*
+  console.log(`Subscription`)
+  console.log(subscription)
+
+  res.status(201).json({});
+  const payload = JSON.stringify({
+    title: `push test`
+  })
+  */
+
+  // Send a push notification to the subscription
+  // webpush.sendNotification(subscription, payload)
+  // .catch(err => console.error(err))
+});
+
 import { awsRouter } from "./vendors/aws_s3";
 app.use("/vendors/aws_s3", awsRouter);
 
@@ -105,6 +179,7 @@ import {StudentResolver,
   PropertyResolver} from "./GQL/resolvers"
 import { ObjectIdScalar } from "./GQL/entities";
 import {ObjectId} from 'mongodb'
+import webpush from 'web-push';
 
 const StartServer = async (): Promise<{
   server: http.Server;
@@ -132,6 +207,12 @@ const StartServer = async (): Promise<{
     console.error(err);
     process.exit(1);
   }
+
+  // web-push
+  webpush.setVapidDetails('mailto:test@test.com', 
+    process.env.VAPID_PUBLIC as string,
+    process.env.VAPID_PRIVATE as string
+  )
 
   const server = app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);

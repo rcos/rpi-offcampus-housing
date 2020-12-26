@@ -83,7 +83,8 @@ const generateStudent = (): Student => {
     phone_number: faker.phone.phoneNumber("+1##########"),
     saved_collection: [],
     user_settings: {
-      recieve_email_notifications: false
+      recieve_email_notifications: false,
+      push_subscriptions: []
     },
     auth_info: {
       institution_id: '',
@@ -125,7 +126,8 @@ const generateLandlord = (): Landlord => {
     phone_number: faker.phone.phoneNumber("+1##########"),
     password: bcrypt.hashSync(faker.internet.password(), 1),
     user_settings: {
-      recieve_email_notifications: false
+      recieve_email_notifications: false,
+      push_subscriptions: []
     }
   }
 }

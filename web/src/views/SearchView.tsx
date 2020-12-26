@@ -9,6 +9,8 @@ import Button from '../components/toolbox/form/Button'
 import {useMediaQuery} from 'react-responsive'
 import {HiCheck} from 'react-icons/hi'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import Cookies from 'universal-cookie'
+import {useHistory} from 'react-router'
 
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
@@ -19,6 +21,9 @@ const SearchView = () => {
     const [leftFilterWidth, setLeftFilterWidth] = useState<number>(400)
     const [contentStart, setContentStart] = useState<number>(0)
 
+    const history = useHistory();
+    const cookie = new Cookies ();
+
     const resultsCount = useNumberCounter({
         value: 50,
         duration: 1000
@@ -27,6 +32,12 @@ const SearchView = () => {
     useEffect(() => {
         updateFilterWidth ()
         window.addEventListener(`resize`, updateFilterWidth)
+
+        // check if the notif cookie is set
+        let notification_prompted = cookie.get('notif') != undefined
+        if (!notification_prompted) {
+            history.push('/notifications/enable')
+        }
 
         return () => {
             window.removeEventListener(`resize`, updateFilterWidth)

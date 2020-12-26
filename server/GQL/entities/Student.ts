@@ -1,5 +1,6 @@
 import { prop, getModelForClass } from "@typegoose/typegoose"
 import { Field, ObjectType, InputType, ID, Int } from "type-graphql";
+import {PushSubscription} from './Landlord'
 import {APIResult} from "."
 import {Property} from './Property'
 import {ObjectId} from 'mongodb'
@@ -8,7 +9,12 @@ import mongoose from 'mongoose'
 @ObjectType({description: "Student User Settinhs"})
 export class StudentUserSettings {
   @Field(type => Boolean)
+  @prop({type: Boolean})
   recieve_email_notifications: boolean;
+
+  @Field(type => [PushSubscription])
+  @prop({type: [PushSubscription]})
+  push_subscriptions: PushSubscription[];
 }
 
 @ObjectType({description: "Cas Auth Information"})
@@ -71,6 +77,7 @@ export class Student {
   confirmation_key?: string;
 
   @Field(type => StudentUserSettings)
+  @prop({type: StudentUserSettings})
   user_settings: StudentUserSettings;
 }
 
