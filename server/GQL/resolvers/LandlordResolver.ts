@@ -119,7 +119,8 @@ export class LandlordResolver {
         confirmation_key: confirm_key,
         onboarded: false,
         user_settings: {
-          recieve_email_notifications: true
+          recieve_email_notifications: true,
+          push_subscriptions: []
         }
       })
 

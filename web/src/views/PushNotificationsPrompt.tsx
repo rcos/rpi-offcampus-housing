@@ -41,13 +41,18 @@ const PushNotificationsPrompt = () => {
             </React.Fragment>
         }
         if (user.type == "landlord") {
-            return <div>PLACEHOLDER</div>
+            return <div>
+                Enable push notifications in order to be notified when someone is interested
+                in your property lease!
+            </div>
         }
     }
 
     const setNotifCookie = () => {
         let next_date_to_ask = new Date ( /* Today's date */ new Date().getTime() +  /* 2 weeks from now */ (1000 * 60 * 60 * 24 * 14) );
-        cookies.set('notif', next_date_to_ask.getTime().toString())
+        cookies.set('notif', next_date_to_ask.getTime().toString(), {
+            maxAge: next_date_to_ask.getTime() * 0.0001
+        })
     }
 
     const declineEnableNotifications = () => {

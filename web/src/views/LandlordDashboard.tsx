@@ -17,6 +17,7 @@ import {Link} from 'react-router-dom'
 import Popup, {PopupHeader} from '../components/toolbox/misc/Popup'
 import {HiCheckCircle} from 'react-icons/hi'
 import Cookies from 'universal-cookie'
+import {shouldPromptToEnableNotifications} from './PushNotificationsPrompt'
 
 const LandlordDashboard = () => {
 
@@ -38,6 +39,14 @@ const LandlordDashboard = () => {
       console.log(`landlord info`, user.user)
       if (user.user.onboarded == false) {
         history.push('/landlord/welcome')
+      }
+      else {
+        
+        // prompt landlord to enable notifications
+        shouldPromptToEnableNotifications(user)
+        .then((shouldPrompt: boolean) => {
+            if (shouldPrompt) history.push('/notifications/enable')
+        })
       }
 
       GetOwnershipsForLandlord({
