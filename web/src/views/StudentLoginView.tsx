@@ -4,6 +4,7 @@ import Centered from '../components/toolbox/layout/Centered'
 import Button from '../components/toolbox/form/Button'
 import {backendPath} from '../config'
 import SuggestionInput from '../components/toolbox/form/SuggestionInput'
+import {useMediaQuery} from 'react-responsive'
 // @ts-ignore
 import urlencode from 'urlencode'
 import {BiBookAlt} from 'react-icons/bi'
@@ -18,7 +19,8 @@ const StudentLoginView = () => {
 
   const history = useHistory()
   const cookies = new Cookies()
-
+  
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 800px)'})
   const handleInstitutionLogin = (institution_name: string | null) => {
     console.log(`Clicked...`)
     let name_ = institution_name == null ? institutionName : institution_name
@@ -100,7 +102,7 @@ const StudentLoginView = () => {
     return partial.length == k
   }
 
-  return (<Centered width={400} height={lastInstitution == null? 300 : 500}>
+  return (<Centered width={350} height={lastInstitution == null? 300 : 500}>
 
     <div>
         <div style={{
@@ -155,6 +157,8 @@ const StudentLoginView = () => {
         <Button 
           text="Continue"
           background="#3B4353"
+          bold={true}
+          large={isSmallScreen}
           textColor="white"
           iconLocation="right"
           onClick={() => {

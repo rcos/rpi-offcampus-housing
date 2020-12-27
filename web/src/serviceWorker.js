@@ -20,8 +20,23 @@ const isLocalhost = Boolean(
     )
 );
 
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+ 
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+ 
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 export function register(config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if (/*process.env.NODE_ENV === 'production' &&*/ 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -50,6 +65,33 @@ export function register(config) {
         // Is not localhost. Just register service worker
         registerValidSW(swUrl, config);
       }
+
+      // Register push
+      /*
+      console.log(`Registering push.`)
+      navigator.serviceWorker.getRegistrations()
+      .then((registrations) => {
+        if (registrations.length == 0) {
+          console.error(`No service workers found. Cannot subscribe push.`)
+          return;
+        }
+
+        let sWorker = registrations[0];
+        let subscription = sWorker.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID_PUBLIC)
+        });
+        subscription.then(sub_ => {
+          console.log(`subscription`, sub_)
+          fetch('http://localhost:9010/subscribe/5fe762d79540f12ef1e3508d', {
+            method: 'POST',
+            body: JSON.stringify(sub_),
+            headers: {
+              'content-type': 'application/json'
+            }
+          })
+        })
+      })*/
     });
   }
 }

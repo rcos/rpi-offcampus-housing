@@ -2710,7 +2710,7 @@ body {
       div {
         width: 35px;
         height: 35px;
-        transform: translateX(10px) translateY(10px);
+        transform: translateY(10px);
       }
     }
     box-sizing: border-box;
@@ -4360,6 +4360,164 @@ a {
 
     &.active {
       background: #E0777D;
+    }
+  }
+}
+
+.mini-loading-slider {
+  width: 50px;
+  height: 100%;
+  background-color: $pink;
+  position: absolute;
+  animation-name: mini-loading-anim;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes mini-loading-anim {
+  from {
+    left: -60px;
+  }
+  to {
+    left: calc(100% + 10px);
+  }
+}
+
+.mobile-tab-slider {
+  font-family: sans-serif;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  ._slider {
+    display: flex;
+    justify-content: space-around;
+    
+    ._tab {
+      margin: 0 0px;
+      cursor: pointer;
+      color: $navy;
+      font-size: 1.2rem;
+      opacity: 0.5;
+      transition: color 0.25s, color 0.25s;
+
+      &.active {
+        color: $pink;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.unauth-mobile-menu {
+  background-color: $navy;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  .menu-container {
+    position: fixed;
+    top: 80px;
+    bottom: 60px;
+    width: 200px;
+    left: 15px;
+
+    .menu-section-header {
+      color: $navyVeryLight;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      height: 20px;
+      line-height: 20px;
+      opacity: 0.5;
+    }
+
+    .menu-link_ {
+      font-size: 1.1rem;
+      padding: 12px 8px;
+      color: white;
+      font-weight: 600;
+    }
+  }
+
+  ._navbar-spacer {
+    height: 60px;
+    transition: height 0.35s, border 0.25s;
+    border-bottom: 1px solid $navyLight;
+  }
+
+  &.menu-opened {
+    ._navbar-spacer {
+      height: 0px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0);
+    }
+
+    ._body {
+      border-radius: 10px;
+    }
+
+    ._navbar {
+      .logo-text {
+        color: white;
+      }
+
+      .menu-icon {
+        color: white;
+      }
+    }
+  }
+
+  ._body {
+    border-radius: 0px;
+    transition: border-radius 0.25s;
+    background-color: $navyVeryLight;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  ._navbar {
+    height: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+
+    .menu-icon {
+      width: 30px;
+      height: 40px;
+      margin-left: 10px;
+      font-size: 1.8rem;
+      line-height: 55px;
+      text-align: center;
+      color: $navy;
+      transition: color 0.35s;
+      cursor: pointer;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      margin-left: 10px;
+      background-image: url('../svg/logo.svg');
+      background-size: 100%;
+      background-position: center;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      color: $navy;
+      margin-left: 10px;
+      font-size: 1.2rem;
+      transition: color 0.35s;
     }
   }
 }

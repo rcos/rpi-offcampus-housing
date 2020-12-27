@@ -32,6 +32,16 @@ fragment StudentAPIResponseFields on StudentAPIResponse {
       cas_id
       institution_id
     }
+    user_settings {
+      recieve_email_notifications
+      push_subscriptions {
+        endpoint
+        keys {
+          p256dh
+          auth
+        }
+      }
+    }
   }
   success
   error

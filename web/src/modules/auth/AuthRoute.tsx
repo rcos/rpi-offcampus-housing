@@ -4,6 +4,7 @@ import AccessLevels from './accessLevels.json'
 // import AuthAPI from '../../API/AuthAPI'
 import Cookies from 'universal-cookie'
 import {useHistory} from 'react-router'
+import NoInternetConnection from '../../views/NoInternetConnection'
 
 import _ from 'lodash'
 
@@ -18,6 +19,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
 
   const history = useHistory()
   const cookie = new Cookies()
+  const [pageReachTimeout, setPageRechTimeout] = useState<boolean>(false)
 
   const getUserType = (): number => {
     if (!user) return -1;
@@ -56,6 +58,16 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
   const [institutionId, setInstitutionId] = useState<string | null>(null)
   const [getInstitution, {data: instutionData, loading: institutionLoading, error}] = useGetInstitutionLazyQuery({variables: {id: institutionId == null ? "" : institutionId}})
 
+  useEffect(() => {
+
+    let t_ = setTimeout(() => {
+      setPageRechTimeout(true);
+    }, 10000)
+
+    return () => {
+      clearTimeout(t_);
+    }
+  }, [])
 
   useEffect(() => {
 
@@ -160,7 +172,7 @@ const AuthRoute = ({component: Component, accessLevel, ...rest}: any) => {
       }
     }
     else {
-      return <div />
+      return pageReachTimeout ? <NoInternetConnection />: <div />;
     }
     
   }} 

@@ -9,15 +9,24 @@ import Button from '../components/toolbox/form/Button'
 import {useMediaQuery} from 'react-responsive'
 import {HiCheck} from 'react-icons/hi'
 import {motion, useSpring, useTransform} from 'framer-motion'
+import Cookies from 'universal-cookie'
+import {useHistory} from 'react-router'
+import {shouldPromptToEnableNotifications} from './PushNotificationsPrompt'
+import {ReduxState} from '../redux/reducers/all_reducers'
+import {useSelector} from 'react-redux'
 
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 
 const SearchView = () => {
 
+    const user = useSelector((state: ReduxState) => state.user)
     const containerRef = useRef<HTMLDivElement>(null)
     const leftContainerRef = useRef<HTMLDivElement>(null)
     const [leftFilterWidth, setLeftFilterWidth] = useState<number>(400)
     const [contentStart, setContentStart] = useState<number>(0)
+
+    const history = useHistory();
+    const cookie = new Cookies ();
 
     const resultsCount = useNumberCounter({
         value: 50,
@@ -32,6 +41,16 @@ const SearchView = () => {
             window.removeEventListener(`resize`, updateFilterWidth)
         }
     }, [])
+
+    useEffect(() => {
+
+        if (user && user.user) {
+            shouldPromptToEnableNotifications(user)
+            .then((shouldPrompt: boolean) => {
+                if (shouldPrompt) history.push('/notifications/enable')
+            })
+        }
+    }, [user])
 
     const updateFilterWidth = () => {
         // filter width should be x% of the page width

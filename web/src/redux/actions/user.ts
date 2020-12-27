@@ -45,7 +45,8 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
               institution_id: user_.user.auth_info.institution_id
             },
             saved_collection: user_.user.saved_collection,
-            elevated_privileges: user_.user.elevated_privileges
+            elevated_privileges: user_.user.elevated_privileges,
+            user_settings: user_.user.user_settings
           }
     
           let student_auth: StudentInfo = {
@@ -66,7 +67,8 @@ const fetchUser = (user: any, {update}: {update: boolean}) => {
             phone_number: user_.user.phone_number,
             password: "",
             confirmation_key: user_.user.confirmation_key,
-            onboarded: user_.user.onboarded
+            onboarded: user_.user.onboarded,
+            user_settings: user_.user.user_settings
           }
 
           let landlord_auth: LandlordInfo = {

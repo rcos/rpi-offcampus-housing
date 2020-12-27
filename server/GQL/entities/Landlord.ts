@@ -2,6 +2,42 @@ import {prop, getModelForClass} from "@typegoose/typegoose"
 import {Field, ObjectType, ID, InputType} from "type-graphql"
 import {APIResult} from "."
 
+@ObjectType({description: "Keys for push subscription"})
+class PushSubscriptionKeys {
+
+  @Field(type => String)
+  @prop({type: String})
+  p256dh: string;
+
+  @Field(type => String)
+  @prop({type: String})
+  auth: string;
+}
+
+@ObjectType({description: "Push Subscription Details"})
+export class PushSubscription {
+  
+  @Field(type => String)
+  @prop({type: String})
+  endpoint: string;
+  
+  @Field(type => PushSubscriptionKeys)
+  @prop({type: PushSubscriptionKeys})
+  keys: PushSubscriptionKeys;
+
+}
+
+@ObjectType({description: "Landlord User Settings"})
+export class LandlordUserSettings {
+  @Field(type => Boolean)
+  @prop({type: Boolean})
+  recieve_email_notifications: boolean;
+
+  @Field(type => [PushSubscription])
+  @prop({type: [PushSubscription]})
+  push_subscriptions: PushSubscription[];
+}
+
 @ObjectType({description: "Landlord model"})
 export class Landlord {
   @Field(() => ID)
@@ -38,6 +74,10 @@ export class Landlord {
   @Field(type => Boolean, {nullable: true})
   @prop({type: Boolean})
   onboarded?: boolean;
+
+  @Field(type => LandlordUserSettings)
+  @prop({type: LandlordUserSettings})
+  user_settings: LandlordUserSettings;
 }
 
 @InputType()

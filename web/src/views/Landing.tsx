@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {motion, useSpring, useTransform} from 'framer-motion'
 import queryString from 'query-string'
+import { useMediaQuery } from 'react-responsive'
 
 import LeftAndRight from '../components/toolbox/layout/LeftAndRight'
 import Logo from '../components/Logo'
@@ -13,6 +14,7 @@ import SuggestionInput from '../components/toolbox/form/SuggestionInput'
 import RectMouseMagnet from '../components/toolbox/misc/RectMouseMagnet'
 import DramaticButton from '../components/toolbox/form/DramaticButton'
 import Canvas from '../components/toolbox/misc/Canvas'
+import MobileLanding from './mobile/Landing'
 
 // SVG Imports
 import HouseSVG from '../assets/svg/landing/house.svg'
@@ -26,6 +28,10 @@ import BlueTriangle from '../assets/svg/landing/blue_triangle.svg'
 import BlueTriangle2 from '../assets/svg/landing/blue_triangle2.svg'
 
 const LandingPage = () => {
+
+  const isSmallScreen = useMediaQuery({
+    query: '(max-width: 900px)'
+  })
   const history_ = useHistory()
 
   const getInitialView = (): 'student' | 'landlord' => {
@@ -62,48 +68,52 @@ const LandingPage = () => {
 
   }, [showStudent, showLandlord])
 
-  return (<div>
+  return (<React.Fragment>
+    
+    {isSmallScreen && <MobileLanding initialLandlord={showLandlord} />}
+    {!isSmallScreen && <div>
 
-    <Centered horizontalBuffer={400} height="100%">
-      <React.Fragment>
+      <Centered horizontalBuffer={400} height="100%">
+        <React.Fragment>
 
-        {/* Header */}
-        <div style={{marginTop: `20px`}}></div>
-        <LeftAndRight 
-          left={<Logo withText={true} withBeta={true} />}
-          right={<LandingAction />}
-        />
-
-        {/* Selection Area for Landlord / Student */}
-        <div style={{
-          width: `40px`,
-          margin: `10px auto`
-        }}>
-          <Toggle2 
-            initialValue={getInitialView() == "landlord" ? false : true}
-            on_label="I am a Student"
-            off_label="I am a Landlord"
-            onToggle={(val: boolean, option: string) => {
-              if (val) {
-                setShowLandlord(false);
-                setTimeout(() => {setShowStudent(true);}, 500)
-              }
-              else {
-                setShowStudent(false);
-                setTimeout(() => {setShowLandlord(true);}, 500)
-              }
-            }}
+          {/* Header */}
+          <div style={{marginTop: `20px`}}></div>
+          <LeftAndRight 
+            left={<Logo withText={true} withBeta={true} />}
+            right={<LandingAction />}
           />
-        </div>
 
-        {/* Landing Content */}
-        <StudentLanding show={showStudent} />
-        <LandlordLanding show={showLandlord} />
+          {/* Selection Area for Landlord / Student */}
+          <div style={{
+            width: `40px`,
+            margin: `10px auto`
+          }}>
+            <Toggle2 
+              initialValue={getInitialView() == "landlord" ? false : true}
+              on_label="I am a Student"
+              off_label="I am a Landlord"
+              onToggle={(val: boolean, option: string) => {
+                if (val) {
+                  setShowLandlord(false);
+                  setTimeout(() => {setShowStudent(true);}, 500)
+                }
+                else {
+                  setShowStudent(false);
+                  setTimeout(() => {setShowLandlord(true);}, 500)
+                }
+              }}
+            />
+          </div>
 
-      </React.Fragment>
-    </Centered>
+          {/* Landing Content */}
+          <StudentLanding show={showStudent} />
+          <LandlordLanding show={showLandlord} />
 
-  </div>)
+        </React.Fragment>
+      </Centered>
+
+  </div>}
+  </React.Fragment>)
 }
 
 const StudentLanding = ({
@@ -173,18 +183,7 @@ const StudentLanding = ({
       top: `50%`,
       transform: `translateY(-50%)`,
   }}>
-    <Canvas 
-      show={show}
-      items={[
-        {component: HouseSVG, translatePos: { start:{x: 0.33, y:0.6}, end:{x: 0.33, y: 0.6} }, width: 0.4, height: 0.4, zIndex: 2},
-        {component: HouseSVG, translatePos: { start:{x: 0.65, y:0.5}, end:{x: 0.65, y: 0.5} }, width: 0.4, height: 0.4, zIndex: 1},
-        {component: ContractSVG, translatePos: { start:{x: 0.48, y: 0.45}, end: {x: 0.48, y: 0.35} }, width: 0.4, height: 0.4, zIndex: 0, delay: 500, duration: 1200},
-        {component: Person1SVG, translatePos: { start:{x: 0.95, y: 0.85}, end: {x: 0.9, y: 0.8} }, width: 0.2, height: 0.2, zIndex: 3, delay: 350, duration: 1000},
-        {component: Person2SVG, translatePos: { start:{x: 0.0, y: 0.85}, end: {x: 0.05, y: 0.8} }, width: 0.2, height: 0.2, zIndex: 3, delay: 700, duration: 1000},
-        {component: RedTriangle, translatePos: { start: {x: 0.05, y: 0.43}, end: {x: 0.02, y: 0.4} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500},
-        {component: BlueTriangle, translatePos: { start: {x: 0.92, y: 0.33}, end: {x: 0.95, y: 0.3} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500}
-      ]}
-    />
+    {studentLandingCanvas(show)}
 
     <div className="build-circle">
       <svg height="700px" width="700px">
@@ -227,17 +226,7 @@ const LandlordLanding = ({show}: {show: boolean}) => {
       transform: `translateY(-50%)`
     }}>
       
-    <Canvas 
-      show={show}
-      items={[
-        {component: Person3SVG, translatePos: {start: {x: 0.5, y: 0.55}, end: {x: 0.5, y: 0.5}}, width: 0.8, height: 0.8, zIndex: 2, delay: 600, duration: 1000},
-        {component: House2SVG, translatePos: {start: {x: 0.8, y: 0.15}, end: {x: 0.76, y: 0.2}}, width: 0.3, height: 0.3, zIndex: 1, duration: 700, delay: 200},
-        {component: HouseSVG, translatePos: {start: {x: 0.0, y: 0.58}, end: {x: 0.06, y: 0.52}}, width: 0.3, height: 0.3, zIndex: 1, duration: 700},
-        {component: BlueTriangle2, translatePos: {start: {x: 0.15, y: 0.15}, end: {x: 0.1, y: 0.1}}, width: 0.07, height: 0.07, zIndex: 5, delay: 1500, duration: 700},
-        {component: RedTriangle, translatePos: { start: {x: 0.05, y: 0.72}, end: {x: 0.02, y: 0.75} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500},
-        {component: BlueTriangle, translatePos: { start: {x: 0.72, y: 0.65}, end: {x: 0.75, y: 0.68} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500}
-      ]}
-    />
+    {landlordLandingCanvas(show)}
 
     <div className="build-circle">
       <svg height="700px" width="700px">
@@ -333,6 +322,35 @@ const LandingAction = () => {
     /> */}
 
   </div>)
+}
+
+export const studentLandingCanvas = (show: boolean) => {
+  return (<Canvas 
+      show={show}
+      items={[
+        {component: HouseSVG, translatePos: { start:{x: 0.33, y:0.6}, end:{x: 0.33, y: 0.6} }, width: 0.4, height: 0.4, zIndex: 2},
+        {component: HouseSVG, translatePos: { start:{x: 0.65, y:0.5}, end:{x: 0.65, y: 0.5} }, width: 0.4, height: 0.4, zIndex: 1},
+        {component: ContractSVG, translatePos: { start:{x: 0.48, y: 0.45}, end: {x: 0.48, y: 0.35} }, width: 0.4, height: 0.4, zIndex: 0, delay: 500, duration: 1200},
+        {component: Person1SVG, translatePos: { start:{x: 0.95, y: 0.85}, end: {x: 0.9, y: 0.8} }, width: 0.2, height: 0.2, zIndex: 3, delay: 350, duration: 1000},
+        {component: Person2SVG, translatePos: { start:{x: 0.0, y: 0.85}, end: {x: 0.05, y: 0.8} }, width: 0.2, height: 0.2, zIndex: 3, delay: 700, duration: 1000},
+        {component: RedTriangle, translatePos: { start: {x: 0.05, y: 0.43}, end: {x: 0.02, y: 0.4} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500},
+        {component: BlueTriangle, translatePos: { start: {x: 0.92, y: 0.33}, end: {x: 0.95, y: 0.3} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500}
+      ]}
+    />)
+}
+
+export const landlordLandingCanvas = (show: boolean) => {
+  return (<Canvas 
+      show={show}
+      items={[
+        {component: Person3SVG, translatePos: {start: {x: 0.5, y: 0.55}, end: {x: 0.5, y: 0.5}}, width: 0.8, height: 0.8, zIndex: 2, delay: 600, duration: 1000},
+        {component: House2SVG, translatePos: {start: {x: 0.8, y: 0.15}, end: {x: 0.76, y: 0.2}}, width: 0.3, height: 0.3, zIndex: 1, duration: 700, delay: 200},
+        {component: HouseSVG, translatePos: {start: {x: 0.05, y: 0.58}, end: {x: 0.1, y: 0.52}}, width: 0.3, height: 0.3, zIndex: 1, duration: 700},
+        {component: BlueTriangle2, translatePos: {start: {x: 0.15, y: 0.15}, end: {x: 0.1, y: 0.1}}, width: 0.07, height: 0.07, zIndex: 5, delay: 1500, duration: 700},
+        {component: RedTriangle, translatePos: { start: {x: 0.05, y: 0.72}, end: {x: 0.02, y: 0.75} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500},
+        {component: BlueTriangle, translatePos: { start: {x: 0.72, y: 0.65}, end: {x: 0.75, y: 0.68} }, width: 0.05, height: 0.05, zIndex: 4, delay: 1200, duration: 500}
+      ]}
+    />)
 }
 
 export default LandingPage

@@ -1,9 +1,9 @@
 {
-  "short_name": "OffCmpus",
-  "name": "Student OffCampus Housing Finder",
+  "short_name": "offcmpus",
+  "name": "offcmpus",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon16x16.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
@@ -27,6 +27,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#3B4353",
+  "background_color": "#F6F7F9",
+  "orientation": "portrait-primary"
 }

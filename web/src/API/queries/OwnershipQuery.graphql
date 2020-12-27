@@ -131,11 +131,7 @@ fragment OwnershipAPIResponseFields on OwnershipAPIResponse {
       }
     }
     landlord_doc {
-      _id
-      first_name
-      last_name
-      email
-      phone_number
+      ...LandlordFields
     }
     ownership_documents {
       ...ownershipDocumentFields
@@ -185,11 +181,7 @@ fragment OwnershipCollectionAPIResponseFields on OwnershipCollectionAPIResponse 
       }
       landlord_id
       landlord_doc {
-        _id
-        first_name
-        last_name
-        email
-        phone_number
+        ...LandlordFields
       }
       date_submitted
       status
@@ -227,4 +219,22 @@ fragment statusChangeInfoFields on StatusChangeInfo {
   changed_from
   changed_to
   status_changer_full_name
+}
+
+fragment LandlordFields on Landlord {
+  _id
+    first_name
+    last_name
+    email
+    phone_number
+    user_settings {
+      recieve_email_notifications
+      push_subscriptions {
+        endpoint
+        keys {
+          p256dh
+          auth
+        }
+      }
+    }
 }

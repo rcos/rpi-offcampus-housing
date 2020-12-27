@@ -11,9 +11,11 @@ interface ButtonInterface {
   link_to?: string
   width?: number
   onClick?: Function
+  bold?: boolean
+  large?: boolean
 }
 
-const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, textColor, background }: ButtonInterface) => {
+const Button = ({ text, icon, bold, width, large, border, link_to, iconLocation, onClick, textColor, background }: ButtonInterface) => {
 
   const buttonRef = useRef<HTMLDivElement>(null)
   const bgColor = (): string => {
@@ -66,7 +68,8 @@ const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, tex
     style={{
       backgroundColor: bgColor(),
       color: textColor ? textColor : `black`,
-      width: `${width ?? width}px`
+      width: `${width ?? width}px`,
+      padding: large ? `8px 20px` : `6px 20px`
     }}
   >
     <div className="button-holder">{
@@ -75,7 +78,10 @@ const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, tex
         {icon}
       </div>
     }
-    <div className={`text-area`}>{text}</div>
+    <div className={`text-area`} style={{
+        fontWeight: bold == true ? 600 : 100,
+        fontSize: large ? `1rem` : `0.8rem`
+      }}>{text}</div>
     {
       getIconLocation() == "right" &&
       <div className={`icon-area ${getIconLocation()}`}>
@@ -93,7 +99,8 @@ const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, tex
     style={{
       backgroundColor: bgColor(),
       color: textColor ? textColor : `black`,
-      width: `${width ?? width}px`
+      width: `${width ?? width}px`,
+      padding: large ? `8px 20px` : `6px 20px`
     }}
   >
     <div className="button-holder">{
@@ -102,7 +109,10 @@ const Button = ({ text, icon, width, border, link_to, iconLocation, onClick, tex
         {icon}
       </div>
     }
-    <div className={`text-area`}>{text}</div>
+    <div className={`text-area`} style={{
+        fontWeight: bold == true ? 600 : 100,
+        fontSize: large ? `1rem` : `0.8rem`
+      }}>{text}</div>
     {
       getIconLocation() == "right" &&
       <div className={`icon-area ${getIconLocation()}`}>

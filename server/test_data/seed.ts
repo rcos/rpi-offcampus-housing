@@ -82,6 +82,10 @@ const generateStudent = (): Student => {
     email:`/\\fake_offcmpus_email@+${faker.internet.email(_fname, _lname)}`,
     phone_number: faker.phone.phoneNumber("+1##########"),
     saved_collection: [],
+    user_settings: {
+      recieve_email_notifications: false,
+      push_subscriptions: []
+    },
     auth_info: {
       institution_id: '',
       cas_id: `${_fname.replace(' ', '_')}_${_lname.replace(' ', '_')}`
@@ -120,7 +124,11 @@ const generateLandlord = (): Landlord => {
     last_name: _lname,
     email: `/\\fake_offcmpus_email@+${faker.internet.email(_fname, _lname)}`,
     phone_number: faker.phone.phoneNumber("+1##########"),
-    password: bcrypt.hashSync(faker.internet.password(), 1)
+    password: bcrypt.hashSync(faker.internet.password(), 1),
+    user_settings: {
+      recieve_email_notifications: false,
+      push_subscriptions: []
+    }
   }
 }
 const gnerateLandlords = (n: number) => objectFactory(n, generateLandlord)

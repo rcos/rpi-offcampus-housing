@@ -44,6 +44,7 @@ import PropertyInitialDetails from './views/PropertyInitialDetails'
 import LandlordConfirmEmail from './views/LandlordConfirmEmail'
 import StudentConfirmEmail from './views/StudentConfirmEmail'
 import LandlordOnboarding from './views/LandlordOnboarding'
+import PushNotificationsPrompt from './views/PushNotificationsPrompt'
 
 import Testing from './views/Testing'
 
@@ -116,6 +117,7 @@ const Routes = () => {
 
             {/* Landlord and Student */}
             <AuthRoute accessLevel={AccessLevels.STUDENT | AccessLevels.LANDLORD} exact path="/property/:id" component={({match}) => (<PropertyView property_id={match.params.id} />)} />
+            <AuthRoute accessLevel={AccessLevels.STUDENT | AccessLevels.LANDLORD} exact path="/notifications/enable" component={PushNotificationsPrompt} />
           
           {/* 404 */}
           <Route component={NotFound} />
@@ -142,4 +144,4 @@ ReactDOM.render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();

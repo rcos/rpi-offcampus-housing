@@ -97,6 +97,7 @@ type Landlord {
   password: String
   phone_number: String
   type: String
+  user_settings: LandlordUserSettings!
 }
 
 type LandlordAPIResponse {
@@ -112,6 +113,12 @@ input LandlordInput {
   last_name: String
   password: String
   phone_number: String
+}
+
+"""Landlord User Settings"""
+type LandlordUserSettings {
+  push_subscriptions: [PushSubscription!]!
+  recieve_email_notifications: Boolean!
 }
 
 type Mutation {
@@ -248,6 +255,18 @@ input PropertySearchInput {
   offset: Int
 }
 
+"""Push Subscription Details"""
+type PushSubscription {
+  endpoint: String!
+  keys: PushSubscriptionKeys!
+}
+
+"""Keys for push subscription"""
+type PushSubscriptionKeys {
+  auth: String!
+  p256dh: String!
+}
+
 type Query {
   getInstitution(_id: String!): InstitutionAPIResponse!
   getLandlord(_id: String!): LandlordAPIResponse!
@@ -288,6 +307,7 @@ type Student {
   phone_number: String!
   saved_collection: [String!]
   type: String
+  user_settings: StudentUserSettings!
 }
 
 type StudentAPIResponse {
@@ -301,4 +321,10 @@ input StudentInput {
   email: String
   first_name: String
   last_name: String
+}
+
+"""Student User Settinhs"""
+type StudentUserSettings {
+  push_subscriptions: [PushSubscription!]!
+  recieve_email_notifications: Boolean!
 }

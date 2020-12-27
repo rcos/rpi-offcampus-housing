@@ -34,6 +34,7 @@ const LandlordRegister = () => {
   const user = useSelector((state: any) => state.user)
   const [createLandlord, {data: landlordCreationResponse, loading: createLandlordLoading}] = useCreateLandlordMutation()
   const isMobile = useMediaQuery({ query: '(max-width: 500px)' })
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 800px)'})
   const history = useHistory()
   const [formError, setFormError] = useState<IFormError>({
     message: '', hasError: false
@@ -223,6 +224,8 @@ const LandlordRegister = () => {
         <LeftAndRight
           left={<div></div>}
           right={<Button 
+            bold={true}
+            large={isSmallScreen}
             text="Complete"
             textColor="white"
             background="#E0777D"
@@ -245,6 +248,8 @@ const LandlordRegister = () => {
             Already have an account?
           </div>}
           right={<Button 
+            bold={true}
+            large={isSmallScreen}
             text="Login"
             textColor="white"
             background="#3B4353"
