@@ -209,10 +209,12 @@ const StartServer = async (): Promise<{
   }
 
   // web-push
-  webpush.setVapidDetails('mailto:test@test.com', 
-    process.env.VAPID_PUBLIC != undefined ? process.env.VAPID_PUBLIC as string : "",
-    process.env.VAPID_PRIVATE != undefined ? process.env.VAPID_PRIVATE as string : ""
-  )
+  if (process.env.VAPID_PUBLIC != undefined && process.env.VAPID_PRIVATE != undefined) {
+    webpush .setVapidDetails('mailto:test@test.com', 
+      process.env.VAPID_PUBLIC as string,
+      process.env.VAPID_PRIVATE as string
+    )
+  }
 
   const server = app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
