@@ -1,4 +1,4 @@
-import {prop, getModelForClass, Ref} from "@typegoose/typegoose"
+import {prop, DocumentType, getModelForClass, Ref} from "@typegoose/typegoose"
 import { type } from "os";
 import {Field, ObjectType, ID, InputType, Int, Float} from "type-graphql"
 import {APIResult} from "."
@@ -92,10 +92,10 @@ export class Property {
   @Field(type => PropertyDetails, {nullable: true})
   @prop({type: PropertyDetails})
   details?: PropertyDetails;
+}
 
-  getAddress (): string {
-    return `${this.address_line}, ${this.address_line_2 == "" ? '' : `${this.address_line_2}, ${this.city} ${this.state}, ${this.zip}`}`
-  }
+export const getAddress = (property_: DocumentType<Property>): string => {
+  return `${property_.address_line}, ${property_.address_line_2 == "" ? '' : `${property_.address_line_2}, ${property_.city} ${property_.state}, ${property_.zip}`}`
 }
 
 @InputType()

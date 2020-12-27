@@ -12,7 +12,7 @@ import {Ownership,
   StatusChangeInfo,
   StatusType,
   OwnershipCollection} from '../entities/Ownership'
-import {Property, PropertyModel} from '../entities/Property'
+import {Property, getAddress, PropertyModel} from '../entities/Property'
 import {Landlord, LandlordModel} from '../entities/Landlord'
 import {Student, StudentModel} from '../entities/Student'
 import {NotificationsAPI} from '../../modules/NotificationsAPI'
@@ -484,7 +484,7 @@ export class OwnershipResolver {
         NotificationsAPI.getSingleton().sendNotification(landlord_, {
           title: `Property Ownership Status Changed`,
           excerpt: `The status of your property ownership has changed from ${old_status} to ${new_status}`,
-          body: `The status of your property at ${property_.getAddress()} has changed from ${old_status} to ${new_status}`
+          body: `The status of your property at ${getAddress(property_)} has changed from ${old_status} to ${new_status}`
         }, {
           sendEmailNotifiation: true,
           sendPushNotification: true
